@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.2.2 - 2026-08-13
+
+- Add original light, dark, and compact marketplace artwork built from one Nuko Nova Unslop mark.
+- Expose the artwork through the Codex plugin interface and preserve the same packaged assets for both client distributions.
+- Validate PNG signatures, exact square dimensions, and manifest path alignment in the dependency-free bundle gate.
+- Record the image-generation and deterministic compositing process in the provenance file.
+
 ## 0.2.1 - 2026-08-13
 
 - Draft and rewrite mutable prose with zero em dashes or spaced double-hyphen substitutes, restructured into flowing sentences rather than staccato fragments. Preserve quotations, code, proper titles, contractual text, fixed strings, and en-dash ranges; a voice sample alone does not override the preference.

@@ -4,6 +4,8 @@ Nuko Nova Unslop is the default editorial layer for human-facing writing in Code
 
 The plugin combines an always-on writing standard, a context-aware editing skill, and dependency-free checks for surface patterns and protected facts. It supports a balanced default, an explicit strict pass, and a Nuko Nova house profile for product and marketing copy.
 
+Original marketplace artwork is packaged in `assets/icon.png`, `assets/logo.png`, and `assets/logo-dark.png`. The light and dark versions use the same editorial-page and nova mark so the plugin remains recognizable across client surfaces.
+
 ## Always-on behavior
 
 - Codex receives a universal skill trigger with implicit invocation explicitly enabled.
@@ -79,7 +81,7 @@ After creating a release commit, render aligned immutable catalog entries with:
 ```bash
 python3 scripts/render_marketplace_entries.py \
   --sha <40-character-release-commit> \
-  --ref nuko-nova-unslop-marketplace-v0.2.1
+  --ref nuko-nova-unslop-marketplace-v0.2.2
 ```
 
 ## License

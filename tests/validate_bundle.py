@@ -6,6 +6,7 @@ from __future__ import annotations
 import ast
 import json
 import re
+import struct
 import sys
 from pathlib import Path
 from urllib.parse import unquote
@@ -26,6 +27,11 @@ REQUIRED_REFERENCES = {
 }
 REQUIRED_SCRIPTS = {"preservation_guard.py", "unslop_lint.py"}
 PROFILES = {"balanced", "strict", "nuko-nova"}
+ARTWORK = {
+    "composerIcon": ("./assets/icon.png", 256),
+    "logo": ("./assets/logo.png", 1254),
+    "logoDark": ("./assets/logo-dark.png", 1254),
+}
 
 
 def fail(message: str) -> None:
@@ -68,6 +74,13 @@ def parse_frontmatter(path: Path) -> dict[str, str]:
     return result
 
 
+def png_dimensions(path: Path) -> tuple[int, int]:
+    data = path.read_bytes()
+    if len(data) < 24 or data[:8] != b"\x89PNG\r\n\x1a\n" or data[12:16] != b"IHDR":
+        fail(f"{path.relative_to(ROOT)}: invalid PNG header")
+    return struct.unpack(">II", data[16:24])
+
+
 def check_manifests() -> None:
     codex = load_json(ROOT / ".codex-plugin" / "plugin.json")
     claude = load_json(ROOT / ".claude-plugin" / "plugin.json")
@@ -93,6 +106,16 @@ def check_manifests() -> None:
         fail("Codex defaultPrompt must contain one to three prompts")
     if any(not isinstance(item, str) or len(item) > 128 for item in prompts):
         fail("Codex defaultPrompt entries must be strings of at most 128 characters")
+    interface = codex.get("interface", {})
+    for field, (relative_path, expected_size) in ARTWORK.items():
+        if interface.get(field) != relative_path:
+            fail(f"Codex interface {field} path mismatch")
+        artwork_path = ROOT / relative_path.removeprefix("./")
+        if not artwork_path.is_file():
+            fail(f"missing artwork: {relative_path}")
+        width, height = png_dimensions(artwork_path)
+        if (width, height) != (expected_size, expected_size):
+            fail(f"{relative_path}: expected {expected_size}x{expected_size}, found {width}x{height}")
 
 
 def check_skill() -> None:

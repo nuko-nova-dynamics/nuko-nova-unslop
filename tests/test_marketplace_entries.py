@@ -18,13 +18,16 @@ SPEC.loader.exec_module(MODULE)
 class MarketplaceEntryTests(unittest.TestCase):
     def test_dual_entries_share_immutable_source(self) -> None:
         sha = "a" * 40
-        entries = MODULE.build_entries(sha, "nuko-nova-unslop-marketplace-v0.2.1")
+        entries = MODULE.build_entries(sha, "nuko-nova-unslop-marketplace-v0.2.2")
         self.assertEqual(entries["codex"]["source"], entries["claude"]["source"])
         self.assertEqual(entries["codex"]["version"], entries["claude"]["version"])
         self.assertEqual(entries["codex"]["source"]["sha"], sha)
         self.assertEqual(entries["codex"]["source"]["url"], entries["codex"]["repository"] + ".git")
         self.assertEqual(entries["codex"]["policy"]["installation"], "AVAILABLE")
         self.assertIn("all human-facing writing", entries["codex"]["description"])
+        self.assertEqual(entries["codex"]["interface"]["composerIcon"], "./assets/icon.png")
+        self.assertEqual(entries["codex"]["interface"]["logo"], "./assets/logo.png")
+        self.assertEqual(entries["codex"]["interface"]["logoDark"], "./assets/logo-dark.png")
 
     def test_invalid_sha_is_rejected(self) -> None:
         with self.assertRaises(ValueError):

@@ -26,6 +26,12 @@ Short conventional phrases such as pattern names and examples may overlap with p
 
 LanguageTool is research-only in this package because its LGPL implementation and language data are not needed by the dependency-free core. Optional references to installed Vale, Harper, LanguageTool, or Promptfoo tools do not redistribute them.
 
+## Artwork
+
+The marketplace mark in `assets/icon.png`, `assets/logo.png`, and `assets/logo-dark.png` was created for this project on August 13, 2026. OpenAI's built-in image-generation tool produced the original transparent raster mark from a human-directed brief for an abstract editorial-page form resolving around a single nova. The brief required an original design, Nuko Nova violet, warm ivory, no text, no third-party marks, and no robot or generic AI imagery.
+
+The selected mark was composited locally onto light and dark square backgrounds and resized for the compact icon. No third-party image, logo, font, or stock asset is included. Nuko Nova Dynamics owns or controls the generated and composited artwork to the extent permitted by applicable terms and law.
+
 ## Claims boundary
 
 The linter detects explicit phrases and document-shape signals. It cannot determine who wrote a text, and its output must not be described as an authorship score. A clean scan does not prove good writing; a flagged sentence does not prove AI involvement.

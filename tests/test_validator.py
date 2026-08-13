@@ -99,6 +99,21 @@ class ValidatorMutationTests(unittest.TestCase):
 
         self.assert_rejected(mutate, "parent review of delegated prose")
 
+    def test_missing_artwork_is_rejected(self) -> None:
+        def mutate(root: Path) -> None:
+            (root / "assets" / "logo-dark.png").unlink()
+
+        self.assert_rejected(mutate, "missing artwork")
+
+    def test_artwork_dimension_drift_is_rejected(self) -> None:
+        def mutate(root: Path) -> None:
+            path = root / "assets" / "icon.png"
+            data = bytearray(path.read_bytes())
+            data[16:24] = (128).to_bytes(4, "big") + (256).to_bytes(4, "big")
+            path.write_bytes(data)
+
+        self.assert_rejected(mutate, "expected 256x256")
+
     def test_cadence_drift_is_rejected(self) -> None:
         def mutate(root: Path) -> None:
             path = root / "upstreams.lock.json"
