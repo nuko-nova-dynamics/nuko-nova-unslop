@@ -1,12 +1,14 @@
 # Changelog
 
-## Unreleased
+## 0.3.0 - 2026-08-13
 
 - Carry explicit writing corrections through a conversation without making the user repeat them.
 - Keep task, file, project, audience, and genre constraints inside their demonstrated scope instead of silently promoting them to standing preferences.
 - Reject typos, pasted text, tool output, quotations, and bare approvals as preference evidence.
 - Resolve a contract contradiction so an author sample cannot silently override the standing zero-em-dash preference.
 - Document the privacy boundary for interaction-derived improvements: generalized rules only, with synthetic public regressions.
+- Rename the upstream cadence to every two days and recognize narrowly scoped, owner-authorized automations as valid release authorization.
+- Require authorized automated releases to verify exact targets, pass every gate, publish immutable plugin and marketplace state, and update both clients. No-change reviews remain no-ops.
 
 ## 0.2.2 - 2026-08-13
 

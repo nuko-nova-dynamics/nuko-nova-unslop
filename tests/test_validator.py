@@ -132,7 +132,7 @@ class ValidatorMutationTests(unittest.TestCase):
             data["review_cadence"] = "monthly"
             path.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
 
-        self.assert_rejected(mutate, "cadence must be every-other-day")
+        self.assert_rejected(mutate, "cadence must be every-two-days")
 
 
 if __name__ == "__main__":

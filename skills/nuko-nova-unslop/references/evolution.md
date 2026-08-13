@@ -4,7 +4,7 @@ Use this protocol when maintaining or updating Nuko Nova Unslop. The objective i
 
 ## Cadence
 
-Check upstream state every other day. A check is read-only until a reviewed change justifies a local edit. Do not update source pins merely to make the report clean.
+Check upstream state every two days. A check is read-only until a reviewed change justifies a local edit. Do not update source pins merely to make the report clean.
 
 The permanent reference worktrees normally live at:
 
@@ -82,4 +82,12 @@ Every accepted evolution must preserve these guarantees:
 
 ## Release boundary
 
-Passing local checks does not publish an update. Repository push, release tag, marketplace pin, marketplace validation, client installation, and client reload are separate stages. Require explicit authorization before changing public or live state.
+Passing local checks does not publish an update. Repository push, release tag, marketplace pin, marketplace validation, client installation, and client reload are separate stages.
+
+Require explicit authorization before changing public or live state. A recurring automation created by the repository owner satisfies this requirement only when its prompt explicitly authorizes the exact push, release, marketplace, and client-update actions for Nuko Nova Unslop. On every authorized run:
+
+1. Verify the plugin repository, branch, marketplace repository, open pull request or target branch, installed marketplace identity, and both client scopes before mutation.
+2. Refuse to publish when tests fail, the worktree contains unrelated changes, credentials are unavailable, or the target cannot be resolved exactly.
+3. For a behavioral improvement, bump the version, validate, commit, push, create an immutable tag and release, update the marketplace pin, validate and publish the marketplace change, then update and verify Codex and Claude Code.
+4. For a fully reviewed upstream change that requires only a source-pin advance, commit and push the reviewed pins without claiming a behavioral release or reinstalling unchanged clients.
+5. If no upstream changed, or no accepted change is justified, report the no-op without manufacturing a commit or release.

@@ -18,7 +18,7 @@ SPEC.loader.exec_module(MODULE)
 class MarketplaceEntryTests(unittest.TestCase):
     def test_dual_entries_share_immutable_source(self) -> None:
         sha = "a" * 40
-        entries = MODULE.build_entries(sha, "nuko-nova-unslop-marketplace-v0.2.2")
+        entries = MODULE.build_entries(sha, "nuko-nova-unslop-marketplace-v0.3.0")
         self.assertEqual(entries["codex"]["source"], entries["claude"]["source"])
         self.assertEqual(entries["codex"]["version"], entries["claude"]["version"])
         self.assertEqual(entries["codex"]["source"]["sha"], sha)

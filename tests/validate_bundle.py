@@ -179,8 +179,8 @@ def check_skill() -> None:
 
 def check_upstreams() -> None:
     lock = load_json(ROOT / "upstreams.lock.json")
-    if lock.get("review_cadence") != "every-other-day":
-        fail("upstream cadence must be every-other-day")
+    if lock.get("review_cadence") != "every-two-days":
+        fail("upstream cadence must be every-two-days")
     sources = lock.get("sources")
     if not isinstance(sources, list) or len(sources) != 10:
         fail("upstream lock must contain the ten researched repositories")
@@ -209,7 +209,7 @@ def check_content() -> None:
             fail(f"{path.relative_to(ROOT)}: tab character found")
     workflow = (ROOT / ".github" / "workflows" / "upstream-review.yml").read_text(encoding="utf-8")
     if "86400 % 2" not in workflow or "schedule:" not in workflow:
-        fail("upstream workflow must enforce its every-other-day cadence")
+        fail("upstream workflow must enforce its every-two-days cadence")
 
 
 def main() -> int:

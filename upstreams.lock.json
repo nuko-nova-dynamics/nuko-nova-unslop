@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "review_cadence": "every-other-day",
+  "review_cadence": "every-two-days",
   "research_cutoff": "2026-08-13",
   "sources": [
     {

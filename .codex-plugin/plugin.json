@@ -1,6 +1,6 @@
 {
   "name": "nuko-nova-unslop",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "description": "Default anti-slop standard for all human-facing writing, with facts, voice, and genre preserved.",
   "author": {
     "name": "Nuko Nova Dynamics",

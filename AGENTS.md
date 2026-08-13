@@ -10,6 +10,7 @@ This repository contains one shared writing skill packaged for Codex and Claude 
 - The files under `skills/nuko-nova-unslop/references/` hold detailed rules and maintenance guidance.
 - `.codex-plugin/plugin.json` and `.claude-plugin/plugin.json` must keep name, version, description, author, repository, and license aligned.
 - `upstreams.lock.json` records reviewed upstream state; a new SHA is not accepted until its relevant diff has been reviewed and the package gates pass.
+- A recurring owner-created automation may publish only when its prompt explicitly grants the exact Nuko Nova Unslop push, release, marketplace, and client-update actions and every target is reverified during that run.
 
 ## Editing contract
 
@@ -22,6 +23,7 @@ This repository contains one shared writing skill packaged for Codex and Claude 
 - Never ingest a third-party phrase corpus wholesale. Curate small, explainable rules with false-positive boundaries.
 - Keep the skill body concise and route detailed material into one-level references.
 - Treat unslopped human-facing prose as the default acceptance criterion, not an optional user-requested pass.
+- On authorized automated evolution runs, publish accepted behavioral changes through the full repository, release, marketplace, and client-update sequence. Report a no-op when no justified change exists.
 
 ## Required checks
 
