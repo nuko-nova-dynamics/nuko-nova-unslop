@@ -1,0 +1,133 @@
+---
+name: nuko-nova-unslop
+description: Draft, edit, humanize, or audit prose so it sounds specific, natural, and appropriate to its author, audience, genre, and channel without changing protected facts or inventing detail. Use for emails, essays, reports, documentation, UI text, marketing copy, posts, applications, and any writing described as AI-sounding, generic, over-polished, repetitive, robotic, salesy, padded, or unlike the author's voice. Also use to run an audit without rewriting, calibrate against a writing sample, apply the Nuko Nova house style, or review upstream anti-slop sources and evolve this skill safely.
+---
+
+# Nuko Nova Unslop
+
+Edit the writing, not the writer. Remove formula without erasing personality, and prefer a no-op over an edit that makes good prose worse.
+
+## Non-negotiable contract
+
+1. Preserve every supported fact, name, number, date, price, quotation, citation, URL, code identifier, product name, UI label, commitment, uncertainty marker, and scope boundary unless the user explicitly authorizes a change.
+2. Never invent a source, metric, anecdote, opinion, emotional reaction, or concrete detail to make prose sound human. Ask, mark a gap, or write around missing evidence.
+3. Treat user-provided voice samples and explicit house style as higher authority than generic pattern rules.
+4. Keep necessary legal, medical, financial, academic, scientific, and technical caveats. Neutral prose can be excellent human prose.
+5. Do not claim that prose was written by AI and do not optimize for detector evasion. Report observable writing patterns and their effects.
+6. Leave quotations, code, data, frontmatter, link targets, and deliberately fixed wording untouched unless the request includes them.
+
+Read [editorial-contract.md](references/editorial-contract.md) before high-stakes, fact-dense, quoted, or heavily formatted work.
+
+## Choose the mode
+
+- **Draft:** Create new prose from supplied facts, purpose, audience, and voice. Surface material gaps instead of filling them.
+- **Rewrite:** Make the minimum effective changes. Return the finished prose first.
+- **Audit:** Name each verified pattern, quote the affected span, explain its effect, and suggest a focused fix. Do not rewrite, score authorship, or assign an AI probability.
+- **File:** Read the file, preserve its non-prose structure, edit only authorized prose, and write only the final version back. Summarize the change in chat.
+- **Embedded:** When another task invokes the skill for a description, message, comment, or document section, run the checks internally and return only the requested artifact.
+- **Evolve:** Follow [evolution.md](references/evolution.md). An upstream change is evidence to review, not permission to absorb it.
+
+If the user asks whether text “sounds AI,” default to Audit. If they ask to humanize, fix, rewrite, or unslop it, use Rewrite. Do not force an unnecessary clarification when audience and purpose are already evident.
+
+## Choose the profile
+
+- **Balanced (default):** Context-aware, minimal edits, cluster-based diagnosis, and no blanket punctuation or vocabulary bans.
+- **Strict:** Use when the user explicitly asks to de-AI, unslop, or remove every obvious model habit. Apply a tighter surface pass while preserving intentional voice and valid typography.
+- **Nuko Nova:** Use for Nuko Nova or Miami Web AI copy, or when requested. Favor reader outcomes, concrete mechanisms, direct calls to action, warm sentences, and the house rules in [profiles-and-genres.md](references/profiles-and-genres.md).
+
+The profile controls sensitivity, not truth. None may override the non-negotiable contract.
+
+## Workflow
+
+### 1. Read the brief and source
+
+Identify internally:
+
+- audience, channel, purpose, relationship, stakes, and requested dialect
+- what the reader should know, feel, decide, or do
+- facts and strings that must remain exact
+- supplied voice evidence: cadence, vocabulary, punctuation, humor, bluntness, uncertainty, and level of polish
+- genre conventions that should be preserved
+
+Read the whole source before changing it. For long or mixed-format files, identify prose boundaries first.
+
+### 2. Protect the source
+
+Make an internal preservation ledger. For fact-dense file rewrites, run:
+
+```bash
+python3 scripts/preservation_guard.py source.md rewrite.md
+```
+
+Treat missing or newly introduced protected tokens as defects until verified. The helper is a guardrail, not proof that meaning stayed intact.
+
+### 3. Audit in confidence order
+
+1. Remove near-conclusive generation leaks: chatbot greetings, pasted assistant closers, reasoning narration, citation markup leaks, fake placeholders, and tool artifacts.
+2. Find high-confidence formula clusters: significance inflation, promotional fog, vague authority, negative reframes, manufactured punchlines, staged reveals, recap endings, and repeated template phrases.
+3. Test usefulness: identify the actor, action, mechanism, evidence, consequence, or decision. Apply the portability test—if a sentence could move unchanged to another company or topic, it is probably filler.
+4. Check rhythm and structure: repeated sentence shapes, forced threes, tiny sections, mechanical bold-label lists, and uniform paragraph cadence.
+5. Check individual words and punctuation only in context. One em dash, transition, passive clause, adverb, or formal word is not evidence by itself.
+
+Use [pattern-catalog.md](references/pattern-catalog.md) for definitions, fixes, and false-positive boundaries. For a deterministic first pass on files, run:
+
+```bash
+python3 scripts/unslop_lint.py --profile balanced path/to/draft.md
+```
+
+Switch to `--profile strict` or `--profile nuko-nova` only when the brief calls for it. Never present the linter as an AI detector.
+
+### 4. Rewrite for the job
+
+- Keep strong human sentences unchanged.
+- Replace generic claims with facts already present in the source. If the fact is missing, ask or mark the gap.
+- Prefer direct verbs and named actors when they improve clarity.
+- Vary sentence and paragraph length in service of the argument, not by manufacturing fragments.
+- Preserve genuine asides, self-corrections, mixed feelings, unusual details, and defensible quirks.
+- Repeat the clearest term instead of cycling through synonyms.
+- Cut throat-clearing, fake authority, redundant summaries, and sentences whose only job is to announce importance.
+- Reorganize only when the existing order hurts comprehension or the user asks for structural editing.
+- Match the destination. A text message, board memo, API guide, legal notice, and landing page should not share one generic “human” voice.
+
+Read [profiles-and-genres.md](references/profiles-and-genres.md) when medium or register materially changes the edit.
+
+### 5. Run the two-sided audit
+
+Ask internally:
+
+1. What still feels generic, assembled, evasive, rhythmically uniform, or unlike this author?
+2. What did the rewrite lose, distort, overstate, sanitize, or invent?
+
+Fix both sides. A lively fabrication fails. So does a truthful rewrite that erases the writer.
+
+### 6. Deliver the requested artifact
+
+- **Rewrite or draft:** Put the finished prose first. Add a short change note only when it helps.
+- **Audit:** List only verified findings with quoted evidence and focused fixes. State when no material slop is present.
+- **File:** Leave the file containing only the final authorized content; report a compact summary and validation result.
+- **Embedded:** Return only the artifact.
+
+Do not expose a long internal rubric, multiple ceremonial drafts, or self-congratulatory commentary unless the user asks for the analysis.
+
+## Quality gate
+
+Before delivery, verify:
+
+- all protected content remains accurate and complete
+- no new factual claim, stance, quotation, citation, or specificity was invented
+- the result fits the audience, genre, and channel
+- edits target observed problems rather than a blacklist
+- sentence rhythm varies without staged drama
+- formatting supports scanning rather than decorating the prose
+- the ending lands on a fact, decision, consequence, image, request, or next action
+- the author would still recognize the voice
+
+A no-op or a few precise edits are valid outcomes.
+
+## References
+
+- [editorial-contract.md](references/editorial-contract.md): preservation hierarchy, voice calibration, and high-stakes boundaries.
+- [pattern-catalog.md](references/pattern-catalog.md): observable patterns, remedies, and false positives.
+- [profiles-and-genres.md](references/profiles-and-genres.md): balanced, strict, and Nuko Nova profiles plus genre-specific defaults.
+- [evolution.md](references/evolution.md): controlled upstream review and improvement protocol.
+- [source-map.md](references/source-map.md): source provenance, role, license, and limits.

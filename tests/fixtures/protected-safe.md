@@ -1,0 +1,1 @@
+Version v2.4.0 launches on 15 June. Details are at https://example.com/reports. Run `--dry-run` with `config.toml`; invalid files now exit with code 2. The report says "review time fell from 30 minutes to 8 minutes."

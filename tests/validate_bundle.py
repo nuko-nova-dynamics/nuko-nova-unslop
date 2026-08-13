@@ -1,0 +1,179 @@
+#!/usr/bin/env python3
+"""Dependency-free integrity checks for the Nuko Nova Unslop plugin."""
+
+from __future__ import annotations
+
+import ast
+import json
+import re
+import sys
+from pathlib import Path
+from urllib.parse import unquote
+
+
+ROOT = Path(__file__).resolve().parents[1]
+SKILL = ROOT / "skills" / "nuko-nova-unslop"
+SEMVER = re.compile(r"^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:[-+][0-9A-Za-z.-]+)?$")
+SHA = re.compile(r"^[0-9a-f]{40}$")
+LINK = re.compile(r"\[[^\]]+\]\(([^)]+)\)")
+REQUIRED_REFERENCES = {
+    "editorial-contract.md",
+    "evolution.md",
+    "pattern-catalog.md",
+    "profiles-and-genres.md",
+    "source-map.md",
+}
+REQUIRED_SCRIPTS = {"preservation_guard.py", "unslop_lint.py"}
+PROFILES = {"balanced", "strict", "nuko-nova"}
+
+
+def fail(message: str) -> None:
+    raise AssertionError(message)
+
+
+def load_json(path: Path) -> dict:
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        fail(f"{path.relative_to(ROOT)}: invalid JSON: {exc}")
+
+
+def check_links(path: Path) -> None:
+    for raw in LINK.findall(path.read_text(encoding="utf-8")):
+        target = raw.split("#", 1)[0].split(maxsplit=1)[0].strip("<>")
+        if not target or target.startswith(("https://", "http://", "mailto:")):
+            continue
+        resolved = (path.parent / unquote(target)).resolve()
+        if not resolved.exists():
+            fail(f"{path.relative_to(ROOT)}: broken link {raw}")
+
+
+def parse_frontmatter(path: Path) -> dict[str, str]:
+    text = path.read_text(encoding="utf-8")
+    if not text.startswith("---\n"):
+        fail("skill: missing frontmatter")
+    try:
+        raw = text.split("---\n", 2)[1]
+    except IndexError as exc:
+        raise AssertionError("skill: malformed frontmatter") from exc
+    result = {}
+    for line in raw.splitlines():
+        if not line.strip():
+            continue
+        if ":" not in line:
+            fail(f"skill: malformed frontmatter line {line!r}")
+        key, value = line.split(":", 1)
+        result[key.strip()] = value.strip()
+    return result
+
+
+def check_manifests() -> None:
+    codex = load_json(ROOT / ".codex-plugin" / "plugin.json")
+    claude = load_json(ROOT / ".claude-plugin" / "plugin.json")
+    for field in ("name", "version", "description", "author", "homepage", "repository", "license"):
+        if codex.get(field) != claude.get(field):
+            fail(f"client manifests disagree on {field}")
+    if codex.get("name") != "nuko-nova-unslop":
+        fail("plugin name mismatch")
+    if not isinstance(codex.get("version"), str) or not SEMVER.fullmatch(codex["version"]):
+        fail("plugin version must use semver")
+    if codex.get("skills") != "./skills/":
+        fail("Codex manifest must expose ./skills/")
+    if codex.get("license") != "Apache-2.0":
+        fail("plugin license must be Apache-2.0")
+    if claude.get("displayName") != codex.get("interface", {}).get("displayName"):
+        fail("client display names differ")
+    if {"mcpServers", "apps", "hooks"} & (set(codex) | set(claude)):
+        fail("skills-only plugin declares an integration component")
+    prompts = codex.get("interface", {}).get("defaultPrompt")
+    if not isinstance(prompts, list) or not 1 <= len(prompts) <= 3:
+        fail("Codex defaultPrompt must contain one to three prompts")
+    if any(not isinstance(item, str) or len(item) > 128 for item in prompts):
+        fail("Codex defaultPrompt entries must be strings of at most 128 characters")
+
+
+def check_skill() -> None:
+    frontmatter = parse_frontmatter(SKILL / "SKILL.md")
+    if set(frontmatter) != {"name", "description"}:
+        fail("skill frontmatter must contain only name and description")
+    if frontmatter["name"] != "nuko-nova-unslop":
+        fail("skill name mismatch")
+    if len(frontmatter["description"]) < 180 or "Use " not in frontmatter["description"]:
+        fail("skill description must explain capability and triggers")
+    references = {path.name for path in (SKILL / "references").iterdir() if path.is_file()}
+    scripts = {path.name for path in (SKILL / "scripts").iterdir() if path.is_file() and path.suffix == ".py"}
+    if references != REQUIRED_REFERENCES:
+        fail(f"reference set mismatch: {sorted(references)}")
+    if scripts != REQUIRED_SCRIPTS:
+        fail(f"script set mismatch: {sorted(scripts)}")
+    agent = (SKILL / "agents" / "openai.yaml").read_text(encoding="utf-8")
+    if "$nuko-nova-unslop" not in agent:
+        fail("OpenAI default prompt must mention $nuko-nova-unslop")
+    match = re.search(r'^\s*short_description:\s*"([^"]+)"', agent, re.MULTILINE)
+    if not match or not 25 <= len(match.group(1)) <= 64:
+        fail("OpenAI short description must be 25 to 64 characters")
+    for path in [SKILL / "SKILL.md", *(SKILL / "references").glob("*.md")]:
+        check_links(path)
+    for path in (SKILL / "scripts").glob("*.py"):
+        try:
+            ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
+        except SyntaxError as exc:
+            fail(f"{path.relative_to(ROOT)}: invalid Python: {exc}")
+
+    for path in (ROOT / "scripts").glob("*.py"):
+        try:
+            ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
+        except SyntaxError as exc:
+            fail(f"{path.relative_to(ROOT)}: invalid Python: {exc}")
+
+
+def check_upstreams() -> None:
+    lock = load_json(ROOT / "upstreams.lock.json")
+    if lock.get("review_cadence") != "every-other-day":
+        fail("upstream cadence must be every-other-day")
+    sources = lock.get("sources")
+    if not isinstance(sources, list) or len(sources) != 10:
+        fail("upstream lock must contain the ten researched repositories")
+    ids = [source.get("id") for source in sources]
+    if len(ids) != len(set(ids)):
+        fail("upstream ids must be unique")
+    for source in sources:
+        if not SHA.fullmatch(source.get("reviewed_sha", "")):
+            fail(f"{source.get('id')}: invalid reviewed SHA")
+        if not source.get("monitored_paths"):
+            fail(f"{source.get('id')}: monitored paths are required")
+        if not source.get("url", "").startswith("https://github.com/"):
+            fail(f"{source.get('id')}: expected GitHub HTTPS URL")
+
+
+def check_content() -> None:
+    for path in ROOT.rglob("*"):
+        if not path.is_file() or ".git" in path.parts or "__pycache__" in path.parts:
+            continue
+        if path.suffix not in {".md", ".json", ".yaml", ".yml", ".py"} and path.name not in {"LICENSE", "NOTICE"}:
+            continue
+        text = path.read_text(encoding="utf-8")
+        if "[" + "TODO:" in text or "<" + "placeholder>" in text:
+            fail(f"{path.relative_to(ROOT)}: editorial placeholder remains")
+        if path.suffix in {".md", ".yaml", ".yml", ".py"} and "\t" in text:
+            fail(f"{path.relative_to(ROOT)}: tab character found")
+    workflow = (ROOT / ".github" / "workflows" / "upstream-review.yml").read_text(encoding="utf-8")
+    if "86400 % 2" not in workflow or "schedule:" not in workflow:
+        fail("upstream workflow must enforce its every-other-day cadence")
+
+
+def main() -> int:
+    check_manifests()
+    check_skill()
+    check_upstreams()
+    check_content()
+    print("PASS: dual manifests, one shared skill, five references, two helpers, ten source pins, links, metadata, and cadence verified")
+    return 0
+
+
+if __name__ == "__main__":
+    try:
+        raise SystemExit(main())
+    except AssertionError as exc:
+        print(f"FAIL: {exc}", file=sys.stderr)
+        raise SystemExit(1)

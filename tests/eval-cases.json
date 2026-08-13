@@ -1,0 +1,23 @@
+[
+  {
+    "name": "slop-heavy-balanced",
+    "file": "slop-heavy.md",
+    "profile": "balanced",
+    "required_rules": ["chatbot-artifact", "significance-inflation", "promotional-fog", "vague-authority", "negative-reframe", "staccato-drama", "generic-conclusion"],
+    "forbidden_rules": []
+  },
+  {
+    "name": "clean-human-balanced",
+    "file": "clean-human.md",
+    "profile": "balanced",
+    "required_rules": [],
+    "forbidden_rules": ["watched-vocabulary", "dash-cluster", "negative-reframe"]
+  },
+  {
+    "name": "nuko-house-copy",
+    "file": "nuko-copy.md",
+    "profile": "nuko-nova",
+    "required_rules": ["via-negativa", "collaborative-cta", "watched-vocabulary"],
+    "forbidden_rules": []
+  }
+]

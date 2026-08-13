@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "nuko-nova-unslop",
+  "displayName": "Nuko Nova Unslop",
+  "version": "0.1.0",
+  "description": "Context-aware drafting, editing, and auditing that removes AI-writing patterns while preserving facts, voice, and genre.",
+  "author": {
+    "name": "Nuko Nova Dynamics",
+    "email": "hello@nukonova.com",
+    "url": "https://nukonova.com"
+  },
+  "homepage": "https://github.com/nuko-nova-dynamics/nuko-nova-unslop",
+  "repository": "https://github.com/nuko-nova-dynamics/nuko-nova-unslop",
+  "license": "Apache-2.0",
+  "keywords": [
+    "writing",
+    "editing",
+    "humanizer",
+    "anti-slop",
+    "voice",
+    "prose",
+    "copywriting"
+  ]
+}

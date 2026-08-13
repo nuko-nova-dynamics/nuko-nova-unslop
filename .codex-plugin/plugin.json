@@ -1,0 +1,43 @@
+{
+  "name": "nuko-nova-unslop",
+  "version": "0.1.0",
+  "description": "Context-aware drafting, editing, and auditing that removes AI-writing patterns while preserving facts, voice, and genre.",
+  "author": {
+    "name": "Nuko Nova Dynamics",
+    "email": "hello@nukonova.com",
+    "url": "https://nukonova.com"
+  },
+  "homepage": "https://github.com/nuko-nova-dynamics/nuko-nova-unslop",
+  "repository": "https://github.com/nuko-nova-dynamics/nuko-nova-unslop",
+  "license": "Apache-2.0",
+  "keywords": [
+    "writing",
+    "editing",
+    "humanizer",
+    "anti-slop",
+    "voice",
+    "prose",
+    "copywriting"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Nuko Nova Unslop",
+    "shortDescription": "Human writing without fabricated facts or lost voice.",
+    "longDescription": "Draft, audit, or rewrite prose with context-aware anti-slop rules, voice calibration, protected-fact checks, deterministic linting, genre profiles, and a controlled upstream-learning workflow.",
+    "developerName": "Nuko Nova Dynamics",
+    "category": "Productivity",
+    "capabilities": [
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://nukonova.com",
+    "privacyPolicyURL": "https://nukonova.com/privacy",
+    "termsOfServiceURL": "https://nukonova.com/terms",
+    "defaultPrompt": [
+      "Humanize this draft without changing its facts or voice.",
+      "Audit this copy for AI slop, but do not rewrite it.",
+      "Draft this in my voice using the Nuko Nova profile."
+    ],
+    "brandColor": "#7C3AED"
+  }
+}

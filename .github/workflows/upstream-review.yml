@@ -1,0 +1,58 @@
+name: Review upstream writing sources
+
+on:
+  schedule:
+    - cron: "17 13 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Select every-other-day run
+        id: cadence
+        shell: bash
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]] || (( $(date -u +%s) / 86400 % 2 == 0 )); then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "run=false" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Check remote pins
+        if: steps.cadence.outputs.run == 'true'
+        id: check
+        continue-on-error: true
+        run: python3 scripts/check_upstreams.py --refresh --format markdown --output upstream-review.md
+      - name: Validate report outcome
+        if: steps.cadence.outputs.run == 'true' && steps.check.outcome == 'failure'
+        shell: bash
+        run: |
+          if grep -q '| changed |' upstream-review.md; then
+            exit 0
+          fi
+          sed -n '1,240p' upstream-review.md
+          exit 1
+      - name: Open or update review issue
+        if: steps.cadence.outputs.run == 'true' && hashFiles('upstream-review.md') != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          if ! grep -q '| changed |' upstream-review.md; then
+            exit 0
+          fi
+          title='Upstream anti-slop sources changed'
+          issue_number=$(gh issue list --state open --search "$title in:title" --json number,title --jq '.[] | select(.title == "Upstream anti-slop sources changed") | .number' | head -n 1)
+          if [[ -n "$issue_number" ]]; then
+            gh issue comment "$issue_number" --body-file upstream-review.md
+          else
+            gh issue create --title "$title" --body-file upstream-review.md
+          fi

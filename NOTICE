@@ -1,0 +1,24 @@
+Nuko Nova Unslop
+Copyright 2026 Nuko Nova Dynamics
+
+Created by Julio Diaz with AI-assisted research and drafting under human
+direction and review.
+
+This project was informed by the following open-source projects. Their code,
+documentation, and marks remain subject to their respective licenses and
+owners:
+
+- Avoid AI Writing, Copyright 2026 Conor Bronsdon, MIT License
+- Better Writing, Copyright 2026 Forjd, MIT License
+- Cursor pstack Unslop, Copyright 2026 Lauren Tan, MIT License
+- Humanizer, Copyright 2025 Siqi Chen, MIT License
+- No AI Slop, Copyright 2026 Peter Yang, MIT License
+- Vale, Copyright 2016 Joseph Kato, MIT License
+- AntiSlop Sampler, Apache License 2.0
+- Harper, Apache License 2.0
+- LanguageTool, GNU Lesser General Public License 2.1 or later
+- Promptfoo, Copyright 2025 Promptfoo, MIT License
+
+No LanguageTool code or data is distributed in this package. No upstream
+phrase corpus, model, grammar engine, or executable is bundled. See
+PROVENANCE.md and skills/nuko-nova-unslop/references/source-map.md.

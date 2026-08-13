@@ -1,0 +1,4 @@
+interface:
+  display_name: "Nuko Nova Unslop"
+  short_description: "Humanize prose without changing its truth"
+  default_prompt: "Use $nuko-nova-unslop to rewrite this draft as natural, specific prose while preserving its facts and voice."

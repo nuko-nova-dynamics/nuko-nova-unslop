@@ -1,0 +1,1 @@
+Version v2.5.0 launches on 16 June. Details are at https://example.com/reports. Run `--preview` with `config.toml`; invalid files now exit with code 3. The report says "review time fell from 30 minutes to 6 minutes."
