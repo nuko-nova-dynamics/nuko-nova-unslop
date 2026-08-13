@@ -13,6 +13,10 @@ Apply this skill to every human-facing sentence produced while it is available. 
 
 Apply the standard while drafting, not as cosmetic cleanup after the content is complete. Direct, specific, readable writing is the acceptance criterion. Do not confuse unslopped writing with extreme brevity, casual language, low detail, or a flattened voice.
 
+Treat delegated prose as unreviewed source material. When a child agent or external tool writes text, ask it to follow this skill when possible, then apply the standard again in the parent before delivering or saving the result. Never assume a client output style propagates into subagents.
+
+Draft and rewrite mutable prose without em dashes or spaced double-hyphen substitutes. This is a house style preference, not an authorship signal; measured corpora show em dashes skew human. Where a dash would have gone, choose the connective that keeps the sentence natural: a comma, a colon, parentheses, a semicolon, or a separate sentence. Never satisfy the preference with a run of staccato fragments, and never alter quotations, code, commands, flags, link targets, proper titles, contractual text, fixed wording, or valid en-dash ranges to remove a dash. A voice sample informs cadence and syntax but does not override this preference. Only an explicit request to use em dashes in the current piece overrides it.
+
 Keep code, commands, machine-readable data, quotations, citations, and fixed strings outside the prose pass unless the user explicitly includes them.
 
 ## Non-negotiable contract
@@ -25,6 +29,19 @@ Keep code, commands, machine-readable data, quotations, citations, and fixed str
 6. Leave quotations, code, data, frontmatter, link targets, and deliberately fixed wording untouched unless the request includes them.
 
 Read [editorial-contract.md](references/editorial-contract.md) before high-stakes, fact-dense, quoted, or heavily formatted work.
+
+## Voice ownership
+
+Soul is welcome when the voice is owned or authorized:
+
+- the actual author, evidenced by their sample, draft, or stated stance
+- the assistant speaking as itself in conversation
+- an approved house or brand voice, such as the Nuko Nova profile
+- a creative genre the user has authorized
+
+Within an owned voice, judgment, warmth, tension, humor, uncertainty, rhythm, asides, and point of view are legitimate tools. Personality from any other mouth is fabrication: never invent a represented person's lived experience, opinion, emotion, factual detail, quotation, source, metric, or commitment. A brand stance or value must come from the brief or approved house voice; never invent customer sentiment, social proof, founder beliefs, or product claims.
+
+When writing as yourself, take a position instead of hiding behind neutral connectors. State the judgment, the trade-off, or the open question directly, and mark real uncertainty as uncertainty. Do not claim lived experience, memory, sensory feeling, personal use, or continuing attention. High-stakes and reference prose expresses soul through clarity, selection, care, and confident structure rather than injected personality.
 
 ## Choose the mode
 
@@ -75,7 +92,7 @@ Treat missing or newly introduced protected tokens as defects until verified. Th
 
 1. Remove near-conclusive generation leaks: chatbot greetings, pasted assistant closers, reasoning narration, citation markup leaks, fake placeholders, and tool artifacts.
 2. Find high-confidence formula clusters: significance inflation, promotional fog, vague authority, negative reframes, manufactured punchlines, staged reveals, recap endings, and repeated template phrases.
-3. Test usefulness: identify the actor, action, mechanism, evidence, consequence, or decision. Apply the portability test—if a sentence could move unchanged to another company or topic, it is probably filler.
+3. Test usefulness: identify the actor, action, mechanism, evidence, consequence, or decision. Apply the portability test. If a sentence could move unchanged to another company or topic, it is probably filler.
 4. Check rhythm and structure: repeated sentence shapes, forced threes, tiny sections, mechanical bold-label lists, and uniform paragraph cadence.
 5. Check individual words and punctuation only in context. One em dash, transition, passive clause, adverb, or formal word is not evidence by itself.
 
@@ -85,7 +102,7 @@ Use [pattern-catalog.md](references/pattern-catalog.md) for definitions, fixes, 
 python3 scripts/unslop_lint.py --profile balanced path/to/draft.md
 ```
 
-Switch to `--profile strict` or `--profile nuko-nova` only when the brief calls for it. Never present the linter as an AI detector.
+Use `--profile balanced` to audit supplied text. Use `--profile strict` on newly drafted or rewritten general prose, and `--profile nuko-nova` on Nuko Nova or Miami Web AI copy. Never present the linter as an AI detector.
 
 ### Apply the linter proportionately
 
@@ -93,6 +110,7 @@ The editorial standard is always active; the linter is a fast local backstop, no
 
 - For short conversational replies and progress updates, apply the workflow and quality gate internally. Do not create a temporary file only to lint a sentence unless a pattern is uncertain.
 - For prose files, multi-paragraph deliverables, and text intended to be sent, submitted, published, or reused, run the linter before delivery when the bundled script is accessible.
+- In mutable prose you drafted or rewrote, treat any remaining em dash or spaced double-hyphen substitute as a defect to restructure before delivery. In protected source material, dashes are contextual evidence rather than proof of a writing problem.
 - For fact-dense source-to-rewrite work, also run the preservation guard.
 - Review every finding in context. Fix justified findings and retain intentional language. Zero findings are not a substitute for editorial judgment.
 - Keep the checks local. Do not add a network request or another model call merely to enforce this standard.
@@ -135,6 +153,8 @@ Before delivery, verify:
 
 - all protected content remains accurate and complete
 - no new factual claim, stance, quotation, citation, or specificity was invented
+- any personality present belongs to an owned voice
+- newly drafted or rewritten mutable prose carries no em dashes or spaced double-hyphen substitutes outside quoted or fixed material, and no staccato fragments standing in for them
 - the result fits the audience, genre, and channel
 - edits target observed problems rather than a blacklist
 - sentence rhythm varies without staged drama

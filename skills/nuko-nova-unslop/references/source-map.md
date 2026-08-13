@@ -21,7 +21,7 @@ Research cutoff: August 13, 2026. `upstreams.lock.json` is the machine-readable 
 
 ## Deliberate departures
 
-- Em dashes, en dashes, curly quotes, parentheses, passive voice, adverbs, formal vocabulary, three-item lists, headings, and bullets are not universal bans.
+- Em dashes, en dashes, curly quotes, parentheses, passive voice, adverbs, formal vocabulary, three-item lists, headings, and bullets are not authorship signals. The zero-em-dash preference for newly drafted or rewritten mutable prose is an owner style choice: Avoid AI Writing's published corpus table measured em-dash frequency skewing human at 0.2x, and the pstack advice to swap dashes for periods is rejected because the owner's own editing history shows it manufactures staccato slop.
 - Personality is never invented for neutral or high-stakes prose.
 - A self-audit does not require showing users multiple ceremonial drafts.
 - Deterministic findings are writing signals, not evidence of machine authorship.

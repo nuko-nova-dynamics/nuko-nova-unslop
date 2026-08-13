@@ -133,6 +133,9 @@ def check_skill() -> None:
     style_body = OUTPUT_STYLE.read_text(encoding="utf-8")
     if "every human-facing response" not in style_body or "Never invent detail" not in style_body:
         fail("Claude output style is missing the default writing contract")
+    skill_body = (SKILL / "SKILL.md").read_text(encoding="utf-8")
+    if "Treat delegated prose as unreviewed source material" not in skill_body:
+        fail("skill must require parent review of delegated prose")
     for path in [SKILL / "SKILL.md", *(SKILL / "references").glob("*.md")]:
         check_links(path)
     for path in (SKILL / "scripts").glob("*.py"):

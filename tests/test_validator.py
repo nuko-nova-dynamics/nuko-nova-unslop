@@ -88,6 +88,17 @@ class ValidatorMutationTests(unittest.TestCase):
 
         self.assert_rejected(mutate, "Claude output style is missing")
 
+    def test_delegated_prose_guard_drift_is_rejected(self) -> None:
+        def mutate(root: Path) -> None:
+            path = root / "skills" / "nuko-nova-unslop" / "SKILL.md"
+            text = path.read_text(encoding="utf-8")
+            path.write_text(
+                text.replace("Treat delegated prose as unreviewed source material", "Delegated prose may be returned directly"),
+                encoding="utf-8",
+            )
+
+        self.assert_rejected(mutate, "parent review of delegated prose")
+
     def test_cadence_drift_is_rejected(self) -> None:
         def mutate(root: Path) -> None:
             path = root / "upstreams.lock.json"

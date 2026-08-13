@@ -70,8 +70,10 @@ Every accepted evolution must preserve these guarantees:
 
 - no authorship classification or detector-evasion promise
 - no invented facts, sources, stance, or personality
+- personality stays with an owned voice: the author, the assistant as itself, an approved brand voice, or an authorized genre
 - source facts and fixed strings outrank style rules
-- author samples outrank generic punctuation preferences
+- author samples guide cadence and syntax but do not override the zero-em-dash house preference without an explicit request for the current piece
+- removed em dashes are restructured into flowing sentences, never into staccato fragments
 - context and genre outrank isolated surface patterns
 - audit mode never rewrites
 - a no-op remains valid

@@ -8,7 +8,8 @@ Use by default.
 
 - Diagnose clusters and effects rather than banning isolated words or punctuation.
 - Make minimum-effective edits.
-- Keep intentional em dashes, parentheses, lists, headings, passive voice, and formal vocabulary.
+- When editing another author's text, keep intentional em dashes, parentheses, lists, headings, passive voice, and formal vocabulary.
+- When drafting or rewriting mutable prose, follow the zero-em-dash house preference without manufacturing staccato fragments. A voice sample alone does not override it.
 - Preserve a clean human sentence even when it contains a watched word.
 - Return the final artifact first and keep notes short.
 
@@ -19,7 +20,7 @@ This profile is safest for normal editing, professional documents, technical wor
 Use when the user explicitly asks to “unslop,” “de-AI,” remove obvious ChatGPT habits, or apply a hard surface cleanup.
 
 - Remove generation leaks and formulaic structures aggressively.
-- Avoid em dashes in short copy; in long prose keep only those supported by an author sample or a clear grammatical need. Preserve en dashes in valid numeric and date ranges.
+- Remove em dashes and spaced double-hyphen substitutes from mutable prose unless the user explicitly requests em dashes for the current piece. Preserve quotations, fixed strings, and valid en dashes in numeric and date ranges.
 - Remove decorative emojis, mechanical bold-label lists, unnecessary title case, and tiny sections.
 - Replace watched vocabulary when it is generic, promotional, or part of a cluster.
 - Break repeated mid-length cadence without creating artificial fragments.
@@ -41,7 +42,7 @@ Voice: precise, confident, direct, warm, and grounded in what the reader gets or
 - Name the service, mechanism, timeline, price, evidence, or outcome. Avoid generic “AI tools,” “innovative solutions,” and unsupported superlatives.
 - Prefer reader-outcome framing over adjectives about the company.
 - Use direct calls to action such as “Start your project,” “Apply,” or “Book a call.” Avoid generic “Let's build together” language.
-- Keep em dashes rare rather than banned. Do not replace them with staccato periods that reproduce the same problem.
+- Write new house copy without em dashes or spaced double-hyphen substitutes. Where one would have gone, restructure with a comma, colon, parentheses, or a separate sentence. Do not replace a dash with staccato periods that reproduce the same problem, and leave quoted or fixed text unchanged.
 - End when the point is made. Confidence often needs no reassurance line.
 
 ### Valid exceptions

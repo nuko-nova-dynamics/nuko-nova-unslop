@@ -24,9 +24,11 @@ def build_entries(sha: str, ref: str) -> dict[str, dict]:
         raise ValueError("ref must be non-empty")
     codex = load(ROOT / ".codex-plugin" / "plugin.json")
     claude = load(ROOT / ".claude-plugin" / "plugin.json")
+    if codex["repository"] != claude["repository"]:
+        raise ValueError("client manifests disagree on repository")
     source = {
         "source": "url",
-        "url": "https://github.com/nuko-nova-dynamics/nuko-nova-unslop.git",
+        "url": codex["repository"] + ".git",
         "ref": ref,
         "sha": sha,
     }

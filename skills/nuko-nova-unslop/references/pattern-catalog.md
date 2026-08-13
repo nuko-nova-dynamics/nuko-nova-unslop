@@ -8,6 +8,8 @@ These are editing signals, not proof of authorship. Diagnose clusters, purpose, 
 - **Strong:** Often weakens writing, but confirm the span is not quoted, required, or genre-correct.
 - **Contextual:** Edit only when it repeats, obscures meaning, or conflicts with the chosen voice.
 
+The one measured corpus among the sources (Avoid AI Writing, 875 human and 779 machine paragraphs, mostly 2022 to 2024 assistant prose) supports this ordering: rhythm uniformity showed an 11.7x machine lift and filler 3.4x, while its Tier 1 vocabulary list managed only 0.9x and em-dash frequency skewed human at 0.2x. Structure and cluster signals carry the weight; word lists and punctuation folklore do not, and its composite score separated authorship no better than a coin flip.
+
 ## Generation leaks
 
 | ID | Signal | Focused response |
@@ -28,7 +30,8 @@ These are editing signals, not proof of authorship. Diagnose clusters, purpose, 
 | `notability-list` | Media, customer, or award names stacked without relevant context | Keep the evidence that advances the point. Do not invent context. |
 | `generic-future` | “the future looks bright,” “exciting times lie ahead,” or progress-as-destiny | End on the actual plan, evidence, risk, or next action. |
 | `formulaic-challenges` | “Despite challenges, X continues to thrive” | Name the specific problem and response, if sourced. |
-| `interpretive-label` | “This is crucial,” “the key point is,” “as you can see” | Let evidence carry emphasis or explain the consequence. |
+| `interpretive-label` | “This is crucial,” “the key point is,” “as you can see,” “this underscores,” “this signals that” | Let evidence carry emphasis, or state the author's actual judgment. Keep literal technical uses such as a process signaling a handler. |
+| `hedging-filler` | “It's worth noting that,” “it's important to note that” | State the point and delete the announcement that it matters. |
 
 ## Formula and staged rhetoric
 
@@ -68,7 +71,8 @@ These are editing signals, not proof of authorship. Diagnose clusters, purpose, 
 | `inline-label-list` | Repeated bold label, colon, and sentence that echoes the label | Use prose or a real list whose labels aid scanning. |
 | `list-addiction` | Bullets substitute for an argument or narrative | Use prose when sequence and relationships matter. Keep reference lists and checklists. |
 | `decorative-emphasis` | Mechanical bolding, emoji section markers, or excessive title case | Remove decoration that does not convey structure. |
-| `dash-cluster` | Em dashes repeatedly supply rhythm or fake punch | Restructure the cluster. Preserve intentional dashes and valid en-dash ranges. |
+| `dash-cluster` | Em dashes repeatedly supply rhythm or fake punch | Restructure mutable prose with commas, colons, parentheses, or separate sentences, never with staccato fragments. Preserve quoted, fixed, or explicitly requested dashes and valid en-dash ranges. Typographic label separators do not count toward the balanced rhythm threshold, but strict and house passes still surface them for the zero-em-dash preference. |
+| `dash-substitute` | A spaced double hyphen substitutes for an em dash in prose | Restructure the sentence. Preserve command flags and fixed strings. |
 | `transition-stack` | Paragraphs repeatedly open with “Moreover,” “Furthermore,” “Additionally,” or “That said” | Remove announcements and connect the ideas directly. |
 | `diff-anchored` | Documentation explains what was added or replaced rather than current behavior | Describe the current system unless change history is the genre. |
 
@@ -78,7 +82,7 @@ These are editing signals, not proof of authorship. Diagnose clusters, purpose, 
 | --- | --- | --- |
 | `sycophancy` | Unnecessary praise, agreement, or servile reassurance | Respond to the substance. Keep genuine warmth. |
 | `permission-giving` | “Feel free to,” “don't hesitate,” or repeated offers that dilute a clear action | Give the action, deadline, or contact path once. |
-| `manufactured-soul` | Added opinion, first person, humor, or emotional reaction not present in the source or brief | Remove the invented stance. Personality must belong to the author. |
+| `manufactured-soul` | Added opinion, first person, humor, or emotional reaction not present in the source or brief | Remove the invented stance. Personality must belong to an owned voice: the actual author, the assistant speaking as itself, an approved brand voice, or an authorized creative genre. |
 | `sterile-polish` | Every paragraph is equally tidy, neutral, and resolved despite a distinctive source voice | Restore supported edge, uncertainty, asides, or unevenness. |
 
 ## Contextual word bank
@@ -100,3 +104,7 @@ Likewise, passive voice, adverbs, parentheses, curly quotes, Oxford commas, hyph
 - punctuation habits supported by the author's sample
 
 Good human writing may be polished, formal, complex, or grammatically perfect.
+
+## Deterministic linter coverage
+
+`scripts/unslop_lint.py` implements a subset of this catalog: the leak rules, the high-confidence phrase rules, the em-dash check, and the two rhythm checks. Its `watched-vocabulary` rule maps to the contextual word bank, `generic-conclusion` spans `generic-recap` and `generic-future`, `signposting` covers throat-clearing openers such as “let's dive in” and “without further ado,” and the profile-scoped `via-negativa` and `collaborative-cta` rules are defined with the house rules in [profiles-and-genres.md](profiles-and-genres.md). Everything else in this catalog is editorial judgment the linter does not attempt.

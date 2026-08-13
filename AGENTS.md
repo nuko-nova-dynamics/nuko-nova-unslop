@@ -14,6 +14,9 @@ This repository contains one shared writing skill packaged for Codex and Claude 
 ## Editing contract
 
 - Preserve the skill's fact and voice safeguards when changing pattern rules.
+- Keep the zero-em-dash house preference subordinate to quotations and fixed strings, but not to an author sample unless the user explicitly requests em dashes for the current piece. Never satisfy it with spaced double hyphens or staccato fragments.
+- Keep personality inside an owned voice; never let an edit donate opinions or experiences to a represented author.
+- Treat delegated prose as source material and apply the skill in the parent before delivery because client output styles may not propagate to subagents.
 - Add a regression fixture for every non-obvious behavioral fix.
 - Never turn a context-sensitive signal into proof of AI authorship.
 - Never ingest a third-party phrase corpus wholesale. Curate small, explainable rules with false-positive boundaries.

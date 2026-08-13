@@ -11,13 +11,38 @@
     "file": "clean-human.md",
     "profile": "balanced",
     "required_rules": [],
-    "forbidden_rules": ["watched-vocabulary", "dash-cluster", "negative-reframe"]
+    "forbidden_rules": ["watched-vocabulary", "dash-cluster", "negative-reframe"],
+    "max_findings": 0
   },
   {
     "name": "nuko-house-copy",
     "file": "nuko-copy.md",
     "profile": "nuko-nova",
-    "required_rules": ["via-negativa", "collaborative-cta", "watched-vocabulary"],
+    "required_rules": ["via-negativa", "collaborative-cta", "watched-vocabulary", "staccato-drama"],
     "forbidden_rules": []
+  },
+  {
+    "name": "dash-usage-balanced",
+    "file": "dash-usage.md",
+    "profile": "balanced",
+    "required_rules": [],
+    "forbidden_rules": ["dash-cluster", "staccato-drama"],
+    "max_findings": 0
+  },
+  {
+    "name": "dash-usage-strict",
+    "file": "dash-usage.md",
+    "profile": "strict",
+    "required_rules": ["dash-cluster"],
+    "forbidden_rules": ["staccato-drama"],
+    "max_findings": 1
+  },
+  {
+    "name": "dash-usage-nuko-nova",
+    "file": "dash-usage.md",
+    "profile": "nuko-nova",
+    "required_rules": ["dash-cluster"],
+    "forbidden_rules": ["staccato-drama"],
+    "max_findings": 1
   }
 ]

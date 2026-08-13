@@ -10,13 +10,15 @@ The plugin combines an always-on writing standard, a context-aware editing skill
 - Claude Code receives a forced plugin output style that applies at session start whenever the plugin is enabled, while retaining Claude Code's coding instructions.
 - The full skill loads for substantive drafting, rewriting, auditing, file editing, linting, and preservation work.
 - Short conversational text follows the standard internally without requiring a linter subprocess.
+- Delegated prose returns to the parent for an unslop pass before delivery. Claude's forced output style does not propagate into subagents, so child output is never treated as final by itself.
 
 The standard and the linter are separate. The standard shapes every sentence as it is written. The linter is a local backstop for prose files, multi-paragraph deliverables, and text that will be sent, submitted, published, or reused.
 
 ## What it does
 
-- Drafts new prose from supplied facts, audience, channel, and voice.
+- Drafts and rewrites mutable prose from supplied facts, audience, channel, and voice, with zero em dashes or spaced double-hyphen substitutes and flowing constructions instead of staccato fragments.
 - Audits observable writing patterns without guessing who or what wrote the text.
+- Allows real judgment, warmth, humor, and point of view only in an owned voice: the actual author, the assistant as itself, an approved brand voice, or an authorized genre.
 - Rewrites with minimum-effective edits and an explicit preservation contract.
 - Calibrates to author samples instead of forcing a generic casual voice.
 - Protects URLs, numbers, dates, code identifiers, quotations, and other fixed details.
@@ -77,7 +79,7 @@ After creating a release commit, render aligned immutable catalog entries with:
 ```bash
 python3 scripts/render_marketplace_entries.py \
   --sha <40-character-release-commit> \
-  --ref nuko-nova-unslop-marketplace-v0.2.0
+  --ref nuko-nova-unslop-marketplace-v0.2.1
 ```
 
 ## License

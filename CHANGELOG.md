@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.2.1 - 2026-08-13
+
+- Draft and rewrite mutable prose with zero em dashes or spaced double-hyphen substitutes, restructured into flowing sentences rather than staccato fragments. Preserve quotations, code, proper titles, contractual text, fixed strings, and en-dash ranges; a voice sample alone does not override the preference.
+- Define voice ownership: judgment, warmth, humor, and point of view are allowed for the actual author, the assistant as itself, an approved brand voice, or an authorized genre, and are never invented for a represented person.
+- Fix chatbot-artifact alternatives that could never match ("Certainly!", "Of course,") and scope "let me know if" to assistant offers so ordinary human email closers stop flagging as errors.
+- Normalize curly apostrophes before phrase matching so typographic copy is checked like plain copy.
+- Exempt typographic label separators from the balanced rhythm count and Markdown checklists from the staccato rule, while strict and house passes still flag em dashes in mutable prose.
+- Exempt quoted spans from phrase and dash findings so exact source language remains untouched.
+- Require parent agents to pass delegated prose through the skill before delivery because forced client styles do not necessarily propagate to subagents.
+- Add cutoff-disclaimer and hedging-filler rules, extend interpretive-label to neutral connectors in strict and house profiles, add via-negativa nouns fees, fuss, prep, and guesswork, and add `to sum up` to the generic-conclusion rule.
+- Track sentence-final numbers and hyphen or dash ranges in the preservation guard so en-dash corruption and trailing-number drift surface for review.
+- Record the measured corpus evidence behind the confidence ordering and the em-dash stance in the pattern catalog and source map.
+
 ## 0.2.0 - 2026-08-13
 
 - Make unslopped prose the default standard for every human-facing response and artifact.

@@ -59,7 +59,7 @@ When the user supplies a sample, build an internal style fingerprint from eviden
 
 Match stable habits without caricaturing them. Do not amplify every quirk or reuse distinctive phrases so often that the result becomes imitation. A sample controls style, not facts or opinions.
 
-When no sample exists, infer only from the supplied draft and the channel. Use a clean, direct baseline without manufacturing personality.
+When no sample exists, infer only from the supplied draft and the channel. Use a clean, direct baseline without manufacturing personality. Personality must belong to an owned voice as defined in the skill's voice-ownership rules; an editor never donates opinions, feelings, or anecdotes to a represented author.
 
 ## Meaning preservation
 
@@ -98,7 +98,7 @@ Protect identifiers and present-tense behavior. Avoid narrating the diff unless 
 
 ## Quotations and formatting
 
-Do not rewrite quoted material because it contains a watched phrase. Do not alter code fences, inline code, YAML frontmatter, JSON, tables, citations, Markdown link targets, or HTML attributes during a prose-only pass.
+Do not rewrite quoted material because it contains a watched phrase. Do not alter code fences, inline code, YAML frontmatter, JSON, tables, citations, Markdown link targets, or HTML attributes during a prose-only pass. Punctuation inside quotations stays exactly as quoted, including em dashes, and en dashes in numeric and date ranges stay en dashes.
 
 Formatting can be functional. Keep headings, lists, bold text, tables, emojis, and typography when the destination or author uses them deliberately. Remove them when they decorate weak prose or repeat information already conveyed by structure.
 

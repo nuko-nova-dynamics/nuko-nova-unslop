@@ -50,8 +50,20 @@ RULES = (
     Rule(
         "chatbot-artifact",
         "Chatbot artifact",
-        rx(r"\b(?:certainly[!,]|of course[!,]|i hope this helps|let me know if|would you like me to|here(?:'s| is) (?:the|an?) (?:draft|overview|rewrite))\b"),
+        rx(
+            r"(?:^|[.!?]\s+)(?:certainly|of course)[!,]"
+            r"|\b(?:i hope this helps|would you like me to"
+            r"|let me know if you(?:'d| would) like (?:me|us) to"
+            r"|here(?:'s| is) (?:the|an?) (?:draft|overview|rewrite))\b"
+        ),
         "Remove the assistant-to-user wrapper and begin with the content.",
+        "error",
+    ),
+    Rule(
+        "cutoff-disclaimer",
+        "Training-cutoff disclaimer",
+        rx(r"\bas of my (?:last|latest) (?:training|knowledge) (?:update|cutoff)\b|\bas an ai(?: language)? model\b"),
+        "Verify the fact, state what is unknown, or cut the sentence.",
         "error",
     ),
     Rule(
@@ -130,9 +142,30 @@ RULES = (
         "Name the action, owner, behavior, or decision.",
     ),
     Rule(
+        "hedging-filler",
+        "Importance announcement",
+        rx(r"\bit(?:'s| is) (?:worth noting|important to (?:note|remember|understand)) that\b"),
+        "State the point directly and delete the announcement that it matters.",
+    ),
+    Rule(
+        "interpretive-label",
+        "Opinion-free connector",
+        rx(r"\bthis (?:underscores|speaks to)\b|\bthis (?:signals|highlights) (?:that|the (?:need|importance|shift))\b"),
+        "State the judgment, trade-off, or consequence directly instead of a neutral connector.",
+        "info",
+        profiles=("strict", "nuko-nova"),
+    ),
+    Rule(
+        "dash-substitute",
+        "Spaced double-hyphen substitute",
+        rx(r"(?<=\S)\s--\s(?=\S)"),
+        "Restructure the sentence instead of substituting two hyphens for an em dash.",
+        profiles=("strict", "nuko-nova"),
+    ),
+    Rule(
         "generic-conclusion",
         "Generic conclusion",
-        rx(r"\b(?:in conclusion|at the end of the day|the future looks bright|exciting times lie ahead|only time will tell|this represents? (?:a )?(?:major|significant) step (?:in the right direction|forward))\b"),
+        rx(r"\b(?:in conclusion|to sum up|at the end of the day|the future looks bright|exciting times lie ahead|only time will tell|this represents? (?:a )?(?:major|significant) step (?:in the right direction|forward))\b"),
         "End on a concrete fact, consequence, decision, or next action.",
     ),
     Rule(
@@ -153,7 +186,7 @@ RULES = (
     Rule(
         "via-negativa",
         "Via-negativa value proposition",
-        rx(r"(?:^|[.!?]\s+)(?:No|Without)\s+(?:surprises|fluff|filler|guessing|scope creep|hidden fees|hassle|headaches|shortcuts|templates)\b"),
+        rx(r"(?:^|[.!?]\s+)(?:No|Without)\s+(?:surprises|fluff|filler|guessing|guesswork|scope creep|hidden fees|fees|fuss|prep|hassle|headaches|shortcuts|templates)\b"),
         "Describe what the reader receives or how the process works.",
         profiles=("nuko-nova",),
     ),
@@ -171,11 +204,12 @@ FENCE_RE = re.compile(r"```.*?```|~~~.*?~~~", re.DOTALL)
 INLINE_CODE_RE = re.compile(r"`[^`\n]+`")
 LINK_TARGET_RE = re.compile(r"(?<=\]\()[^)]+(?=\))")
 URL_RE = re.compile(r"https?://[^\s)>]+")
+QUOTED_SPAN_RE = re.compile(r'"[^"\n]*"|“[^”\n]*”')
 
 
 def mask_exempt_spans(text: str) -> str:
     chars = list(text)
-    for pattern in (FENCE_RE, INLINE_CODE_RE, LINK_TARGET_RE, URL_RE):
+    for pattern in (FENCE_RE, INLINE_CODE_RE, LINK_TARGET_RE, URL_RE, QUOTED_SPAN_RE):
         for match in pattern.finditer(text):
             for index in range(match.start(), match.end()):
                 if chars[index] != "\n":
@@ -222,12 +256,32 @@ def phrase_findings(text: str, masked: str, profile: str) -> list[Finding]:
     return findings
 
 
+STRUCTURAL_DASH_PREFIX_RE = re.compile(
+    r"^\s*(?:"
+    r"[-*+]\s+(?:\*\*[^*\n]{1,50}\*\*|`[^`\n]{1,50}`)"
+    r"|#{1,6}\s+(?:\[[^\]\n]{1,50}\]|v?\d+(?:\.\d+){1,3})"
+    r")\s*$"
+)
+
+
+def balanced_structural_dash_offsets(masked: str, offsets: list[int]) -> set[int]:
+    """Exclude label separators from balanced rhythm counts, not strict house checks."""
+    exempt: set[int] = set()
+    for offset in offsets:
+        line_start = masked.rfind("\n", 0, offset) + 1
+        if STRUCTURAL_DASH_PREFIX_RE.match(masked[line_start:offset]):
+            exempt.add(offset)
+    return exempt
+
+
 def dash_finding(text: str, masked: str, profile: str) -> Finding | None:
     offsets = [match.start() for match in re.finditer("—", masked)]
+    if profile == "balanced":
+        offsets = sorted(set(offsets) - balanced_structural_dash_offsets(masked, offsets))
     words = max(1, len(re.findall(r"\b[\w’'-]+\b", masked)))
     if not offsets:
         return None
-    threshold = 4 if profile == "balanced" else 1 if profile == "strict" else 2
+    threshold = 4 if profile == "balanced" else 1
     density = len(offsets) * 500 / words
     if profile == "balanced" and (len(offsets) < threshold or density < threshold):
         return None
@@ -236,29 +290,34 @@ def dash_finding(text: str, masked: str, profile: str) -> Finding | None:
     line, column = position(text, offsets[0])
     return Finding(
         "dash-cluster",
-        "Em-dash cluster",
+        "Em-dash cluster" if len(offsets) > 1 else "Em dash in new prose",
         "info" if profile == "balanced" else "warning",
         line,
         column,
         excerpt(text, offsets[0], offsets[0] + 1),
-        f"Review {len(offsets)} em dashes for rhythm-crutch use; preserve intentional author style.",
+        f"Review {len(offsets)} em dash(es); restructure mutable prose with a comma, colon, parentheses, "
+        "or a separate sentence rather than staccato fragments. Preserve quotations, fixed strings, and "
+        "valid en-dash ranges.",
     )
 
 
 SENTENCE_RE = re.compile(r"[^.!?\n]+[.!?](?=\s|$)")
+LIST_ITEM_RE = re.compile(r"\s*(?:[-*+]|\d+[.)])\s")
 
 
 def rhythm_findings(text: str, masked: str) -> list[Finding]:
-    sentences: list[tuple[int, int]] = []
+    sentences: list[tuple[int, int, bool]] = []
     for match in SENTENCE_RE.finditer(masked):
         count = len(re.findall(r"\b[\w’'-]+\b", match.group()))
         if count:
-            sentences.append((match.start(), count))
+            line_start = masked.rfind("\n", 0, match.start()) + 1
+            in_list = bool(LIST_ITEM_RE.match(masked, line_start))
+            sentences.append((match.start(), count, in_list))
     findings: list[Finding] = []
 
     for index in range(len(sentences) - 2):
         window = sentences[index : index + 3]
-        if all(count <= 4 for _, count in window):
+        if all(count <= 4 and not in_list for _, count, in_list in window):
             start = window[0][0]
             line, column = position(text, start)
             findings.append(
@@ -274,7 +333,7 @@ def rhythm_findings(text: str, masked: str) -> list[Finding]:
             )
             break
 
-    lengths = [count for _, count in sentences]
+    lengths = [count for _, count, _ in sentences]
     if len(lengths) >= 8:
         mean = sum(lengths) / len(lengths)
         variance = sum((value - mean) ** 2 for value in lengths) / len(lengths)
@@ -298,7 +357,9 @@ def rhythm_findings(text: str, masked: str) -> list[Finding]:
 def lint_text(text: str, profile: str = "balanced") -> list[Finding]:
     if profile not in PROFILE_LEVEL:
         raise ValueError(f"unknown profile: {profile}")
-    masked = mask_exempt_spans(text)
+    # Curly apostrophes are normal typography; match phrases through them
+    # without shifting offsets.
+    masked = mask_exempt_spans(text).replace("’", "'").replace("‘", "'")
     findings = phrase_findings(text, masked, profile)
     dash = dash_finding(text, masked, profile)
     if dash:
