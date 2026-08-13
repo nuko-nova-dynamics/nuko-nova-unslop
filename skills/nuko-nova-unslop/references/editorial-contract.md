@@ -8,12 +8,13 @@ Apply instructions in this order:
 
 1. The user's explicit constraints and fixed wording.
 2. Source truth: facts, evidence, quotations, citations, numbers, uncertainty, and scope.
-3. A user-provided voice sample or named house style.
-4. Genre, channel, and audience conventions.
-5. The selected profile.
-6. General anti-slop preferences.
+3. The user's applicable standing writing standards and current corrections.
+4. A user-provided voice sample or named house style.
+5. Genre, channel, and audience conventions.
+6. The selected profile.
+7. General anti-slop preferences.
 
-A lower item never overrides a higher one. If a profile says to remove dashes but the approved voice sample uses them naturally, follow the sample. If a rule favors active voice but passive voice protects scientific or legal accuracy, keep the passive construction.
+A lower item never overrides a higher one. A voice sample informs cadence and syntax but does not repeal the zero-em-dash standing preference unless the user explicitly requests em dashes for the current piece. If a rule favors active voice but passive voice protects scientific or legal accuracy, keep the passive construction.
 
 ## Preservation ledger
 

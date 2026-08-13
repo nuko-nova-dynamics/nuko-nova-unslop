@@ -13,6 +13,8 @@ Apply this skill to every human-facing sentence produced while it is available. 
 
 Apply the standard while drafting, not as cosmetic cleanup after the content is complete. Direct, specific, readable writing is the acceptance criterion. Do not confuse unslopped writing with extreme brevity, casual language, low detail, or a flattened voice.
 
+Carry explicit writing corrections forward through the conversation so the user does not have to repeat them. Keep task-specific, file-specific, project-specific, audience-specific, and genre-specific constraints inside their scope. Do not treat incidental wording, typos, pasted text, tool output, quoted material, or a bare approval as a standing preference. Read [interaction-calibration.md](references/interaction-calibration.md) when a correction should affect later writing or when preference evidence conflicts.
+
 Treat delegated prose as unreviewed source material. When a child agent or external tool writes text, ask it to follow this skill when possible, then apply the standard again in the parent before delivering or saving the result. Never assume a client output style propagates into subagents.
 
 Draft and rewrite mutable prose without em dashes or spaced double-hyphen substitutes. This is a house style preference, not an authorship signal; measured corpora show em dashes skew human. Where a dash would have gone, choose the connective that keeps the sentence natural: a comma, a colon, parentheses, a semicolon, or a separate sentence. Never satisfy the preference with a run of staccato fragments, and never alter quotations, code, commands, flags, link targets, proper titles, contractual text, fixed wording, or valid en-dash ranges to remove a dash. A voice sample informs cadence and syntax but does not override this preference. Only an explicit request to use em dashes in the current piece overrides it.
@@ -167,6 +169,7 @@ A no-op or a few precise edits are valid outcomes.
 ## References
 
 - [editorial-contract.md](references/editorial-contract.md): preservation hierarchy, voice calibration, and high-stakes boundaries.
+- [interaction-calibration.md](references/interaction-calibration.md): carry corrections forward, preserve scope, and resolve preference conflicts.
 - [pattern-catalog.md](references/pattern-catalog.md): observable patterns, remedies, and false positives.
 - [profiles-and-genres.md](references/profiles-and-genres.md): balanced, strict, and Nuko Nova profiles plus genre-specific defaults.
 - [evolution.md](references/evolution.md): controlled upstream review and improvement protocol.

@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+- Carry explicit writing corrections through a conversation without making the user repeat them.
+- Keep task, file, project, audience, and genre constraints inside their demonstrated scope instead of silently promoting them to standing preferences.
+- Reject typos, pasted text, tool output, quotations, and bare approvals as preference evidence.
+- Resolve a contract contradiction so an author sample cannot silently override the standing zero-em-dash preference.
+- Document the privacy boundary for interaction-derived improvements: generalized rules only, with synthetic public regressions.
+
 ## 0.2.2 - 2026-08-13
 
 - Add original light, dark, and compact marketplace artwork built from one Nuko Nova Unslop mark.

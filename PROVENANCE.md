@@ -6,6 +6,8 @@ Nuko Nova Unslop is an original, human-directed synthesis published by Nuko Nova
 
 The local `/Users/judiazm/Projects/no-ai-copy` corpus supplied Nuko Nova and Miami Web AI preferences derived from real editing sessions. Those preferences include reader-outcome framing, resistance to via-negativa value propositions, avoidance of manufactured triplets and contrastive countdowns, direct calls to action, and specific language over vague promotion.
 
+Private Codex and Claude Code interaction review is used only to validate generalized preference-continuity behavior. Raw messages, excerpts, personal identifiers, client facts, and local source paths are not distributed with this plugin. Public rules are independently worded, and regression cases use synthetic examples.
+
 ## Public research sources
 
 The source set includes the ten repositories in the August 13, 2026 research report: Vale, Avoid AI Writing, Cursor pstack Unslop, Better Writing, Harper, No AI Slop, Humanizer, AntiSlop Sampler, LanguageTool, and Promptfoo. The exact reviewed commits and monitored paths live in `upstreams.lock.json`.

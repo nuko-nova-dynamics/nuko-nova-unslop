@@ -21,6 +21,7 @@ LINK = re.compile(r"\[[^\]]+\]\(([^)]+)\)")
 REQUIRED_REFERENCES = {
     "editorial-contract.md",
     "evolution.md",
+    "interaction-calibration.md",
     "pattern-catalog.md",
     "profiles-and-genres.md",
     "source-map.md",
@@ -159,6 +160,8 @@ def check_skill() -> None:
     skill_body = (SKILL / "SKILL.md").read_text(encoding="utf-8")
     if "Treat delegated prose as unreviewed source material" not in skill_body:
         fail("skill must require parent review of delegated prose")
+    if "Carry explicit writing corrections forward" not in skill_body:
+        fail("skill must carry explicit writing corrections forward")
     for path in [SKILL / "SKILL.md", *(SKILL / "references").glob("*.md")]:
         check_links(path)
     for path in (SKILL / "scripts").glob("*.py"):
@@ -214,7 +217,7 @@ def main() -> int:
     check_skill()
     check_upstreams()
     check_content()
-    print("PASS: dual manifests, implicit Codex invocation, forced Claude output style, one shared skill, five references, two helpers, ten source pins, links, metadata, and cadence verified")
+    print("PASS: dual manifests, implicit Codex invocation, forced Claude output style, one shared skill, six references, two helpers, ten source pins, links, metadata, and cadence verified")
     return 0
 
 

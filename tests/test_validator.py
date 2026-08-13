@@ -99,6 +99,17 @@ class ValidatorMutationTests(unittest.TestCase):
 
         self.assert_rejected(mutate, "parent review of delegated prose")
 
+    def test_preference_continuity_drift_is_rejected(self) -> None:
+        def mutate(root: Path) -> None:
+            path = root / "skills" / "nuko-nova-unslop" / "SKILL.md"
+            text = path.read_text(encoding="utf-8")
+            path.write_text(
+                text.replace("Carry explicit writing corrections forward", "Ignore prior writing corrections"),
+                encoding="utf-8",
+            )
+
+        self.assert_rejected(mutate, "carry explicit writing corrections forward")
+
     def test_missing_artwork_is_rejected(self) -> None:
         def mutate(root: Path) -> None:
             (root / "assets" / "logo-dark.png").unlink()
