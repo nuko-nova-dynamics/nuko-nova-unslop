@@ -8,7 +8,7 @@ Research cutoff: August 13, 2026. `upstreams.lock.json` is the machine-readable 
 | Avoid AI Writing | `3c0fd8a2668962df97f0a6771dcd57c84a4be568` | MIT | Separation of regex-detectable signals from editorial judgment, corpus discipline, and explicit limits on authorship classification. |
 | Cursor pstack Unslop | `6dbbdd50cef1bdbfb540f80df8b598d0a546e3aa` | MIT for `pstack` | Compact pattern catalog, portability test, mechanism-first specificity, and rhythm audit. |
 | Better Writing | `4023076319e5a7838dd7587ebf3d5e3588f9544f` | MIT | Preservation contract, context dials, genre exemptions, voice fixtures, and preflight checks. |
-| Harper | `1aa883d3c7ca83edaceef39ee1255abd3b5824a6` | Apache-2.0 | Private English mechanics pass and the principle that a proofreader should not invent replacement facts. |
+| Harper | `1aa883d3c7ca83edaceef39ee1255abd3b5824a6` | Apache-2.0 | Private, low-latency English mechanics and structured, markup-aware diagnostics. |
 | No AI Slop | `d30eddb9e04562234f2070b5ee63ca4649d9a05e` | MIT | Audit-only mode, minimum-effective editing, named findings, and no authorship guesses. |
 | Humanizer | `523374dee72d67c7b2b5f858ea0094ffda49c3ac` | MIT | Cross-client packaging, author-sample calibration, broad pattern coverage, and non-fabrication guidance. |
 | AntiSlop Sampler | `0ae330e98fbe6f09351f2d1063a51956378a44b2` | Apache-2.0 | Phrase-level prevention research and the warning that generated slop lists require curation rather than blanket adoption. |

@@ -1,8 +1,17 @@
 # Nuko Nova Unslop
 
-Nuko Nova Unslop is a shared Codex and Claude Code writing plugin. It drafts, audits, and rewrites prose without treating human style as a blacklist or sacrificing facts to sound less artificial.
+Nuko Nova Unslop is the default editorial layer for human-facing writing in Codex and Claude Code. While enabled, it applies a direct, specific, readable standard to every response and prose artifact without treating human style as a blacklist or sacrificing facts to sound less artificial.
 
-The plugin combines a context-aware editing skill with dependency-free checks for surface patterns and protected facts. It supports a balanced default, an explicit strict pass, and a Nuko Nova house profile for product and marketing copy.
+The plugin combines an always-on writing standard, a context-aware editing skill, and dependency-free checks for surface patterns and protected facts. It supports a balanced default, an explicit strict pass, and a Nuko Nova house profile for product and marketing copy.
+
+## Always-on behavior
+
+- Codex receives a universal skill trigger with implicit invocation explicitly enabled.
+- Claude Code receives a forced plugin output style that applies at session start whenever the plugin is enabled, while retaining Claude Code's coding instructions.
+- The full skill loads for substantive drafting, rewriting, auditing, file editing, linting, and preservation work.
+- Short conversational text follows the standard internally without requiring a linter subprocess.
+
+The standard and the linter are separate. The standard shapes every sentence as it is written. The linter is a local backstop for prose files, multi-paragraph deliverables, and text that will be sent, submitted, published, or reused.
 
 ## What it does
 
@@ -27,6 +36,8 @@ python3 -m unittest discover -s tests -p 'test_*.py'
 
 The linter reports writing signals. It does not classify authorship and does not produce an “AI score.”
 
+The scripts make no network or model calls. On ordinary text, their runtime is normally negligible compared with generating the response; invoking a tool through a client can still add orchestration time.
+
 ## Marketplace installation
 
 After the first release is published through the existing `nuko-nova-tools` marketplace:
@@ -45,7 +56,7 @@ claude plugin marketplace update nuko-nova-tools
 claude plugin install nuko-nova-unslop@nuko-nova-tools --scope user
 ```
 
-The same `skills/nuko-nova-unslop/SKILL.md` is loaded by both clients.
+Both clients use `skills/nuko-nova-unslop/SKILL.md`. Claude Code also loads the forced plugin output style so the baseline applies before a substantive writing task explicitly invokes the full skill.
 
 ## Controlled evolution
 
@@ -66,7 +77,7 @@ After creating a release commit, render aligned immutable catalog entries with:
 ```bash
 python3 scripts/render_marketplace_entries.py \
   --sha <40-character-release-commit> \
-  --ref nuko-nova-unslop-marketplace-v0.1.0
+  --ref nuko-nova-unslop-marketplace-v0.2.0
 ```
 
 ## License

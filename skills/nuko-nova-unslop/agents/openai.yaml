@@ -1,4 +1,7 @@
 interface:
   display_name: "Nuko Nova Unslop"
-  short_description: "Humanize prose without changing its truth"
-  default_prompt: "Use $nuko-nova-unslop to rewrite this draft as natural, specific prose while preserving its facts and voice."
+  short_description: "Default anti-slop standard for human-facing text"
+  default_prompt: "Use $nuko-nova-unslop as the default editorial standard for every human-facing response and prose artifact."
+
+policy:
+  allow_implicit_invocation: true

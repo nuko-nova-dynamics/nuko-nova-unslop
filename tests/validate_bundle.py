@@ -13,6 +13,7 @@ from urllib.parse import unquote
 
 ROOT = Path(__file__).resolve().parents[1]
 SKILL = ROOT / "skills" / "nuko-nova-unslop"
+OUTPUT_STYLE = ROOT / "output-styles" / "nuko-nova-unslop.md"
 SEMVER = re.compile(r"^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:[-+][0-9A-Za-z.-]+)?$")
 SHA = re.compile(r"^[0-9a-f]{40}$")
 LINK = re.compile(r"\[[^\]]+\]\(([^)]+)\)")
@@ -79,6 +80,8 @@ def check_manifests() -> None:
         fail("plugin version must use semver")
     if codex.get("skills") != "./skills/":
         fail("Codex manifest must expose ./skills/")
+    if "all human-facing writing" not in codex.get("description", ""):
+        fail("plugin description must declare the default writing standard")
     if codex.get("license") != "Apache-2.0":
         fail("plugin license must be Apache-2.0")
     if claude.get("displayName") != codex.get("interface", {}).get("displayName"):
@@ -100,6 +103,8 @@ def check_skill() -> None:
         fail("skill name mismatch")
     if len(frontmatter["description"]) < 180 or "Use " not in frontmatter["description"]:
         fail("skill description must explain capability and triggers")
+    if not frontmatter["description"].startswith("Default editorial layer for every human-facing"):
+        fail("skill description must trigger for every human-facing response")
     references = {path.name for path in (SKILL / "references").iterdir() if path.is_file()}
     scripts = {path.name for path in (SKILL / "scripts").iterdir() if path.is_file() and path.suffix == ".py"}
     if references != REQUIRED_REFERENCES:
@@ -109,9 +114,25 @@ def check_skill() -> None:
     agent = (SKILL / "agents" / "openai.yaml").read_text(encoding="utf-8")
     if "$nuko-nova-unslop" not in agent:
         fail("OpenAI default prompt must mention $nuko-nova-unslop")
+    if not re.search(r"^\s*allow_implicit_invocation:\s*true\s*$", agent, re.MULTILINE):
+        fail("OpenAI implicit invocation must remain enabled")
     match = re.search(r'^\s*short_description:\s*"([^"]+)"', agent, re.MULTILINE)
     if not match or not 25 <= len(match.group(1)) <= 64:
         fail("OpenAI short description must be 25 to 64 characters")
+    if not OUTPUT_STYLE.is_file():
+        fail("Claude output style is missing")
+    style = parse_frontmatter(OUTPUT_STYLE)
+    expected_style = {
+        "name": "Nuko Nova Unslop",
+        "description": "Default anti-slop standard for every human-facing response",
+        "keep-coding-instructions": "true",
+        "force-for-plugin": "true",
+    }
+    if style != expected_style:
+        fail("Claude output style must stay forced and retain coding instructions")
+    style_body = OUTPUT_STYLE.read_text(encoding="utf-8")
+    if "every human-facing response" not in style_body or "Never invent detail" not in style_body:
+        fail("Claude output style is missing the default writing contract")
     for path in [SKILL / "SKILL.md", *(SKILL / "references").glob("*.md")]:
         check_links(path)
     for path in (SKILL / "scripts").glob("*.py"):
@@ -167,7 +188,7 @@ def main() -> int:
     check_skill()
     check_upstreams()
     check_content()
-    print("PASS: dual manifests, one shared skill, five references, two helpers, ten source pins, links, metadata, and cadence verified")
+    print("PASS: dual manifests, implicit Codex invocation, forced Claude output style, one shared skill, five references, two helpers, ten source pins, links, metadata, and cadence verified")
     return 0
 
 

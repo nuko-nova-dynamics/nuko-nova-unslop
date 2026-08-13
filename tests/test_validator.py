@@ -66,6 +66,28 @@ class ValidatorMutationTests(unittest.TestCase):
 
         self.assert_rejected(mutate, "reference set mismatch")
 
+    def test_implicit_invocation_drift_is_rejected(self) -> None:
+        def mutate(root: Path) -> None:
+            path = root / "skills" / "nuko-nova-unslop" / "agents" / "openai.yaml"
+            text = path.read_text(encoding="utf-8")
+            path.write_text(text.replace("allow_implicit_invocation: true", "allow_implicit_invocation: false"), encoding="utf-8")
+
+        self.assert_rejected(mutate, "OpenAI implicit invocation must remain enabled")
+
+    def test_forced_output_style_drift_is_rejected(self) -> None:
+        def mutate(root: Path) -> None:
+            path = root / "output-styles" / "nuko-nova-unslop.md"
+            text = path.read_text(encoding="utf-8")
+            path.write_text(text.replace("force-for-plugin: true", "force-for-plugin: false"), encoding="utf-8")
+
+        self.assert_rejected(mutate, "Claude output style must stay forced")
+
+    def test_missing_output_style_is_rejected(self) -> None:
+        def mutate(root: Path) -> None:
+            (root / "output-styles" / "nuko-nova-unslop.md").unlink()
+
+        self.assert_rejected(mutate, "Claude output style is missing")
+
     def test_cadence_drift_is_rejected(self) -> None:
         def mutate(root: Path) -> None:
             path = root / "upstreams.lock.json"

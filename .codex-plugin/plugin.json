@@ -1,7 +1,7 @@
 {
   "name": "nuko-nova-unslop",
-  "version": "0.1.0",
-  "description": "Context-aware drafting, editing, and auditing that removes AI-writing patterns while preserving facts, voice, and genre.",
+  "version": "0.2.0",
+  "description": "Default anti-slop standard for all human-facing writing, with facts, voice, and genre preserved.",
   "author": {
     "name": "Nuko Nova Dynamics",
     "email": "hello@nukonova.com",
@@ -17,13 +17,14 @@
     "anti-slop",
     "voice",
     "prose",
-    "copywriting"
+    "copywriting",
+    "always-on"
   ],
   "skills": "./skills/",
   "interface": {
     "displayName": "Nuko Nova Unslop",
-    "shortDescription": "Human writing without fabricated facts or lost voice.",
-    "longDescription": "Draft, audit, or rewrite prose with context-aware anti-slop rules, voice calibration, protected-fact checks, deterministic linting, genre profiles, and a controlled upstream-learning workflow.",
+    "shortDescription": "Default anti-slop standard for every human-facing text.",
+    "longDescription": "Apply a clear, direct writing standard to every human-facing response and artifact, with context-aware editing, voice calibration, protected-fact checks, proportionate local linting, genre profiles, and controlled upstream learning.",
     "developerName": "Nuko Nova Dynamics",
     "category": "Productivity",
     "capabilities": [
@@ -34,9 +35,9 @@
     "privacyPolicyURL": "https://nukonova.com/privacy",
     "termsOfServiceURL": "https://nukonova.com/terms",
     "defaultPrompt": [
-      "Humanize this draft without changing its facts or voice.",
+      "Apply Nuko Nova Unslop to every human-facing response and artifact by default.",
       "Audit this copy for AI slop, but do not rewrite it.",
-      "Draft this in my voice using the Nuko Nova profile."
+      "Rewrite this without slop while preserving its facts and voice."
     ],
     "brandColor": "#7C3AED"
   }

@@ -1,1 +1,1 @@
-Last Tuesday I spent four hours trying to delve into why the night-shift export kept failing. Turned out the cron job ran at 2am — right when the backup locked the table. I moved it to 3:30am and it has run clean for nine days. Not elegant, but I will take it.
+I missed the first bus because I went back upstairs for my notebook. Annoying, yes, but the delay gave me ten quiet minutes to reread the proposal before the meeting. I caught one bad number, fixed it on my phone, and arrived with two minutes to spare. That notebook finally earned its place in my bag.

@@ -1,11 +1,19 @@
 ---
 name: nuko-nova-unslop
-description: Draft, edit, humanize, or audit prose so it sounds specific, natural, and appropriate to its author, audience, genre, and channel without changing protected facts or inventing detail. Use for emails, essays, reports, documentation, UI text, marketing copy, posts, applications, and any writing described as AI-sounding, generic, over-polished, repetitive, robotic, salesy, padded, or unlike the author's voice. Also use to run an audit without rewriting, calibrate against a writing sample, apply the Nuko Nova house style, or review upstream anti-slop sources and evolve this skill safely.
+description: Default editorial layer for every human-facing response and prose artifact. Draft, edit, humanize, or audit writing so it is direct, specific, readable, and appropriate to its author, audience, genre, and channel without changing protected facts or inventing detail. Use automatically for chat replies, explanations, emails, essays, reports, documentation, UI text, marketing copy, posts, applications, code comments, release notes, and any other text a person is expected to read, even when the user does not explicitly request an unslop pass. Also use for writing described as AI-sounding, generic, over-polished, repetitive, robotic, salesy, padded, or unlike the author's voice; audits without rewriting; voice calibration; the Nuko Nova house style; and controlled upstream evolution.
 ---
 
 # Nuko Nova Unslop
 
 Edit the writing, not the writer. Remove formula without erasing personality, and prefer a no-op over an edit that makes good prose worse.
+
+## Default editorial standard
+
+Apply this skill to every human-facing sentence produced while it is available. The user should not need to request a cleanup pass. Use it for the main deliverable and for prose embedded in otherwise technical work, including chat responses, progress updates, code comments, documentation, commit and pull-request text, interface copy, and error messages.
+
+Apply the standard while drafting, not as cosmetic cleanup after the content is complete. Direct, specific, readable writing is the acceptance criterion. Do not confuse unslopped writing with extreme brevity, casual language, low detail, or a flattened voice.
+
+Keep code, commands, machine-readable data, quotations, citations, and fixed strings outside the prose pass unless the user explicitly includes them.
 
 ## Non-negotiable contract
 
@@ -28,6 +36,8 @@ Read [editorial-contract.md](references/editorial-contract.md) before high-stake
 - **Evolve:** Follow [evolution.md](references/evolution.md). An upstream change is evidence to review, not permission to absorb it.
 
 If the user asks whether text “sounds AI,” default to Audit. If they ask to humanize, fix, rewrite, or unslop it, use Rewrite. Do not force an unnecessary clarification when audience and purpose are already evident.
+
+For a task whose primary purpose is not writing, use Embedded mode for every human-facing passage it produces.
 
 ## Choose the profile
 
@@ -76,6 +86,16 @@ python3 scripts/unslop_lint.py --profile balanced path/to/draft.md
 ```
 
 Switch to `--profile strict` or `--profile nuko-nova` only when the brief calls for it. Never present the linter as an AI detector.
+
+### Apply the linter proportionately
+
+The editorial standard is always active; the linter is a fast local backstop, not the mechanism that activates the skill.
+
+- For short conversational replies and progress updates, apply the workflow and quality gate internally. Do not create a temporary file only to lint a sentence unless a pattern is uncertain.
+- For prose files, multi-paragraph deliverables, and text intended to be sent, submitted, published, or reused, run the linter before delivery when the bundled script is accessible.
+- For fact-dense source-to-rewrite work, also run the preservation guard.
+- Review every finding in context. Fix justified findings and retain intentional language. Zero findings are not a substitute for editorial judgment.
+- Keep the checks local. Do not add a network request or another model call merely to enforce this standard.
 
 ### 4. Rewrite for the job
 
