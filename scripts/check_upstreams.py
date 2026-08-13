@@ -126,7 +126,7 @@ def main(argv: list[str] | None = None) -> int:
             source["reviewed_sha"] = row["observed_sha"]
             source["reviewed_at"] = datetime.now(timezone.utc).date().isoformat()
         LOCK_PATH.write_text(json.dumps(lock, indent=2) + "\n", encoding="utf-8")
-        rows = report(lock, False, args.references_dir)
+        rows = report(lock, args.refresh, args.references_dir)
 
     if args.format == "json":
         output = json.dumps(rows, indent=2) + "\n"
