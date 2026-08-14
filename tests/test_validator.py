@@ -82,38 +82,13 @@ class ValidatorMutationTests(unittest.TestCase):
 
         self.assert_rejected(mutate, "Claude output style must stay forced")
 
-    def test_missing_hook_bundle_is_rejected(self) -> None:
+    def test_hook_bundle_is_rejected(self) -> None:
         def mutate(root: Path) -> None:
-            (root / "hooks" / "hooks.json").unlink()
+            hooks = root / "hooks"
+            hooks.mkdir()
+            (hooks / "hooks.json").write_text('{"hooks": {}}\n', encoding="utf-8")
 
-        self.assert_rejected(mutate, "hooks/hooks.json: invalid JSON")
-
-    def test_missing_hook_event_is_rejected(self) -> None:
-        def mutate(root: Path) -> None:
-            path = root / "hooks" / "hooks.json"
-            data = json.loads(path.read_text(encoding="utf-8"))
-            del data["hooks"]["Stop"]
-            path.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
-
-        self.assert_rejected(mutate, "hook event set mismatch")
-
-    def test_wrong_hook_command_is_rejected(self) -> None:
-        def mutate(root: Path) -> None:
-            path = root / "hooks" / "hooks.json"
-            data = json.loads(path.read_text(encoding="utf-8"))
-            data["hooks"]["Stop"][0]["hooks"][0]["command"] = "python3 wrong.py"
-            path.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
-
-        self.assert_rejected(mutate, "Stop: hook command mismatch")
-
-    def test_client_specific_hook_field_is_rejected(self) -> None:
-        def mutate(root: Path) -> None:
-            path = root / "hooks" / "hooks.json"
-            data = json.loads(path.read_text(encoding="utf-8"))
-            data["hooks"]["SessionStart"][0]["hooks"][0]["statusMessage"] = "Loading"
-            path.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
-
-        self.assert_rejected(mutate, "handler must use the shared client field set")
+        self.assert_rejected(mutate, "lifecycle hook bundle must not be shipped")
 
     def test_missing_output_style_is_rejected(self) -> None:
         def mutate(root: Path) -> None:

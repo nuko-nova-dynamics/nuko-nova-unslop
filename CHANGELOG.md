@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.5.1 - 2026-08-14
+
+- Remove the `SessionStart`, `UserPromptSubmit`, `SubagentStart`, and `Stop` hooks from both clients.
+- Remove automatic final-output scanning and correction after a technical Markdown bullet was incorrectly blocked as mutable prose.
+- Keep the Codex skill, implicit invocation metadata, Claude Code output style, and explicit local linting without lifecycle interception.
+- Add package gates that reject any future lifecycle-hook bundle.
+
 ## 0.5.0 - 2026-08-14
 
 - Reframe the plugin as an always-on human-writing standard rather than an editorial layer.

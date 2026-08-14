@@ -1,7 +1,7 @@
 {
   "name": "nuko-nova-unslop",
-  "version": "0.5.0",
-  "description": "Always-on human-writing standard for every human-facing response and artifact: no slop or cringe, with facts, voice, and genre preserved.",
+  "version": "0.5.1",
+  "description": "Human-writing standard for every human-facing response and artifact: no slop or cringe, with facts, voice, and genre preserved.",
   "author": {
     "name": "Nuko Nova Dynamics",
     "email": "hello@nukonova.com",
@@ -26,7 +26,7 @@
   "interface": {
     "displayName": "Nuko Nova Unslop",
     "shortDescription": "Human writing with no slop, no cringe, and no fake personality.",
-    "longDescription": "Apply an always-on human-writing standard to every human-facing response and artifact, with context-aware drafting, no-cringe judgment, voice calibration, emotional proportion, protected-fact checks, local linting, genre profiles, and controlled upstream learning.",
+    "longDescription": "Apply a human-writing standard to every human-facing response and artifact, with context-aware drafting, no-cringe judgment, voice calibration, emotional proportion, protected-fact checks, local linting, genre profiles, and controlled upstream learning.",
     "developerName": "Nuko Nova Dynamics",
     "category": "Productivity",
     "capabilities": [
