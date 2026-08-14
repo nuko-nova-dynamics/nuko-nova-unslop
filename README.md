@@ -1,10 +1,10 @@
 # Nuko Nova Unslop
 
-Nuko Nova Unslop is the default editorial layer for human-facing writing in Codex and Claude Code. While enabled, it applies a direct, specific, readable standard to every response and prose artifact without treating human style as a blacklist or sacrificing facts to sound less artificial.
+Nuko Nova Unslop is the always-on human-writing standard for Codex and Claude Code. While enabled, it makes every response and prose artifact direct, specific, natural, and appropriate to its writer and reader, without treating human style as a blacklist or sacrificing facts to sound less artificial.
 
 The plugin combines an always-on writing standard, a context-aware editing skill, shared lifecycle hooks, and dependency-free checks for surface patterns and protected facts. It supports a balanced default, an explicit strict pass, and a Nuko Nova house profile for product and marketing copy.
 
-Original marketplace artwork is packaged in `assets/icon.png`, `assets/logo.png`, and `assets/logo-dark.png`. The light and dark versions use the same editorial-page and nova mark so the plugin remains recognizable across client surfaces.
+Original marketplace artwork is packaged in `assets/icon.png`, `assets/logo.png`, and `assets/logo-dark.png`. The light and dark versions use the same writing-page and nova mark so the plugin remains recognizable across client surfaces.
 
 ## Always-on behavior
 
@@ -20,6 +20,8 @@ The standard and the linter are separate. The standard shapes every sentence as 
 ## What it does
 
 - Drafts and rewrites mutable prose from supplied facts, audience, channel, and voice, with zero em dashes or spaced double-hyphen substitutes and flowing constructions instead of staccato fragments.
+- Applies an explicit no-cringe test based on voice ownership, emotional proportion, audience relationship, and substance.
+- Rejects fake intimacy, forced cleverness, canned vulnerability, motivational uplift, theatrical reveals, borrowed slang, and unsupported quirks while preserving personality the voice has earned.
 - Audits observable writing patterns without guessing who or what wrote the text.
 - Allows real judgment, warmth, humor, and point of view only in an owned voice: the actual author, the assistant as itself, an approved brand voice, or an authorized genre.
 - Rewrites with minimum-effective edits and an explicit preservation contract.
@@ -86,7 +88,7 @@ After creating a release commit, render aligned immutable catalog entries with:
 ```bash
 python3 scripts/render_marketplace_entries.py \
   --sha <40-character-release-commit> \
-  --ref nuko-nova-unslop-marketplace-v0.4.0
+  --ref nuko-nova-unslop-marketplace-v0.5.0
 ```
 
 ## License

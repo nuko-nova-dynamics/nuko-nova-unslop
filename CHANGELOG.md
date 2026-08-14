@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.5.0 - 2026-08-14
+
+- Reframe the plugin as an always-on human-writing standard rather than an editorial layer.
+- Define human writing as purposeful, audience-aware, emotionally proportionate prose, not automatic slang, quirks, fragments, casualness, or deliberate imperfection.
+- Add an explicit no-cringe contract based on voice ownership, proportion, audience relationship, and substance.
+- Reject fake intimacy, forced cleverness, canned vulnerability, motivational uplift, emotional overreach, theatrical reveals, and unsupported attempts to sound profound, cool, quirky, or relatable.
+- Extend the session and subagent baselines so the same human and no-cringe standard reaches Codex, Claude Code, and delegated prose.
+- Add contextual `fake-intimacy` and `performative-personality` linter signals without turning subjective taste into a hard final-output blocker.
+- Add regression coverage for grounded personality, quoted language, legitimate technical usage, profile sensitivity, and unmistakable canned formulas.
+
 ## 0.4.0 - 2026-08-14
 
 - Add one shared lifecycle-hook layer for Codex and Claude Code so the baseline no longer depends on optional Codex skill invocation or Claude's main-conversation-only output style.

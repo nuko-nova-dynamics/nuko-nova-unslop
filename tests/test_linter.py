@@ -110,6 +110,44 @@ class LinterTests(unittest.TestCase):
         self.assertNotIn("staccato-drama", rule_ids("- Run tests.\n- Fix lint.\n- Ship it.\n", "balanced"))
         self.assertIn("staccato-drama", rule_ids("Fast. Simple. Powerful.", "balanced"))
 
+    def test_canned_personality_is_contextual_and_profile_scoped(self) -> None:
+        text = "Plot twist: the migration worked. Chef's kiss."
+        self.assertIn("performative-personality", rule_ids(text, "strict"))
+        self.assertIn("performative-personality", rule_ids(text, "nuko-nova"))
+        self.assertNotIn("performative-personality", rule_ids(text, "balanced"))
+
+    def test_fake_intimacy_is_contextual_and_profile_scoped(self) -> None:
+        text = "We've all been there. Trust me on this."
+        self.assertIn("fake-intimacy", rule_ids(text, "strict"))
+        self.assertIn("fake-intimacy", rule_ids(text, "nuko-nova"))
+        self.assertNotIn("fake-intimacy", rule_ids(text, "balanced"))
+
+    def test_literal_concepts_do_not_trigger_canned_phrase_rules(self) -> None:
+        text = "The film's plot twist works because the motive appears in the first scene. I trust Maya on this because she ran the test."
+        ids = rule_ids(text, "strict")
+        self.assertNotIn("performative-personality", ids)
+        self.assertNotIn("fake-intimacy", ids)
+
+    def test_quoted_canned_language_is_protected(self) -> None:
+        text = 'The review says, “Plot twist: it was chef\'s kiss. Trust me on this.” Keep the quotation exact.'
+        ids = rule_ids(text, "strict")
+        self.assertNotIn("performative-personality", ids)
+        self.assertNotIn("fake-intimacy", ids)
+
+    def test_cringe_phrase_findings_remain_contextual_information(self) -> None:
+        findings = MODULE.lint_text("Plot twist: it worked. We've all been there.", "strict")
+        selected = {finding.rule_id: finding for finding in findings}
+        self.assertEqual(selected["performative-personality"].severity, "info")
+        self.assertEqual(selected["fake-intimacy"].severity, "info")
+        self.assertIn("belongs to the voice", selected["performative-personality"].suggestion)
+        self.assertIn("unless the relationship supports it", selected["fake-intimacy"].suggestion)
+
+    def test_grounded_owned_judgment_is_not_cringe(self) -> None:
+        text = "I don't like this trade-off. It saves time today and makes the migration harder next month."
+        ids = rule_ids(text, "strict")
+        self.assertNotIn("performative-personality", ids)
+        self.assertNotIn("fake-intimacy", ids)
+
 
 if __name__ == "__main__":
     unittest.main()

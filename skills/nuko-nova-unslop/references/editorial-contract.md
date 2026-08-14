@@ -1,4 +1,4 @@
-# Editorial contract
+# Writing and preservation contract
 
 Use this reference for fact-dense, high-stakes, quoted, cited, technical, or heavily formatted work.
 
@@ -58,9 +58,9 @@ When the user supplies a sample, build an internal style fingerprint from eviden
 - asides, self-corrections, fragments, and repeated phrases
 - typical density and amount of polish
 
-Match stable habits without caricaturing them. Do not amplify every quirk or reuse distinctive phrases so often that the result becomes imitation. A sample controls style, not facts or opinions.
+Match stable habits without caricaturing them. Do not amplify every quirk, emotional cue, slang term, joke, or distinctive phrase so often that the result becomes imitation. A sample controls style, not facts or opinions. Match the sample's emotional range and relationship to the reader instead of turning its most noticeable feature into a performance.
 
-When no sample exists, infer only from the supplied draft and the channel. Use a clean, direct baseline without manufacturing personality. Personality must belong to an owned voice as defined in the skill's voice-ownership rules; an editor never donates opinions, feelings, or anecdotes to a represented author.
+When no sample exists, infer only from the supplied draft, audience relationship, and channel. Use a clean, direct baseline without manufacturing personality, intimacy, vulnerability, humor, slang, or emotional intensity. Personality must belong to an owned voice as defined in the skill's voice-ownership rules; an editor never donates opinions, feelings, or anecdotes to a represented author.
 
 ## Meaning preservation
 

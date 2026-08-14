@@ -44,5 +44,20 @@
     "required_rules": ["dash-cluster"],
     "forbidden_rules": ["staccato-drama"],
     "max_findings": 1
+  },
+  {
+    "name": "cringe-heavy-strict",
+    "file": "cringe-heavy.md",
+    "profile": "strict",
+    "required_rules": ["performative-personality", "fake-intimacy"],
+    "forbidden_rules": []
+  },
+  {
+    "name": "grounded-human-strict",
+    "file": "grounded-human.md",
+    "profile": "strict",
+    "required_rules": [],
+    "forbidden_rules": ["performative-personality", "fake-intimacy", "staccato-drama"],
+    "max_findings": 0
   }
 ]

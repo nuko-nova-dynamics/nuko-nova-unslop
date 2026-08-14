@@ -142,6 +142,28 @@ RULES = (
         "Name the action, owner, behavior, or decision.",
     ),
     Rule(
+        "fake-intimacy",
+        "Unsupported familiarity",
+        rx(
+            r"\b(?:we(?:'ve| have) all been there|you know (?:the|that) feeling|between you and me|trust me(?: on this)?)\b"
+        ),
+        "State the point without claiming closeness, consensus, or shared experience unless the relationship supports it.",
+        "info",
+        profiles=("strict", "nuko-nova"),
+    ),
+    Rule(
+        "performative-personality",
+        "Canned personality performance",
+        rx(
+            r"(?:^|[.!?]\s+)plot twist\s*:"
+            r"|\b(?:chef's kiss|mic drop|i'm not crying,? you(?:'re| are) crying|main character energy"
+            r"|say it louder for (?:the )?people in the back|we did a thing)\b"
+        ),
+        "Keep the flourish only when it belongs to the voice, fits the audience, and carries meaning.",
+        "info",
+        profiles=("strict", "nuko-nova"),
+    ),
+    Rule(
         "hedging-filler",
         "Importance announcement",
         rx(r"\bit(?:'s| is) (?:worth noting|important to (?:note|remember|understand)) that\b"),

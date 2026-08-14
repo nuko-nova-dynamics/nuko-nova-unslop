@@ -18,6 +18,8 @@ This repository contains one shared writing skill packaged for Codex and Claude 
 - Preserve the skill's fact and voice safeguards when changing pattern rules.
 - Keep the zero-em-dash house preference subordinate to quotations and fixed strings, but not to an author sample unless the user explicitly requests em dashes for the current piece. Never satisfy it with spaced double hyphens or staccato fragments.
 - Keep personality inside an owned voice; never let an edit donate opinions or experiences to a represented author.
+- Treat human writing as purposeful, audience-aware, emotionally proportionate language, not as automatic slang, casualness, quirks, fragments, or deliberate mistakes.
+- Apply the no-cringe standard through ownership, proportion, audience fit, and substance. Keep subjective cringe signals contextual and reserve hard blocking for the narrow rules named below.
 - Treat delegated prose as source material and apply the skill in the parent before delivery because client output styles may not propagate to subagents.
 - Keep hook context derived from the output-style contract. Keep Stop blocking limited to em dashes, spaced double hyphens, and clear assistant or artifact leaks.
 - Keep hook execution local, dependency-free, fail-open on internal errors, and guarded against more than one corrective continuation.
