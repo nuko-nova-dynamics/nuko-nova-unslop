@@ -15,6 +15,8 @@ from urllib.parse import unquote
 ROOT = Path(__file__).resolve().parents[1]
 SKILL = ROOT / "skills" / "nuko-nova-unslop"
 OUTPUT_STYLE = ROOT / "output-styles" / "nuko-nova-unslop.md"
+HOOKS = ROOT / "hooks" / "hooks.json"
+HOOK_SCRIPT = ROOT / "hooks" / "nn_baseline.py"
 SEMVER = re.compile(r"^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:[-+][0-9A-Za-z.-]+)?$")
 SHA = re.compile(r"^[0-9a-f]{40}$")
 LINK = re.compile(r"\[[^\]]+\]\(([^)]+)\)")
@@ -33,6 +35,8 @@ ARTWORK = {
     "logo": ("./assets/logo.png", 1254),
     "logoDark": ("./assets/logo-dark.png", 1254),
 }
+HOOK_EVENTS = {"SessionStart", "UserPromptSubmit", "SubagentStart", "Stop"}
+HOOK_COMMAND = 'python3 "${CLAUDE_PLUGIN_ROOT}/hooks/nn_baseline.py"'
 
 
 def fail(message: str) -> None:
@@ -100,8 +104,8 @@ def check_manifests() -> None:
         fail("plugin license must be Apache-2.0")
     if claude.get("displayName") != codex.get("interface", {}).get("displayName"):
         fail("client display names differ")
-    if {"mcpServers", "apps", "hooks"} & (set(codex) | set(claude)):
-        fail("skills-only plugin declares an integration component")
+    if {"mcpServers", "apps"} & (set(codex) | set(claude)):
+        fail("plugin declares an unsupported integration component")
     prompts = codex.get("interface", {}).get("defaultPrompt")
     if not isinstance(prompts, list) or not 1 <= len(prompts) <= 3:
         fail("Codex defaultPrompt must contain one to three prompts")
@@ -177,6 +181,41 @@ def check_skill() -> None:
             fail(f"{path.relative_to(ROOT)}: invalid Python: {exc}")
 
 
+def check_hooks() -> None:
+    data = load_json(HOOKS)
+    if set(data) != {"hooks"} or not isinstance(data["hooks"], dict):
+        fail("hook bundle must contain one hooks object")
+    hooks = data["hooks"]
+    if set(hooks) != HOOK_EVENTS:
+        fail(f"hook event set mismatch: {sorted(hooks)}")
+    for event, groups in hooks.items():
+        if not isinstance(groups, list) or len(groups) != 1 or not isinstance(groups[0], dict):
+            fail(f"{event}: expected one hook group")
+        if set(groups[0]) != {"hooks"}:
+            fail(f"{event}: hook group must use the shared client field set")
+        handlers = groups[0]["hooks"]
+        if not isinstance(handlers, list) or len(handlers) != 1 or not isinstance(handlers[0], dict):
+            fail(f"{event}: expected one command handler")
+        handler = handlers[0]
+        if set(handler) != {"type", "command", "timeout"}:
+            fail(f"{event}: handler must use the shared client field set")
+        if handler["type"] != "command" or handler["command"] != HOOK_COMMAND:
+            fail(f"{event}: hook command mismatch")
+        expected_timeout = 15 if event == "Stop" else 10
+        if handler["timeout"] != expected_timeout:
+            fail(f"{event}: hook timeout mismatch")
+    try:
+        ast.parse(HOOK_SCRIPT.read_text(encoding="utf-8"), filename=str(HOOK_SCRIPT))
+    except (OSError, SyntaxError) as exc:
+        fail(f"hooks/nn_baseline.py: invalid Python: {exc}")
+    script = HOOK_SCRIPT.read_text(encoding="utf-8")
+    for required in ("SessionStart", "UserPromptSubmit", "SubagentStart", "Stop"):
+        if required not in script:
+            fail(f"hook script is missing {required} handling")
+    if "stop_hook_active" not in script or "BLOCKING_RULES" not in script:
+        fail("hook script is missing its one-shot final-output backstop")
+
+
 def check_upstreams() -> None:
     lock = load_json(ROOT / "upstreams.lock.json")
     if lock.get("review_cadence") != "every-two-days":
@@ -215,9 +254,10 @@ def check_content() -> None:
 def main() -> int:
     check_manifests()
     check_skill()
+    check_hooks()
     check_upstreams()
     check_content()
-    print("PASS: dual manifests, implicit Codex invocation, forced Claude output style, one shared skill, six references, two helpers, ten source pins, links, metadata, and cadence verified")
+    print("PASS: dual manifests, forced Claude output style, shared cross-client hooks, one shared skill, six references, two helpers, ten source pins, links, metadata, and cadence verified")
     return 0
 
 

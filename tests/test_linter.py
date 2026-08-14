@@ -88,6 +88,13 @@ class LinterTests(unittest.TestCase):
         self.assertNotIn("dash-cluster", rule_ids(text, "nuko-nova"))
         self.assertNotIn("via-negativa", rule_ids(text, "nuko-nova"))
 
+    def test_markdown_blockquotes_are_exempt(self) -> None:
+        text = "> Certainly! No prep — no fees.\n\nThe quoted wording must remain exact."
+        ids = rule_ids(text, "nuko-nova")
+        self.assertNotIn("chatbot-artifact", ids)
+        self.assertNotIn("dash-cluster", ids)
+        self.assertNotIn("via-negativa", ids)
+
     def test_spaced_double_hyphen_is_not_a_dash_workaround(self) -> None:
         text = "The launch slipped -- the vendor missed the deadline."
         self.assertIn("dash-substitute", rule_ids(text, "strict"))

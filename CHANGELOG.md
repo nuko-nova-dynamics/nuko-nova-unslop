@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.4.0 - 2026-08-14
+
+- Add one shared lifecycle-hook layer for Codex and Claude Code so the baseline no longer depends on optional Codex skill invocation or Claude's main-conversation-only output style.
+- Inject the full standard at session boundaries, a compact contract when subagents start, and a small per-prompt reminder in Codex.
+- Check main-agent final output locally for em dashes, spaced double hyphens, and clear assistant or artifact leaks, with one corrective pass and a loop guard.
+- Exempt quoted Markdown blocks from punctuation and phrase checks in file audits and final output so protected source wording does not trigger the backstop.
+- Document Codex's required hook-trust review and the exact clean-output versus corrective-pass latency trade-off.
+
 ## 0.3.0 - 2026-08-13
 
 - Carry explicit writing corrections through a conversation without making the user repeat them.

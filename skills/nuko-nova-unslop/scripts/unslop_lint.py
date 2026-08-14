@@ -205,11 +205,12 @@ INLINE_CODE_RE = re.compile(r"`[^`\n]+`")
 LINK_TARGET_RE = re.compile(r"(?<=\]\()[^)]+(?=\))")
 URL_RE = re.compile(r"https?://[^\s)>]+")
 QUOTED_SPAN_RE = re.compile(r'"[^"\n]*"|“[^”\n]*”')
+BLOCKQUOTE_RE = re.compile(r"^\s{0,3}>[^\n]*$", re.MULTILINE)
 
 
 def mask_exempt_spans(text: str) -> str:
     chars = list(text)
-    for pattern in (FENCE_RE, INLINE_CODE_RE, LINK_TARGET_RE, URL_RE, QUOTED_SPAN_RE):
+    for pattern in (FENCE_RE, INLINE_CODE_RE, LINK_TARGET_RE, URL_RE, QUOTED_SPAN_RE, BLOCKQUOTE_RE):
         for match in pattern.finditer(text):
             for index in range(match.start(), match.end()):
                 if chars[index] != "\n":
