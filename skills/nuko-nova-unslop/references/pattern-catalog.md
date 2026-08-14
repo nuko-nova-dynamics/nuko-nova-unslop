@@ -62,6 +62,26 @@ The one measured corpus among the sources (Avoid AI Writing, 875 human and 779 m
 | `fake-specificity` | An exact-sounding number, quote, source, or anecdote unsupported by the brief | Remove it and restore honest uncertainty. |
 | `corporate-therapist` | “lean into our strengths,” “foster alignment,” or soft managerial abstractions | Name the action, owner, decision, or behavior. |
 
+## Human without cringe
+
+Cringe is usually a mismatch, not a word. The language performs more intimacy, emotion, cleverness, importance, vulnerability, or cultural fluency than the facts, author, audience relationship, or genre can support. Do not flatten an owned voice because it is playful, intense, strange, sentimental, or informal. Check ownership, proportion, audience fit, and substance.
+
+Use these questions in order:
+
+1. **Ownership:** Does the feeling, opinion, joke, slang, or attitude belong to the actual or approved voice?
+2. **Proportion:** Does its intensity fit the event, evidence, stakes, and relationship?
+3. **Audience:** Would this author naturally speak this way to this reader in this channel?
+4. **Substance:** Does the flourish carry meaning or connection, or is it performing humanity?
+
+| ID | Signal | Focused response |
+| --- | --- | --- |
+| `fake-intimacy` | “We've all been there,” “you know the feeling,” “between you and me,” or “trust me on this” without an established relationship or shared experience | State the point without claiming closeness, consensus, or shared experience. Keep genuine familiarity when the relationship supports it. |
+| `performative-personality` | Canned quirks such as “plot twist,” “chef's kiss,” “mic drop,” “I'm not crying, you're crying,” or “main character energy” added to make ordinary information feel human | Keep the humor or flourish only when it belongs to the voice, fits the audience, and earns its space. Otherwise state the actual reaction or fact. |
+| `emotional-overreach` | Fake enthusiasm, delight, outrage, heartbreak, awe, urgency, or triumph whose intensity exceeds the supported event | Lower the emotional temperature or supply the evidence that earns it. Preserve strong emotion present in the source. |
+| `faux-vulnerability` | A confession, self-deprecation, or intimate aside manufactured without source evidence | Remove it. Never donate an experience or feeling to a represented person. |
+| `quirk-injection` | Slang, emojis, deliberate fragments, grammar errors, profanity, or unusual punctuation added merely to prove the prose is human | Restore the natural register. Keep quirks supported by the author, channel, or approved voice. |
+| `motivational-uplift` | Unsolicited encouragement, life lessons, inspirational summaries, or reassurance attached to ordinary information | End on the useful fact, decision, consequence, or next action unless encouragement is the actual purpose. |
+
 ## Rhythm, structure, and formatting
 
 | ID | Signal | Focused response |
@@ -107,4 +127,4 @@ Good human writing may be polished, formal, complex, or grammatically perfect.
 
 ## Deterministic linter coverage
 
-`scripts/unslop_lint.py` implements a subset of this catalog: the leak rules, the high-confidence phrase rules, the em-dash check, and the two rhythm checks. Its `watched-vocabulary` rule maps to the contextual word bank, `generic-conclusion` spans `generic-recap` and `generic-future`, `signposting` covers throat-clearing openers such as “let's dive in” and “without further ado,” and the profile-scoped `via-negativa` and `collaborative-cta` rules are defined with the house rules in [profiles-and-genres.md](profiles-and-genres.md). Everything else in this catalog is editorial judgment the linter does not attempt.
+`scripts/unslop_lint.py` implements a subset of this catalog: the leak rules, the high-confidence phrase rules, the em-dash check, and the two rhythm checks. Its `watched-vocabulary` rule maps to the contextual word bank, `generic-conclusion` spans `generic-recap` and `generic-future`, `signposting` covers throat-clearing openers such as “let's dive in” and “without further ado,” and the profile-scoped `via-negativa` and `collaborative-cta` rules are defined with the house rules in [profiles-and-genres.md](profiles-and-genres.md). Strict and Nuko Nova passes also surface a small set of canned `fake-intimacy` and `performative-personality` phrases for review. Emotional proportion, relationship fit, humor, slang, vulnerability, and genuine personality remain contextual judgments the linter does not attempt to prove.

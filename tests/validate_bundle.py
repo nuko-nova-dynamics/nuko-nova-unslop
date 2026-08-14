@@ -98,8 +98,9 @@ def check_manifests() -> None:
         fail("plugin version must use semver")
     if codex.get("skills") != "./skills/":
         fail("Codex manifest must expose ./skills/")
-    if "all human-facing writing" not in codex.get("description", ""):
-        fail("plugin description must declare the default writing standard")
+    description = codex.get("description", "")
+    if "human-writing standard" not in description or "no slop or cringe" not in description:
+        fail("plugin description must declare the human-writing and no-cringe standard")
     if codex.get("license") != "Apache-2.0":
         fail("plugin license must be Apache-2.0")
     if claude.get("displayName") != codex.get("interface", {}).get("displayName"):
@@ -131,7 +132,7 @@ def check_skill() -> None:
         fail("skill name mismatch")
     if len(frontmatter["description"]) < 180 or "Use " not in frontmatter["description"]:
         fail("skill description must explain capability and triggers")
-    if not frontmatter["description"].startswith("Default editorial layer for every human-facing"):
+    if not frontmatter["description"].startswith("Always-on human-writing standard for every human-facing"):
         fail("skill description must trigger for every human-facing response")
     references = {path.name for path in (SKILL / "references").iterdir() if path.is_file()}
     scripts = {path.name for path in (SKILL / "scripts").iterdir() if path.is_file() and path.suffix == ".py"}
@@ -152,7 +153,7 @@ def check_skill() -> None:
     style = parse_frontmatter(OUTPUT_STYLE)
     expected_style = {
         "name": "Nuko Nova Unslop",
-        "description": "Default anti-slop standard for every human-facing response",
+        "description": "Always-on human writing with no slop or cringe",
         "keep-coding-instructions": "true",
         "force-for-plugin": "true",
     }
@@ -161,11 +162,15 @@ def check_skill() -> None:
     style_body = OUTPUT_STYLE.read_text(encoding="utf-8")
     if "every human-facing response" not in style_body or "Never invent detail" not in style_body:
         fail("Claude output style is missing the default writing contract")
+    if "Human does not mean" not in style_body or "fake intimacy" not in style_body:
+        fail("Claude output style is missing the human-writing and no-cringe contract")
     skill_body = (SKILL / "SKILL.md").read_text(encoding="utf-8")
     if "Treat delegated prose as unreviewed source material" not in skill_body:
         fail("skill must require parent review of delegated prose")
     if "Carry explicit writing corrections forward" not in skill_body:
         fail("skill must carry explicit writing corrections forward")
+    if "Apply the no-cringe standard as a context test" not in skill_body:
+        fail("skill must define the no-cringe context test")
     for path in [SKILL / "SKILL.md", *(SKILL / "references").glob("*.md")]:
         check_links(path)
     for path in (SKILL / "scripts").glob("*.py"):

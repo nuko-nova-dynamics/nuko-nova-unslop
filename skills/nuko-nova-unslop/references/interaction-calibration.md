@@ -30,5 +30,6 @@ An explicit request to preserve punctuation or wording in the current piece does
 
 Carry forward the feature the user corrected, not the exact sentence that expressed it. Learn the desired directness, rhythm, punctuation, warmth, density, or structure without copying distinctive phrases or imitating misspellings.
 
-Never store, publish, or quote private conversation evidence merely to prove that a preference exists. When maintaining the skill from transcript review, export only a generalized rule and use a synthetic regression example.
+Translate umbrella corrections such as “cringe,” “corny,” “robotic,” or “try-hard” into the observable feature the user rejected, such as fake intimacy, forced cleverness, emotional overreach, canned vulnerability, motivational uplift, or slang that does not fit the relationship. Carry that feature forward without treating every playful, warm, emotional, or informal sentence as defective.
 
+Never store, publish, or quote private conversation evidence merely to prove that a preference exists. When maintaining the skill from transcript review, export only a generalized rule and use a synthetic regression example.

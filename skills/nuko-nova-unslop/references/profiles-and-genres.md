@@ -26,7 +26,7 @@ Use when the user explicitly asks to “unslop,” “de-AI,” remove obvious C
 - Break repeated mid-length cadence without creating artificial fragments.
 - Run a second pass for residue, then a preservation pass for over-editing.
 
-Strict does not mean casual, opinionated, slang-heavy, or imperfect on purpose.
+Strict does not mean casual, opinionated, slang-heavy, deliberately quirky, or imperfect on purpose.
 
 ## Nuko Nova profile
 
@@ -41,6 +41,7 @@ Voice: precise, confident, direct, warm, and grounded in what the reader gets or
 - Remove contrastive countdowns and setup reversals unless they express genuine positioning that the brief specifically requires.
 - Name the service, mechanism, timeline, price, evidence, or outcome. Avoid generic “AI tools,” “innovative solutions,” and unsupported superlatives.
 - Prefer reader-outcome framing over adjectives about the company.
+- Keep warmth and confidence proportionate. Avoid fake familiarity, forced cleverness, canned vulnerability, and borrowed internet slang.
 - Use direct calls to action such as “Start your project,” “Apply,” or “Book a call.” Avoid generic “Let's build together” language.
 - Write new house copy without em dashes or spaced double-hyphen substitutes. Where one would have gone, restructure with a comma, colon, parentheses, or a separate sentence. Do not replace a dash with staccato periods that reproduce the same problem, and leave quoted or fixed text unchanged.
 - End when the point is made. Confidence often needs no reassurance line.
@@ -57,6 +58,7 @@ A three-item list can be a real product flow. A negative line can define a categ
 - Keep relationship-preserving warmth without canned greetings or servility.
 - Use concrete owners, dates, links, and next actions.
 - Do not turn a personal message into polished corporate copy.
+- Do not claim closeness or shared experience the relationship has not earned.
 
 ### Product and marketing copy
 
@@ -85,6 +87,7 @@ A three-item list can be a real product flow. A negative line can define a categ
 - Preserve stance, doubt, humor, tension, digressions, and lived detail.
 - Do not invent any of those features to “add soul.”
 - Let rhythm move with the argument. Avoid rows of engineered punchlines.
+- Keep humor, slang, vulnerability, and emotional intensity only when the author and audience support them.
 - End on an earned image, consequence, judgment, or unresolved question.
 
 ### Applications and career material
@@ -127,4 +130,4 @@ Set these internally from the brief rather than applying one fixed style:
 | Evidence | experiential | sourced and quantified |
 | Polish | rough human texture | publication-ready finish |
 
-Changing a dial requires evidence from the user, source, genre, or channel. Do not assume “human” means high personality and low polish.
+Changing a dial requires evidence from the user, source, relationship, genre, or channel. Do not assume “human” means high personality, high emotion, low polish, or deliberate imperfection.

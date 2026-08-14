@@ -42,6 +42,8 @@ class HookTests(unittest.TestCase):
         self.assertEqual(output["hookEventName"], "SessionStart")
         self.assertIn("every human-facing response", output["additionalContext"])
         self.assertIn("Personality is welcome only in an owned voice", output["additionalContext"])
+        self.assertIn("Human does not mean", output["additionalContext"])
+        self.assertIn("fake intimacy", output["additionalContext"])
         self.assertLess(len(output["additionalContext"]), 10_000)
 
     def test_subagent_start_injects_compact_contract(self) -> None:
@@ -50,6 +52,8 @@ class HookTests(unittest.TestCase):
         self.assertEqual(output["hookEventName"], "SubagentStart")
         self.assertIn("without em dashes", output["additionalContext"])
         self.assertIn("owned or authorized", output["additionalContext"])
+        self.assertIn("fake intimacy", output["additionalContext"])
+        self.assertIn("profound, cool, quirky, or relatable", output["additionalContext"])
 
     def test_user_prompt_reminder_is_codex_only_and_small(self) -> None:
         claude = run_hook({"hook_event_name": "UserPromptSubmit", "prompt": "Hello"})
@@ -58,6 +62,8 @@ class HookTests(unittest.TestCase):
         context = parsed_output(codex)["hookSpecificOutput"]["additionalContext"]
         self.assertLessEqual(len(context), 220)
         self.assertIn("no em dashes", context)
+        self.assertIn("match the relationship", context)
+        self.assertIn("unearned performance", context)
 
     def test_stop_allows_clean_output(self) -> None:
         result = run_hook(
@@ -109,6 +115,18 @@ class HookTests(unittest.TestCase):
                 "hook_event_name": "Stop",
                 "stop_hook_active": True,
                 "last_assistant_message": "Certainly! This still has a leak — but it may stop now.",
+            }
+        )
+        self.assertEqual(result.stdout, "")
+
+    def test_stop_does_not_hard_block_contextual_cringe_signals(self) -> None:
+        result = run_hook(
+            {
+                "hook_event_name": "Stop",
+                "stop_hook_active": False,
+                "last_assistant_message": (
+                    "Plot twist: the migration worked. Chef's kiss. We've all been there, Maya. Trust me on this."
+                ),
             }
         )
         self.assertEqual(result.stdout, "")

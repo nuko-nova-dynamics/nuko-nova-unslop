@@ -58,7 +58,7 @@ def build_entries(sha: str, ref: str) -> dict[str, dict]:
         "license": claude["license"],
         "keywords": claude["keywords"],
         "category": "productivity",
-        "tags": ["writing", "editing", "humanizer", "anti-slop", "voice"],
+        "tags": ["writing", "humanizer", "anti-slop", "no-cringe", "voice"],
     }
     return {"codex": codex_entry, "claude": claude_entry}
 

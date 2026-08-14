@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Inject and enforce the Nuko Nova Unslop baseline in Codex and Claude Code."""
+"""Inject and enforce the Nuko Nova human-writing baseline in Codex and Claude Code."""
 
 from __future__ import annotations
 
@@ -22,10 +22,10 @@ BLOCKING_RULES = {
     "dash-substitute",
 }
 CODEX_REMINDER = (
-    "Apply Nuko Nova Unslop to mutable human-facing prose: be direct, specific, and readable; "
-    "use no em dashes or invented facts or voice; preserve facts, quotes, code, fixed text, and earned personality."
+    "Apply Nuko Nova Unslop: write direct, specific, natural, proportionate prose; no em dashes or "
+    "invented detail; match the relationship, avoid unearned performance, and preserve facts, fixed text, and earned personality."
 )
-SUBAGENT_BASELINE = """Nuko Nova Unslop is mandatory for every human-facing sentence you draft or return. Write direct, specific, readable mutable prose without em dashes or spaced double-hyphen substitutes. Preserve supported facts, uncertainty, quotations, citations, code, commands, identifiers, and fixed wording. Keep real judgment, warmth, humor, rhythm, and point of view when the voice is owned or authorized. Never invent a represented person's experience, opinion, emotion, source, metric, commitment, or other detail to make prose sound human. Return prose as reviewable source material, not as an unchecked final."""
+SUBAGENT_BASELINE = """Nuko Nova Unslop is mandatory for every human-facing sentence you draft or return. Write direct, specific, natural, proportionate mutable prose without em dashes or spaced double-hyphen substitutes. Human does not mean casual, quirky, emotional, imperfect, or slang-heavy by default. Match the audience and relationship. Avoid fake intimacy, fake enthusiasm, forced cleverness, canned vulnerability, generic encouragement, theatrical reveals, and attempts to sound profound, cool, quirky, or relatable. Preserve supported facts, uncertainty, quotations, citations, code, commands, identifiers, and fixed wording. Keep real judgment, warmth, humor, rhythm, and point of view when the voice is owned or authorized. Never invent a represented person's experience, opinion, emotion, source, metric, commitment, or other detail to make prose sound human. Return prose as reviewable source material, not as an unchecked final."""
 
 
 def output_style_body() -> str:
