@@ -6,6 +6,7 @@ This repository contains one shared writing skill packaged for Codex and Claude 
 
 - `skills/nuko-nova-unslop/SKILL.md` defines runtime behavior.
 - `output-styles/nuko-nova-unslop.md` makes the standard apply to every Claude Code response while the plugin is enabled.
+- `hooks/hooks.json` and `hooks/nn_baseline.py` inject the shared baseline into both clients and run the narrow final-output backstop.
 - `skills/nuko-nova-unslop/agents/openai.yaml` keeps implicit Codex invocation enabled.
 - The files under `skills/nuko-nova-unslop/references/` hold detailed rules and maintenance guidance.
 - `.codex-plugin/plugin.json` and `.claude-plugin/plugin.json` must keep name, version, description, author, repository, and license aligned.
@@ -18,6 +19,8 @@ This repository contains one shared writing skill packaged for Codex and Claude 
 - Keep the zero-em-dash house preference subordinate to quotations and fixed strings, but not to an author sample unless the user explicitly requests em dashes for the current piece. Never satisfy it with spaced double hyphens or staccato fragments.
 - Keep personality inside an owned voice; never let an edit donate opinions or experiences to a represented author.
 - Treat delegated prose as source material and apply the skill in the parent before delivery because client output styles may not propagate to subagents.
+- Keep hook context derived from the output-style contract. Keep Stop blocking limited to em dashes, spaced double hyphens, and clear assistant or artifact leaks.
+- Keep hook execution local, dependency-free, fail-open on internal errors, and guarded against more than one corrective continuation.
 - Add a regression fixture for every non-obvious behavioral fix.
 - Never turn a context-sensitive signal into proof of AI authorship.
 - Never ingest a third-party phrase corpus wholesale. Curate small, explainable rules with false-positive boundaries.

@@ -2,19 +2,20 @@
 
 Nuko Nova Unslop is the default editorial layer for human-facing writing in Codex and Claude Code. While enabled, it applies a direct, specific, readable standard to every response and prose artifact without treating human style as a blacklist or sacrificing facts to sound less artificial.
 
-The plugin combines an always-on writing standard, a context-aware editing skill, and dependency-free checks for surface patterns and protected facts. It supports a balanced default, an explicit strict pass, and a Nuko Nova house profile for product and marketing copy.
+The plugin combines an always-on writing standard, a context-aware editing skill, shared lifecycle hooks, and dependency-free checks for surface patterns and protected facts. It supports a balanced default, an explicit strict pass, and a Nuko Nova house profile for product and marketing copy.
 
 Original marketplace artwork is packaged in `assets/icon.png`, `assets/logo.png`, and `assets/logo-dark.png`. The light and dark versions use the same editorial-page and nova mark so the plugin remains recognizable across client surfaces.
 
 ## Always-on behavior
 
-- Codex receives a universal skill trigger with implicit invocation explicitly enabled.
-- Claude Code receives a forced plugin output style that applies at session start whenever the plugin is enabled, while retaining Claude Code's coding instructions.
+- Both clients load a shared local hook at session start, before Codex prompts, when subagents start, and before main output becomes final.
+- Codex receives the baseline as developer context instead of depending on optional skill invocation. Codex requires one hook-trust review after installation or after the hook definition changes.
+- Claude Code keeps the forced plugin output style for its main conversation and uses hooks to cover session edges and subagents.
 - The full skill loads for substantive drafting, rewriting, auditing, file editing, linting, and preservation work.
-- Short conversational text follows the standard internally without requiring a linter subprocess.
-- Delegated prose returns to the parent for an unslop pass before delivery. Claude's forced output style does not propagate into subagents, so child output is never treated as final by itself.
+- Short conversational text follows the standard from generation time. A narrow local final check catches em dashes, spaced double hyphens, and clear assistant artifacts.
+- Delegated prose receives the compact contract when a child starts, then returns to the parent as reviewable source material before the parent's final check.
 
-The standard and the linter are separate. The standard shapes every sentence as it is written. The linter is a local backstop for prose files, multi-paragraph deliverables, and text that will be sent, submitted, published, or reused.
+The standard and the linter are separate. The standard shapes every sentence as it is written. The hook backstop runs locally on final conversational output and blocks at most once when it finds a narrow violation. The full linter remains available for prose files, multi-paragraph deliverables, and text that will be sent, submitted, published, or reused.
 
 ## What it does
 
@@ -40,7 +41,7 @@ python3 -m unittest discover -s tests -p 'test_*.py'
 
 The linter reports writing signals. It does not classify authorship and does not produce an “AI score.”
 
-The scripts make no network or model calls. On ordinary text, their runtime is normally negligible compared with generating the response; invoking a tool through a client can still add orchestration time.
+The scripts make no network or model calls. Clean output only pays for a small local Python process and text scan, normally negligible beside generation time. A flagged final answer can add one corrective model pass. The loop guard prevents repeated blocking.
 
 ## Marketplace installation
 
@@ -53,6 +54,8 @@ codex plugin marketplace upgrade nuko-nova-tools
 codex plugin add nuko-nova-unslop@nuko-nova-tools
 ```
 
+Start a fresh Codex task, open `/hooks`, and trust the Nuko Nova Unslop plugin hooks. Codex intentionally skips new or changed plugin hooks until their exact definition is reviewed. Repeat this only when Codex marks the hook definition for review after an update.
+
 Claude Code:
 
 ```bash
@@ -60,7 +63,9 @@ claude plugin marketplace update nuko-nova-tools
 claude plugin install nuko-nova-unslop@nuko-nova-tools --scope user
 ```
 
-Both clients use `skills/nuko-nova-unslop/SKILL.md`. Claude Code also loads the forced plugin output style so the baseline applies before a substantive writing task explicitly invokes the full skill.
+Both clients use `skills/nuko-nova-unslop/SKILL.md` and auto-discover `hooks/hooks.json`. Claude Code also loads the forced plugin output style. The shared hook script uses no network service, injects compact context into subagents, and gives clear punctuation or assistant-artifact violations one revision pass before the text becomes final.
+
+The hook command currently supports macOS and Linux environments with Python 3 available on `PATH`.
 
 ## Controlled evolution
 
@@ -81,7 +86,7 @@ After creating a release commit, render aligned immutable catalog entries with:
 ```bash
 python3 scripts/render_marketplace_entries.py \
   --sha <40-character-release-commit> \
-  --ref nuko-nova-unslop-marketplace-v0.3.0
+  --ref nuko-nova-unslop-marketplace-v0.4.0
 ```
 
 ## License
