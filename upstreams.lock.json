@@ -9,8 +9,8 @@
       "url": "https://github.com/vale-cli/vale.git",
       "branch": "refs/heads/v3",
       "checkout": "vale",
-      "reviewed_sha": "c154ac2ad0011c456ea467d0add8c48ccb769ac3",
-      "reviewed_at": "2026-08-13",
+      "reviewed_sha": "e58732900ce0f94b85e46f3093cfd6facbb9e3cd",
+      "reviewed_at": "2026-08-15",
       "license": "MIT",
       "monitored_paths": ["README.md", "testdata/styles", "testdata/e2e"]
     },
@@ -31,8 +31,8 @@
       "url": "https://github.com/cursor/plugins.git",
       "branch": "refs/heads/main",
       "checkout": "cursor-plugins",
-      "reviewed_sha": "6dbbdd50cef1bdbfb540f80df8b598d0a546e3aa",
-      "reviewed_at": "2026-08-13",
+      "reviewed_sha": "2a8044425c7bddf429c3bdedf3ab61e791d34d65",
+      "reviewed_at": "2026-08-15",
       "license": "MIT (pstack)",
       "monitored_paths": ["pstack/skills/unslop/SKILL.md", "pstack/LICENSE"]
     },
@@ -53,8 +53,8 @@
       "url": "https://github.com/Automattic/harper.git",
       "branch": "refs/heads/master",
       "checkout": "harper",
-      "reviewed_sha": "1aa883d3c7ca83edaceef39ee1255abd3b5824a6",
-      "reviewed_at": "2026-08-13",
+      "reviewed_sha": "52c6aac62c08d58ea6b501e6b31c869032c3ada2",
+      "reviewed_at": "2026-08-15",
       "license": "Apache-2.0",
       "monitored_paths": ["README.md", "harper-cli", "harper-core", "packages/harper.js"]
     },
@@ -97,8 +97,8 @@
       "url": "https://github.com/languagetool-org/languagetool.git",
       "branch": "refs/heads/master",
       "checkout": "languagetool",
-      "reviewed_sha": "a3bb456b22d39227401bc31b715fe5a86b1d4d2c",
-      "reviewed_at": "2026-08-13",
+      "reviewed_sha": "97e309d164d8a19363a3c97aac2748ea8445f5d7",
+      "reviewed_at": "2026-08-15",
       "license": "LGPL-2.1-or-later",
       "monitored_paths": ["README.md", "languagetool-standalone", "languagetool-commandline", "languagetool-language-modules"]
     },
@@ -108,8 +108,8 @@
       "url": "https://github.com/promptfoo/promptfoo.git",
       "branch": "refs/heads/main",
       "checkout": "promptfoo",
-      "reviewed_sha": "f3723187d94479add2a51c5f36c4f61fb1999e80",
-      "reviewed_at": "2026-08-13",
+      "reviewed_sha": "ab84555c1b0ff74eca6b03abb7936ac9a0149242",
+      "reviewed_at": "2026-08-15",
       "license": "MIT",
       "monitored_paths": ["site/docs/configuration/expected-outputs", "site/docs/integrations/agent-skill.md", "examples/claude-agent-sdk/skills", "src/assertions"]
     }
