@@ -53,8 +53,8 @@
       "url": "https://github.com/Automattic/harper.git",
       "branch": "refs/heads/master",
       "checkout": "harper",
-      "reviewed_sha": "52c6aac62c08d58ea6b501e6b31c869032c3ada2",
-      "reviewed_at": "2026-08-15",
+      "reviewed_sha": "3bec2dbe7328c60a931161148cf861e32efff173",
+      "reviewed_at": "2026-08-17",
       "license": "Apache-2.0",
       "monitored_paths": ["README.md", "harper-cli", "harper-core", "packages/harper.js"]
     },
@@ -75,8 +75,8 @@
       "url": "https://github.com/blader/humanizer.git",
       "branch": "refs/heads/main",
       "checkout": "humanizer",
-      "reviewed_sha": "523374dee72d67c7b2b5f858ea0094ffda49c3ac",
-      "reviewed_at": "2026-08-13",
+      "reviewed_sha": "43c97670b563cfa75e4f16ef00c32e933104d10a",
+      "reviewed_at": "2026-08-17",
       "license": "MIT",
       "monitored_paths": ["SKILL.md", ".claude-plugin", "agents", "scripts/validate-package.py"]
     },
@@ -97,8 +97,8 @@
       "url": "https://github.com/languagetool-org/languagetool.git",
       "branch": "refs/heads/master",
       "checkout": "languagetool",
-      "reviewed_sha": "97e309d164d8a19363a3c97aac2748ea8445f5d7",
-      "reviewed_at": "2026-08-15",
+      "reviewed_sha": "d20060d4257ddd7a561567719c10bd574e3f0e85",
+      "reviewed_at": "2026-08-17",
       "license": "LGPL-2.1-or-later",
       "monitored_paths": ["README.md", "languagetool-standalone", "languagetool-commandline", "languagetool-language-modules"]
     },
@@ -108,8 +108,8 @@
       "url": "https://github.com/promptfoo/promptfoo.git",
       "branch": "refs/heads/main",
       "checkout": "promptfoo",
-      "reviewed_sha": "ab84555c1b0ff74eca6b03abb7936ac9a0149242",
-      "reviewed_at": "2026-08-15",
+      "reviewed_sha": "7d6b91a63cc7b20b589545ef505af71a82892a7b",
+      "reviewed_at": "2026-08-17",
       "license": "MIT",
       "monitored_paths": ["site/docs/configuration/expected-outputs", "site/docs/integrations/agent-skill.md", "examples/claude-agent-sdk/skills", "src/assertions"]
     }
