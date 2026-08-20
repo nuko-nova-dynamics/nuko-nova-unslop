@@ -112,7 +112,7 @@ export function createNukoNovaUnslopServer(): McpServer {
   const server = new McpServer(
     {
       name: SERVER_NAME,
-      title: "Nuko Nova Unslop",
+      title: "Unslop",
       version: skill.version,
     },
     {
@@ -122,7 +122,7 @@ export function createNukoNovaUnslopServer(): McpServer {
         },
       },
       instructions:
-        "When the user invokes Nuko Nova Unslop or requests its writing standard, call load_nuko_nova_unslop before drafting. Read a named reference only when the loaded skill routes to it. This server is read-only and never accepts user prose.",
+        "When the user invokes Unslop or requests the Nuko Nova Unslop writing standard, call load_nuko_nova_unslop before drafting. Read a named reference only when the loaded skill routes to it. This server is read-only and never accepts user prose.",
     },
   );
 
@@ -174,9 +174,9 @@ export function createNukoNovaUnslopServer(): McpServer {
   server.registerTool(
     "load_nuko_nova_unslop",
     {
-      title: "Load Nuko Nova Unslop",
+      title: "Load Unslop",
       description:
-        "Load the complete Nuko Nova Unslop writing standard. Use it when the user invokes @Nuko Nova Unslop or asks for human, direct, no-slop, no-cringe writing.",
+        "Load the complete Nuko Nova Unslop writing standard. Use it when the user invokes @Unslop or asks for human, direct, no-slop, no-cringe writing.",
       inputSchema: z.object({}).strict(),
       outputSchema: loadSkillOutputSchema,
       annotations: readOnlyAnnotations,

@@ -48,6 +48,7 @@ describe("Nuko Nova Unslop MCP server", () => {
       "io.modelcontextprotocol/skills": {},
     });
     expect(client.getInstructions()).toContain("never accepts user prose");
+    expect(client.getInstructions()).toContain("invokes Unslop");
   });
 
   it("exposes the complete skill through skills/list and skills/get", async () => {
@@ -109,6 +110,8 @@ describe("Nuko Nova Unslop MCP server", () => {
     });
     expect(JSON.stringify(tools)).not.toContain("text_to_rewrite");
     expect(JSON.stringify(tools)).not.toContain("user_prose");
+    expect(tools[0]?.title).toBe("Load Unslop");
+    expect(tools[0]?.description).toContain("@Unslop");
   });
 
   it("loads the standard and allows only named package references", async () => {

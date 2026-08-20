@@ -5,6 +5,7 @@ This repository contains one shared writing skill packaged for Codex and Claude 
 ## Source of truth
 
 - `skills/nuko-nova-unslop/SKILL.md` defines runtime behavior.
+- `skills/unslop/SKILL.md` is the short explicit alias and must only route to the canonical skill.
 - `output-styles/nuko-nova-unslop.md` makes the standard apply to every Claude Code response while the plugin is enabled.
 - `skills/nuko-nova-unslop/agents/openai.yaml` keeps implicit Codex invocation enabled.
 - The files under `skills/nuko-nova-unslop/references/` hold detailed rules and maintenance guidance.
@@ -36,6 +37,7 @@ Run these before committing:
 python3 tests/validate_bundle.py
 python3 -m unittest discover -s tests -p 'test_*.py'
 python3 /Users/judiazm/.codex/skills/.system/skill-creator/scripts/quick_validate.py skills/nuko-nova-unslop
+python3 /Users/judiazm/.codex/skills/.system/skill-creator/scripts/quick_validate.py skills/unslop
 python3 /Users/judiazm/.codex/skills/.system/plugin-creator/scripts/validate_plugin.py .
 ```
 
