@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 0.6.1 - 2026-08-20
+
+- Fixed the root MCP deployment command so it runs the workspace script instead of pnpm's built-in deploy command.
+
 ## 0.6.0 - 2026-08-20
 
 - Add `unslop` as the short explicit invocation alias while keeping Nuko Nova Unslop as the canonical writing standard.

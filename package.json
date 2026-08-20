@@ -8,6 +8,6 @@
     "mcp:typecheck": "pnpm --filter @nuko-nova/unslop-mcp typecheck",
     "mcp:check": "pnpm --filter @nuko-nova/unslop-mcp check",
     "mcp:dev": "pnpm --filter @nuko-nova/unslop-mcp dev",
-    "mcp:deploy": "pnpm --filter @nuko-nova/unslop-mcp deploy"
+    "mcp:deploy": "pnpm --filter @nuko-nova/unslop-mcp run deploy"
   }
 }
