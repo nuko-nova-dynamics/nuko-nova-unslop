@@ -31,7 +31,18 @@ class ValidatorMutationTests(unittest.TestCase):
     ) -> None:
         with tempfile.TemporaryDirectory(prefix="nuko-nova-unslop-validator-") as temp:
             root = Path(temp) / "plugin"
-            shutil.copytree(SOURCE, root, ignore=shutil.ignore_patterns(".git", "__pycache__"))
+            shutil.copytree(
+                SOURCE,
+                root,
+                ignore=shutil.ignore_patterns(
+                    ".git",
+                    ".wrangler",
+                    "__pycache__",
+                    "coverage",
+                    "dist",
+                    "node_modules",
+                ),
+            )
             mutate(root)
             result = run_validator(root)
             combined = result.stdout + result.stderr

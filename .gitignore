@@ -3,3 +3,6 @@ __pycache__/
 .DS_Store
 .pytest_cache/
 upstream-review.md
+node_modules/
+.wrangler/
+apps/mcp/src/skill-package.generated.ts
