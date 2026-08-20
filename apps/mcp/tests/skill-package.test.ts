@@ -14,7 +14,7 @@ describe("Nuko Nova Unslop skill package", () => {
     const skill = getPrimarySkill();
 
     expect(skill.name).toBe("nuko-nova-unslop");
-    expect(skill.version).toMatch(/^0\.5\.1/);
+    expect(skill.version).toMatch(/^0\.6\.0/);
     expect(skill.uri).toBe("skill://nuko-nova-unslop/nuko-nova-unslop/SKILL.md");
     expect(skill.content).toContain("# Nuko Nova Unslop");
     expect(skill.content).toContain("## Always-on human-writing standard");

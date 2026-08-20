@@ -1,8 +1,8 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "nuko-nova-unslop",
-  "displayName": "Nuko Nova Unslop",
-  "version": "0.5.1",
+  "displayName": "Unslop",
+  "version": "0.6.0",
   "description": "Human-writing standard for every human-facing response and artifact: no slop or cringe, with facts, voice, and genre preserved.",
   "author": {
     "name": "Nuko Nova Dynamics",

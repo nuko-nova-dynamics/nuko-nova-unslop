@@ -15,6 +15,16 @@ Original marketplace artwork is packaged in `assets/icon.png`, `assets/logo.png`
 - The plugin ships no lifecycle hooks and never intercepts, blocks, rewrites, or delays a final answer.
 - ChatGPT can load the same skill package from a public, read-only MCP server. ChatGPT still writes the answer itself.
 
+## Short invocation
+
+Use the same word on every client:
+
+- ChatGPT: `@Unslop`
+- Codex: type `$unslop` and select Unslop
+- Claude Code: `/unslop`
+
+The clients use different prefix characters, but `unslop` is the shared trigger. Automatic writing guidance remains active; the short command is available when you want to invoke it explicitly.
+
 The standard and the linter are separate. The standard shapes prose when the skill or output style is active. The linter runs only when invoked for a writing task or file. It does not scan final conversational output automatically. Use it for prose files, multi-paragraph deliverables, and text that will be sent, submitted, published, or reused.
 
 ## What it does
@@ -49,7 +59,7 @@ The scripts make no network or model calls. They run only when invoked and never
 
 The Cloudflare Worker in `apps/mcp` gives ChatGPT a small read-only doorway to the existing skill package. It does not run a model, rewrite text, or accept prose to process.
 
-When the user invokes `@Nuko Nova Unslop`, ChatGPT calls `load_nuko_nova_unslop` with an empty object. The tool returns `SKILL.md`, its version, its source commit, and the names of its supporting references. ChatGPT reads those instructions and writes the response itself. If the skill routes to a supporting file, ChatGPT can request that file by its fixed package name.
+When the user invokes `@Unslop`, ChatGPT calls `load_nuko_nova_unslop` with an empty object. The tool returns `SKILL.md`, its version, its source commit, and the names of its supporting references. ChatGPT reads those instructions and writes the response itself. If the skill routes to a supporting file, ChatGPT can request that file by its fixed package name.
 
 The server also implements OpenAI's MCP skill-import extension:
 
@@ -108,7 +118,7 @@ After creating a release commit, render aligned immutable catalog entries with:
 ```bash
 python3 scripts/render_marketplace_entries.py \
   --sha <40-character-release-commit> \
-  --ref nuko-nova-unslop-marketplace-v0.5.1
+  --ref nuko-nova-unslop-marketplace-v0.6.0
 ```
 
 ## License

@@ -14,6 +14,7 @@ from urllib.parse import unquote
 
 ROOT = Path(__file__).resolve().parents[1]
 SKILL = ROOT / "skills" / "nuko-nova-unslop"
+ALIAS_SKILL = ROOT / "skills" / "unslop"
 OUTPUT_STYLE = ROOT / "output-styles" / "nuko-nova-unslop.md"
 SEMVER = re.compile(r"^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:[-+][0-9A-Za-z.-]+)?$")
 SHA = re.compile(r"^[0-9a-f]{40}$")
@@ -145,8 +146,8 @@ def check_skill() -> None:
     if scripts != REQUIRED_SCRIPTS:
         fail(f"script set mismatch: {sorted(scripts)}")
     agent = (SKILL / "agents" / "openai.yaml").read_text(encoding="utf-8")
-    if "$nuko-nova-unslop" not in agent:
-        fail("OpenAI default prompt must mention $nuko-nova-unslop")
+    if "Use Unslop" not in agent:
+        fail("OpenAI default prompt must name Unslop")
     if not re.search(r"^\s*allow_implicit_invocation:\s*true\s*$", agent, re.MULTILINE):
         fail("OpenAI implicit invocation must remain enabled")
     match = re.search(r'^\s*short_description:\s*"([^"]+)"', agent, re.MULTILINE)
@@ -175,8 +176,31 @@ def check_skill() -> None:
         fail("skill must carry explicit writing corrections forward")
     if "Apply the no-cringe standard as a context test" not in skill_body:
         fail("skill must define the no-cringe context test")
+
+    alias_entrypoint = ALIAS_SKILL / "SKILL.md"
+    if not alias_entrypoint.is_file():
+        fail("alias skill is missing")
+    alias_frontmatter = parse_frontmatter(alias_entrypoint)
+    if set(alias_frontmatter) != {"name", "description"}:
+        fail("alias skill frontmatter must contain only name and description")
+    if alias_frontmatter["name"] != "unslop":
+        fail("alias skill name must be unslop")
+    if not alias_frontmatter["description"].startswith("Short explicit alias for Nuko Nova Unslop"):
+        fail("alias skill description must declare its narrow purpose")
+    alias_body = alias_entrypoint.read_text(encoding="utf-8")
+    if "../nuko-nova-unslop/SKILL.md" not in alias_body:
+        fail("alias skill must route to the canonical skill")
+    if len(alias_body) > 1_000 or "## Non-negotiable contract" in alias_body:
+        fail("alias skill must not duplicate canonical behavior")
+    alias_agent = (ALIAS_SKILL / "agents" / "openai.yaml").read_text(encoding="utf-8")
+    if not re.search(r"^\s*display_name:\s*\"Unslop\"\s*$", alias_agent, re.MULTILINE):
+        fail("alias OpenAI metadata must display Unslop")
+    if not re.search(r"^\s*allow_implicit_invocation:\s*false\s*$", alias_agent, re.MULTILINE):
+        fail("alias OpenAI invocation must remain explicit")
+
     for path in [SKILL / "SKILL.md", *(SKILL / "references").glob("*.md")]:
         check_links(path)
+    check_links(ALIAS_SKILL / "SKILL.md")
     for path in (SKILL / "scripts").glob("*.py"):
         try:
             ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
@@ -236,7 +260,7 @@ def main() -> int:
     check_no_hooks()
     check_upstreams()
     check_content()
-    print("PASS: dual manifests, forced Claude output style, hook-free packaging, one shared skill, six references, two helpers, ten source pins, links, metadata, and cadence verified")
+    print("PASS: dual manifests, forced Claude output style, hook-free packaging, one canonical skill, one short alias, six references, two helpers, ten source pins, links, metadata, and cadence verified")
     return 0
 
 

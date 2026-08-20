@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## 0.6.0 - 2026-08-20
+
+- Add `unslop` as the short explicit invocation alias while keeping Nuko Nova Unslop as the canonical writing standard.
+- Present the plugin as Unslop in client selectors without changing its stable marketplace ID.
+- Use `@Unslop` in ChatGPT and `/unslop` in Claude Code. Codex users can type `$unslop` to select the namespaced plugin skill.
+- Keep the alias thin so writing behavior, references, scripts, and evolution remain in one canonical skill.
+
 - Add a stateless Cloudflare MCP host for the existing Nuko Nova Unslop skill package.
 - Expose the formal OpenAI skills extension through `skills/list`, `skills/get`, and `resources/read` with a digest for every packaged file.
 - Add two read-only ChatGPT loader tools. Neither tool performs inference, rewrites text, or accepts prose to process.
