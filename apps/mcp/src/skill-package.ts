@@ -97,15 +97,3 @@ export function getSkillCatalog() {
     ],
   };
 }
-
-export function readSkillResource(uri: string) {
-  const resource = GENERATED_SKILL_PACKAGE.resources.find(
-    (candidate) => candidate.uri === uri,
-  );
-
-  if (!resource) {
-    throw new Error(`Unknown Nuko Nova Unslop resource URI: ${uri}`);
-  }
-
-  return { ...resource };
-}

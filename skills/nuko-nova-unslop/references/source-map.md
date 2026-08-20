@@ -17,7 +17,7 @@ Research cutoff: August 13, 2026. `upstreams.lock.json` is the machine-readable 
 
 ## Local knowledge
 
-`/Users/judiazm/Projects/no-ai-copy` is a user-owned local corpus, not an upstream package. It contributes the Nuko Nova house profile and real editing lessons: via-negativa value propositions, fake triplets, contrastive countdowns, vague superlatives, generic collaborative calls to action, and the need to audit metadata and repeated copy surfaces.
+The user-owned No AI Copy corpus is private research material, not an upstream package. It contributes the Nuko Nova house profile and real editing lessons: via-negativa value propositions, fake triplets, contrastive countdowns, vague superlatives, generic collaborative calls to action, and the need to audit metadata and repeated copy surfaces.
 
 ## Deliberate departures
 
