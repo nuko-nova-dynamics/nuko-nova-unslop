@@ -1,6 +1,6 @@
 # Nuko Nova Unslop
 
-Nuko Nova Unslop provides the human-writing standard for Codex and Claude Code. It helps make responses and prose artifacts direct, specific, natural, and appropriate to their writer and reader, without treating human style as a blacklist or sacrificing facts to sound less artificial.
+Nuko Nova Unslop provides the human-writing standard for Codex, Claude Code, and ChatGPT. It helps make responses and prose artifacts direct, specific, natural, and appropriate to their writer and reader, without treating human style as a blacklist or sacrificing facts to sound less artificial.
 
 The plugin combines a default writing standard, a context-aware editing skill, a forced Claude Code output style, and dependency-free checks for surface patterns and protected facts. It supports a balanced default, an explicit strict pass, and a Nuko Nova house profile for product and marketing copy.
 
@@ -13,6 +13,7 @@ Original marketplace artwork is packaged in `assets/icon.png`, `assets/logo.png`
 - The full skill loads for substantive drafting, rewriting, auditing, file editing, linting, and preservation work.
 - Delegated prose returns to the parent as reviewable source material under the skill contract.
 - The plugin ships no lifecycle hooks and never intercepts, blocks, rewrites, or delays a final answer.
+- ChatGPT can load the same skill package from a public, read-only MCP server. ChatGPT still writes the answer itself.
 
 The standard and the linter are separate. The standard shapes prose when the skill or output style is active. The linter runs only when invoked for a writing task or file. It does not scan final conversational output automatically. Use it for prose files, multi-paragraph deliverables, and text that will be sent, submitted, published, or reused.
 
@@ -43,6 +44,30 @@ python3 -m unittest discover -s tests -p 'test_*.py'
 The linter reports writing signals. It does not classify authorship and does not produce an “AI score.”
 
 The scripts make no network or model calls. They run only when invoked and never block a client response.
+
+## ChatGPT web plugin
+
+The Cloudflare Worker in `apps/mcp` gives ChatGPT a small read-only doorway to the existing skill package. It does not run a model, rewrite text, or accept prose to process.
+
+When the user invokes `@Nuko Nova Unslop`, ChatGPT calls `load_nuko_nova_unslop` with an empty object. The tool returns `SKILL.md`, its version, its source commit, and the names of its supporting references. ChatGPT reads those instructions and writes the response itself. If the skill routes to a supporting file, ChatGPT can request that file by its fixed package name.
+
+The server also implements OpenAI's MCP skill-import extension:
+
+- `skills/list` returns the complete catalog entry and SHA-256 digest for every packaged file.
+- `skills/get` returns the exact catalog entry for Nuko Nova Unslop.
+- `resources/read` returns each declared package file by its `skill://` URI.
+
+Only files inside `skills/nuko-nova-unslop` are embedded. Transcripts, interaction-learning evidence, local paths, credentials, and private automation data are outside the package boundary. The loader has no prose argument. The reference reader accepts one package filename and has no rewrite field.
+
+Run the MCP checks locally:
+
+```bash
+pnpm install --frozen-lockfile
+pnpm mcp:check
+pnpm mcp:dev
+```
+
+The public ChatGPT connection uses the Worker's `/mcp` URL with no authentication because it serves the same public package already present in this repository. A formal Plugin Directory submission imports a reviewed snapshot. After the skill changes, scan the MCP server again and submit a new plugin version so ChatGPT imports the new snapshot.
 
 ## Marketplace installation
 

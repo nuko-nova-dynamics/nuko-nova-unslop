@@ -1,0 +1,27 @@
+{
+  "name": "@nuko-nova/unslop-mcp",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "generate": "node scripts/generate-skill-package.mjs",
+    "pretest": "pnpm run generate",
+    "test": "vitest run",
+    "typecheck": "pnpm run generate && tsc --noEmit",
+    "check": "pnpm run test && pnpm run typecheck",
+    "dev": "pnpm run generate && wrangler dev",
+    "deploy": "pnpm run check && wrangler deploy"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/server": "2.0.0",
+    "agents": "0.21.0",
+    "zod": "4.4.3"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "5.20260820.1",
+    "@modelcontextprotocol/client": "2.0.0",
+    "typescript": "7.0.2",
+    "vitest": "4.1.11",
+    "wrangler": "4.124.0"
+  }
+}

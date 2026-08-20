@@ -33,6 +33,14 @@ ARTWORK = {
     "logo": ("./assets/logo.png", 1254),
     "logoDark": ("./assets/logo-dark.png", 1254),
 }
+IGNORED_CONTENT_PARTS = {
+    ".git",
+    ".wrangler",
+    "__pycache__",
+    "coverage",
+    "dist",
+    "node_modules",
+}
 
 
 def fail(message: str) -> None:
@@ -208,7 +216,7 @@ def check_upstreams() -> None:
 
 def check_content() -> None:
     for path in ROOT.rglob("*"):
-        if not path.is_file() or ".git" in path.parts or "__pycache__" in path.parts:
+        if not path.is_file() or IGNORED_CONTENT_PARTS.intersection(path.parts):
             continue
         if path.suffix not in {".md", ".json", ".yaml", ".yml", ".py"} and path.name not in {"LICENSE", "NOTICE"}:
             continue

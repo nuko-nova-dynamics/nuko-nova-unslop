@@ -1,0 +1,13 @@
+{
+  "name": "nuko-nova-unslop-workspace",
+  "private": true,
+  "packageManager": "pnpm@10.34.5",
+  "scripts": {
+    "mcp:generate": "pnpm --filter @nuko-nova/unslop-mcp generate",
+    "mcp:test": "pnpm --filter @nuko-nova/unslop-mcp test",
+    "mcp:typecheck": "pnpm --filter @nuko-nova/unslop-mcp typecheck",
+    "mcp:check": "pnpm --filter @nuko-nova/unslop-mcp check",
+    "mcp:dev": "pnpm --filter @nuko-nova/unslop-mcp dev",
+    "mcp:deploy": "pnpm --filter @nuko-nova/unslop-mcp deploy"
+  }
+}

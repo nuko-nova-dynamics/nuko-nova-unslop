@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+- Add a stateless Cloudflare MCP host for the existing Nuko Nova Unslop skill package.
+- Expose the formal OpenAI skills extension through `skills/list`, `skills/get`, and `resources/read` with a digest for every packaged file.
+- Add two read-only ChatGPT loader tools. Neither tool performs inference, rewrites text, or accepts prose to process.
+- Keep transcripts, interaction-learning evidence, credentials, private paths, and automation data outside the generated public package.
+- Add protocol, package-boundary, path-safety, Worker-route, and type checks for the MCP host.
+
 ## 0.5.1 - 2026-08-14
 
 - Remove the `SessionStart`, `UserPromptSubmit`, `SubagentStart`, and `Stop` hooks from both clients.
