@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "review_cadence": "every-two-days",
-  "research_cutoff": "2026-08-13",
+  "research_cutoff": "2026-08-21",
   "sources": [
     {
       "id": "vale",
@@ -158,6 +158,118 @@
         "site/docs/integrations/agent-skill.md",
         "examples/claude-agent-sdk/skills",
         "src/assertions"
+      ]
+    },
+    {
+      "id": "stop-slop",
+      "repository": "hardikpandya/stop-slop",
+      "url": "https://github.com/hardikpandya/stop-slop.git",
+      "branch": "refs/heads/main",
+      "checkout": "stop-slop",
+      "reviewed_sha": "8da1f030185bdfe8471220585162991eaeb970e9",
+      "reviewed_at": "2026-08-21",
+      "license": "MIT",
+      "monitored_paths": [
+        "SKILL.md",
+        "references",
+        "README.md",
+        "LICENSE"
+      ]
+    },
+    {
+      "id": "slopbeth",
+      "repository": "ehmo/slopkit",
+      "url": "https://github.com/ehmo/slopkit.git",
+      "branch": "refs/heads/main",
+      "checkout": "slopkit",
+      "reviewed_sha": "b33718bb9283c11b09567dc714f92d90ffb7bd16",
+      "reviewed_at": "2026-08-21",
+      "license": "MIT",
+      "monitored_paths": [
+        "skills/slopbeth/SKILL.md",
+        "skills/slopbeth/references",
+        "skills/slopbeth/scripts",
+        "skills/slopbeth/benchmarks",
+        "LICENSE"
+      ]
+    },
+    {
+      "id": "adam-humanizer",
+      "repository": "Aboudjem/humanizer-skill",
+      "url": "https://github.com/Aboudjem/humanizer-skill.git",
+      "branch": "refs/heads/main",
+      "checkout": "humanizer-skill",
+      "reviewed_sha": "9a7f35b7b9ad8c3abd71f10757ec9f91fb8ae165",
+      "reviewed_at": "2026-08-21",
+      "license": "MIT",
+      "monitored_paths": [
+        "skills/humanizer/SKILL.md",
+        "skills/humanizer/references",
+        "skills/humanizer/evals",
+        "cli",
+        "LICENSE"
+      ]
+    },
+    {
+      "id": "stephenturner-deslop",
+      "repository": "stephenturner/skills",
+      "url": "https://github.com/stephenturner/skills.git",
+      "branch": "refs/heads/main",
+      "checkout": "stephenturner-skills",
+      "reviewed_sha": "48287d806e61534bc14939b55b72c3f3f11a7db5",
+      "reviewed_at": "2026-08-21",
+      "license": "MIT",
+      "monitored_paths": [
+        "deslop/SKILL.md",
+        "deslop/references",
+        "LICENSE"
+      ]
+    },
+    {
+      "id": "elithrar-anti-slop",
+      "repository": "elithrar/dotfiles",
+      "url": "https://github.com/elithrar/dotfiles.git",
+      "branch": "refs/heads/main",
+      "checkout": "elithrar-dotfiles",
+      "reviewed_sha": "36b4a7e8d41b55ff5dff568a22f62bb0214967df",
+      "reviewed_at": "2026-08-21",
+      "license": "MIT",
+      "monitored_paths": [
+        ".agents/skills/anti-slop/SKILL.md",
+        "LICENSE"
+      ]
+    },
+    {
+      "id": "soundshuman",
+      "repository": "aashaexo/soundshuman",
+      "url": "https://github.com/aashaexo/soundshuman.git",
+      "branch": "refs/heads/main",
+      "checkout": "soundshuman",
+      "reviewed_sha": "a45cfbba9fde843d670e553a0aa98f6a23d7fb28",
+      "reviewed_at": "2026-08-21",
+      "license": "MIT",
+      "monitored_paths": [
+        "SKILL.md",
+        "references",
+        "rules/slop-rules.json",
+        "bin/sloplint.js",
+        "tests",
+        "LICENSE"
+      ]
+    },
+    {
+      "id": "anti-ai-slop-writing",
+      "repository": "jalaalrd/anti-ai-slop-writing",
+      "url": "https://github.com/jalaalrd/anti-ai-slop-writing.git",
+      "branch": "refs/heads/main",
+      "checkout": "anti-ai-slop-writing",
+      "reviewed_sha": "63255f9bbb75a265dc5786a04535cd033f487756",
+      "reviewed_at": "2026-08-21",
+      "license": "NOASSERTION (README states MIT; no license file)",
+      "monitored_paths": [
+        "skills/anti-ai-slop-writing/SKILL.md",
+        "skills/anti-ai-slop-writing/references/banned-words.md",
+        "README.md"
       ]
     }
   ]

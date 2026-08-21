@@ -12,7 +12,7 @@ Private Codex and Claude Code interaction review is used only to validate genera
 
 ## Public research sources
 
-The source set includes the ten repositories in the August 13, 2026 research report: Vale, Avoid AI Writing, Cursor pstack Unslop, Better Writing, Harper, No AI Slop, Humanizer, AntiSlop Sampler, LanguageTool, and Promptfoo. The exact reviewed commits and monitored paths live in `upstreams.lock.json`.
+The source set began with the ten repositories in the August 13, 2026 research report: Vale, Avoid AI Writing, Cursor pstack Unslop, Better Writing, Harper, No AI Slop, Humanizer, AntiSlop Sampler, LanguageTool, and Promptfoo. On August 21, 2026, the owner added seven repositories from a public anti-slop skills list: Stop Slop, Slopbeth, Adam Boudjemaa Humanizer, Stephen Turner Deslop, Elithrar Anti-Slop, SoundsHuman, and Anti-AI-Slop Writing. The exact reviewed commits, license findings, lineage notes, and monitored paths live in `upstreams.lock.json` and the source map.
 
 The projects were used according to their strengths:
 
@@ -27,6 +27,8 @@ The projects were used according to their strengths:
 The plugin's prose, rule organization, Python helpers, tests, and workflows were written for this project. Third-party phrase corpora, detector engines, language models, grammar engines, and source code are not copied into the distribution.
 
 Short conventional phrases such as pattern names and examples may overlap with public editorial guidance because they describe common writing structures. The package preserves the applicable license notices and identifies upstream influence even where the implementation was independently written.
+
+Derivative skills do not count as independent corroboration merely because they repeat their parent sources. A source with unclear repository licensing may inform review boundaries, but its prose, code, examples, and lists are not reused.
 
 LanguageTool is research-only in this package because its LGPL implementation and language data are not needed by the dependency-free core. Optional references to installed Vale, Harper, LanguageTool, or Promptfoo tools do not redistribute them.
 

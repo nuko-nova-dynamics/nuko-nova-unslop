@@ -224,8 +224,8 @@ def check_upstreams() -> None:
     if lock.get("review_cadence") != "every-two-days":
         fail("upstream cadence must be every-two-days")
     sources = lock.get("sources")
-    if not isinstance(sources, list) or len(sources) != 10:
-        fail("upstream lock must contain the ten researched repositories")
+    if not isinstance(sources, list) or len(sources) != 17:
+        fail("upstream lock must contain the seventeen researched repositories")
     ids = [source.get("id") for source in sources]
     if len(ids) != len(set(ids)):
         fail("upstream ids must be unique")
@@ -260,7 +260,7 @@ def main() -> int:
     check_no_hooks()
     check_upstreams()
     check_content()
-    print("PASS: dual manifests, forced Claude output style, hook-free packaging, one canonical skill, one short alias, six references, two helpers, ten source pins, links, metadata, and cadence verified")
+    print("PASS: dual manifests, forced Claude output style, hook-free packaging, one canonical skill, one short alias, six references, two helpers, seventeen source pins, links, metadata, and cadence verified")
     return 0
 
 

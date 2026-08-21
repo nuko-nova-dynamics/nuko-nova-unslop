@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Add seven reviewed anti-slop repositories to the controlled evolution source set, with exact commit pins, monitored paths, license findings, and derivative-lineage boundaries.
+- Keep the plugin behavior unchanged because the useful guidance is already covered and the remaining proposals fail the existing false-positive, preservation, or evidence tests.
+
 ## 0.6.2 - 2026-08-21
 
 - Keep fenced Markdown examples outside deterministic prose findings when an apparent closing fence carries an info string, uses a shorter delimiter, or remains unclosed.

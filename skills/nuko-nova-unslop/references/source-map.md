@@ -2,7 +2,7 @@
 
 Research cutoff: August 21, 2026. `upstreams.lock.json` is the machine-readable source of reviewed commit pins and monitored paths.
 
-| Source | Reviewed commit | License | What it contributed |
+| Source | Reviewed commit | License | Reviewed value |
 | --- | --- | --- | --- |
 | Vale | `d0e65f4187c304b174f9bcb2854f02ebb455708f` | MIT | Markup-aware deterministic linting and small inspectable rules. |
 | Avoid AI Writing | `b504e2086bd3e544615afba7e5c7f31c8eade1d0` | MIT | Separation of deterministic signals from editorial judgment, protected Markdown-fence handling, corpus discipline, and explicit limits on authorship classification. |
@@ -14,6 +14,13 @@ Research cutoff: August 21, 2026. `upstreams.lock.json` is the machine-readable 
 | AntiSlop Sampler | `0ae330e98fbe6f09351f2d1063a51956378a44b2` | Apache-2.0 | Phrase-level prevention research and the warning that generated slop lists require curation rather than blanket adoption. |
 | LanguageTool | `86c5f3a966621dcacdf910e5a9a7e0d69d949842` | LGPL-2.1-or-later | Multilingual grammar/style architecture; referenced as an optional external tool and not redistributed. |
 | Promptfoo | `127d90534b9c1b1ba4554f007dd4b5fd2c8bf1b4` | MIT | Deterministic assertions, model-graded evaluation boundaries, and repeatable regression configuration. |
+| Stop Slop | `8da1f030185bdfe8471220585162991eaeb970e9` | MIT | Compact structural catalog and the lineage source for several later skills. Blanket bans on adverbs, passive voice, and individual punctuation remain outside the Nuko Nova standard. |
+| Slopbeth | `b33718bb9283c11b09567dc714f92d90ffb7bd16` | MIT | Brief-versus-artifact separation, evidence-bound rewriting, sentence-load and topic-swap tests, preservation benchmarks, and dated detector-evidence hygiene. |
+| Adam Boudjemaa Humanizer | `9a7f35b7b9ad8c3abd71f10757ec9f91fb8ae165` | MIT | Broad cross-harness catalog, voice profiles, cluster-based false-positive checks, and always-on instruction patterns. Self-scoring remains a review signal, never an authorship verdict. |
+| Stephen Turner Deslop | `48287d806e61534bc14939b55b72c3f3f11a7db5` | MIT | Scientific-writing examples, register-aware exceptions, and a derivative Stop Slop and tropes catalog. It is tracked as derivative evidence, not an independent vote for shared rules. |
+| Elithrar Anti-Slop | `36b4a7e8d41b55ff5dff568a22f62bb0214967df` | MIT | Surgical edits and the author-defendability test for separating intentional voice from disposable formula. |
+| SoundsHuman | `a45cfbba9fde843d670e553a0aa98f6a23d7fb28` | MIT | Explicit lineage, thresholded vocabulary tiers, conservative mechanical fixes, and a local scanner split from editorial judgment. Its merged catalogs are treated as derivative evidence. |
+| Anti-AI-Slop Writing | `63255f9bbb75a265dc5786a04535cd033f487756` | No detected license file; README states MIT | Always-on activation and destination-specific formatting reminders. Blanket vocabulary bans, detector claims, and invented human detail are not adopted. |
 
 ## Local knowledge
 
@@ -26,6 +33,7 @@ The user-owned No AI Copy corpus is private research material, not an upstream p
 - A self-audit does not require showing users multiple ceremonial drafts.
 - Deterministic findings are writing signals, not evidence of machine authorship.
 - Large word and phrase lists remain outside the package unless a small rule has a documented purpose and false-positive boundary.
+- Repositories that merge or adapt earlier skills remain useful comparison sources, but repeated guidance from a derivative does not count as independent corroboration.
 
 ## Optional tools
 
