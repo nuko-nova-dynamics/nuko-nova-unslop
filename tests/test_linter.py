@@ -39,6 +39,48 @@ class LinterTests(unittest.TestCase):
         ids = rule_ids(text, "strict")
         self.assertNotIn("watched-vocabulary", ids)
 
+    def test_fenced_code_requires_a_blank_matching_closer(self) -> None:
+        for fence in ("```", "~~~"):
+            with self.subTest(fence=fence):
+                text = (
+                    "Context before the sample is ordinary prose.\n"
+                    f"{fence}\n"
+                    f"{fence}python\n"
+                    "The delve example stays protected.\n"
+                    f"{fence}\n"
+                    "The prose after the sample still says leverage.\n"
+                )
+                findings = MODULE.lint_text(text, "strict")
+                vocabulary_lines = [
+                    finding.line for finding in findings if finding.rule_id == "watched-vocabulary"
+                ]
+                self.assertEqual(vocabulary_lines, [6])
+                self.assertNotIn("staccato-drama", {finding.rule_id for finding in findings})
+
+    def test_longer_and_unclosed_fences_keep_examples_protected(self) -> None:
+        longer = (
+            "Context before the sample is ordinary prose.\n"
+            "````markdown\n"
+            "```text\n"
+            "The delve example stays protected.\n"
+            "```\n"
+            "````\n"
+            "The prose after the sample still says leverage.\n"
+        )
+        longer_lines = [
+            finding.line
+            for finding in MODULE.lint_text(longer, "strict")
+            if finding.rule_id == "watched-vocabulary"
+        ]
+        self.assertEqual(longer_lines, [7])
+
+        unclosed = (
+            "Context before the sample is ordinary prose.\n"
+            "```markdown\n"
+            "The delve example stays protected to the end.\n"
+        )
+        self.assertNotIn("watched-vocabulary", rule_ids(unclosed, "strict"))
+
     def test_output_has_no_ai_score(self) -> None:
         findings = MODULE.lint_text("Certainly! I hope this helps.", "balanced")
         rendered = MODULE.render_text("draft.md", findings).lower()

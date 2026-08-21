@@ -1,19 +1,19 @@
 # Source map
 
-Research cutoff: August 13, 2026. `upstreams.lock.json` is the machine-readable source of reviewed commit pins and monitored paths.
+Research cutoff: August 21, 2026. `upstreams.lock.json` is the machine-readable source of reviewed commit pins and monitored paths.
 
 | Source | Reviewed commit | License | What it contributed |
 | --- | --- | --- | --- |
-| Vale | `e58732900ce0f94b85e46f3093cfd6facbb9e3cd` | MIT | Markup-aware deterministic linting and small inspectable rules. |
-| Avoid AI Writing | `3c0fd8a2668962df97f0a6771dcd57c84a4be568` | MIT | Separation of regex-detectable signals from editorial judgment, corpus discipline, and explicit limits on authorship classification. |
-| Cursor pstack Unslop | `2a8044425c7bddf429c3bdedf3ab61e791d34d65` | MIT for `pstack` | Compact pattern catalog, portability test, mechanism-first specificity, and rhythm audit. |
-| Better Writing | `4023076319e5a7838dd7587ebf3d5e3588f9544f` | MIT | Preservation contract, context dials, genre exemptions, voice fixtures, and preflight checks. |
-| Harper | `3bec2dbe7328c60a931161148cf861e32efff173` | Apache-2.0 | Private, low-latency English mechanics and structured, markup-aware diagnostics. |
+| Vale | `d0e65f4187c304b174f9bcb2854f02ebb455708f` | MIT | Markup-aware deterministic linting and small inspectable rules. |
+| Avoid AI Writing | `b504e2086bd3e544615afba7e5c7f31c8eade1d0` | MIT | Separation of deterministic signals from editorial judgment, protected Markdown-fence handling, corpus discipline, and explicit limits on authorship classification. |
+| Cursor pstack Unslop | `46125561306434d8a1d7745d540d8932ab0cd2a2` | MIT for `pstack` | Compact pattern catalog, portability test, mechanism-first specificity, and rhythm audit. |
+| Better Writing | `0f6ea786b644928b2c047cf0407ba6f2f3190c6e` | MIT | Preservation contract, context dials, genre exemptions, voice fixtures, and preflight checks. |
+| Harper | `3486414b5756f579c4fdf268173dcbb6cbf00ec6` | Apache-2.0 | Private, low-latency English mechanics and structured, markup-aware diagnostics. |
 | No AI Slop | `d30eddb9e04562234f2070b5ee63ca4649d9a05e` | MIT | Audit-only mode, minimum-effective editing, named findings, and no authorship guesses. |
-| Humanizer | `43c97670b563cfa75e4f16ef00c32e933104d10a` | MIT | Cross-client packaging, author-sample calibration, broad pattern coverage, and non-fabrication guidance. |
+| Humanizer | `e2e92e7b4b8229253ed5c8e81dc65463fdeddda5` | MIT | Cross-client packaging, author-sample calibration, broad pattern coverage, and non-fabrication guidance. |
 | AntiSlop Sampler | `0ae330e98fbe6f09351f2d1063a51956378a44b2` | Apache-2.0 | Phrase-level prevention research and the warning that generated slop lists require curation rather than blanket adoption. |
-| LanguageTool | `d20060d4257ddd7a561567719c10bd574e3f0e85` | LGPL-2.1-or-later | Multilingual grammar/style architecture; referenced as an optional external tool and not redistributed. |
-| Promptfoo | `7d6b91a63cc7b20b589545ef505af71a82892a7b` | MIT | Deterministic assertions, model-graded evaluation boundaries, and repeatable regression configuration. |
+| LanguageTool | `56e9ee6ac9770b3744c16c1f7616fc9acad98c58` | LGPL-2.1-or-later | Multilingual grammar/style architecture; referenced as an optional external tool and not redistributed. |
+| Promptfoo | `127d90534b9c1b1ba4554f007dd4b5fd2c8bf1b4` | MIT | Deterministic assertions, model-graded evaluation boundaries, and repeatable regression configuration. |
 
 ## Local knowledge
 

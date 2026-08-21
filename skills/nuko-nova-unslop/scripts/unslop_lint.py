@@ -222,7 +222,7 @@ RULES = (
 )
 
 
-FENCE_RE = re.compile(r"```.*?```|~~~.*?~~~", re.DOTALL)
+FENCE_LINE_RE = re.compile(r"^[ \t]{0,3}(`{3,}|~{3,})([^\r\n]*)\r?$", re.MULTILINE)
 INLINE_CODE_RE = re.compile(r"`[^`\n]+`")
 LINK_TARGET_RE = re.compile(r"(?<=\]\()[^)]+(?=\))")
 URL_RE = re.compile(r"https?://[^\s)>]+")
@@ -230,9 +230,39 @@ QUOTED_SPAN_RE = re.compile(r'"[^"\n]*"|“[^”\n]*”')
 BLOCKQUOTE_RE = re.compile(r"^\s{0,3}>[^\n]*$", re.MULTILINE)
 
 
+def fenced_code_ranges(text: str) -> list[tuple[int, int]]:
+    ranges: list[tuple[int, int]] = []
+    opening: tuple[str, int, int] | None = None
+
+    for match in FENCE_LINE_RE.finditer(text):
+        marker = match.group(1)
+        suffix = match.group(2)
+        if opening is None:
+            opening = (marker[0], len(marker), match.start())
+            continue
+
+        marker_char, marker_length, start = opening
+        if marker[0] != marker_char or len(marker) < marker_length:
+            continue
+        if suffix.strip(" \t"):
+            continue
+
+        ranges.append((start, match.end()))
+        opening = None
+
+    if opening is not None:
+        ranges.append((opening[2], len(text)))
+
+    return ranges
+
+
 def mask_exempt_spans(text: str) -> str:
     chars = list(text)
-    for pattern in (FENCE_RE, INLINE_CODE_RE, LINK_TARGET_RE, URL_RE, QUOTED_SPAN_RE, BLOCKQUOTE_RE):
+    for start, end in fenced_code_ranges(text):
+        for index in range(start, end):
+            if chars[index] != "\n":
+                chars[index] = " "
+    for pattern in (INLINE_CODE_RE, LINK_TARGET_RE, URL_RE, QUOTED_SPAN_RE, BLOCKQUOTE_RE):
         for match in pattern.finditer(text):
             for index in range(match.start(), match.end()):
                 if chars[index] != "\n":

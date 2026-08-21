@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## 0.6.2 - 2026-08-21
+
+- Keep fenced Markdown examples outside deterministic prose findings when an apparent closing fence carries an info string, uses a shorter delimiter, or remains unclosed.
+- Add synthetic coverage for backtick and tilde fences so protected code cannot contaminate phrase or rhythm checks.
+
 ## 0.6.1 - 2026-08-20
 
 - Fixed the root MCP deployment command so it runs the workspace script instead of pnpm's built-in deploy command.
