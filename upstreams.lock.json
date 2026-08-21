@@ -134,7 +134,7 @@
       "url": "https://github.com/languagetool-org/languagetool.git",
       "branch": "refs/heads/master",
       "checkout": "languagetool",
-      "reviewed_sha": "56e9ee6ac9770b3744c16c1f7616fc9acad98c58",
+      "reviewed_sha": "86c5f3a966621dcacdf910e5a9a7e0d69d949842",
       "reviewed_at": "2026-08-21",
       "license": "LGPL-2.1-or-later",
       "monitored_paths": [

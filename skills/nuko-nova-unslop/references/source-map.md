@@ -12,7 +12,7 @@ Research cutoff: August 21, 2026. `upstreams.lock.json` is the machine-readable 
 | No AI Slop | `d30eddb9e04562234f2070b5ee63ca4649d9a05e` | MIT | Audit-only mode, minimum-effective editing, named findings, and no authorship guesses. |
 | Humanizer | `e2e92e7b4b8229253ed5c8e81dc65463fdeddda5` | MIT | Cross-client packaging, author-sample calibration, broad pattern coverage, and non-fabrication guidance. |
 | AntiSlop Sampler | `0ae330e98fbe6f09351f2d1063a51956378a44b2` | Apache-2.0 | Phrase-level prevention research and the warning that generated slop lists require curation rather than blanket adoption. |
-| LanguageTool | `56e9ee6ac9770b3744c16c1f7616fc9acad98c58` | LGPL-2.1-or-later | Multilingual grammar/style architecture; referenced as an optional external tool and not redistributed. |
+| LanguageTool | `86c5f3a966621dcacdf910e5a9a7e0d69d949842` | LGPL-2.1-or-later | Multilingual grammar/style architecture; referenced as an optional external tool and not redistributed. |
 | Promptfoo | `127d90534b9c1b1ba4554f007dd4b5fd2c8bf1b4` | MIT | Deterministic assertions, model-graded evaluation boundaries, and repeatable regression configuration. |
 
 ## Local knowledge
