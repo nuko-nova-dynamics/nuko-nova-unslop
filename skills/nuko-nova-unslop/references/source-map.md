@@ -1,22 +1,22 @@
 # Source map
 
-Research cutoff: August 21, 2026. `upstreams.lock.json` is the machine-readable source of reviewed commit pins and monitored paths.
+Research cutoff: August 27, 2026. `upstreams.lock.json` is the machine-readable source of reviewed commit pins and monitored paths.
 
 | Source | Reviewed commit | License | Reviewed value |
 | --- | --- | --- | --- |
-| Vale | `d0e65f4187c304b174f9bcb2854f02ebb455708f` | MIT | Markup-aware deterministic linting and small inspectable rules. |
-| Avoid AI Writing | `b504e2086bd3e544615afba7e5c7f31c8eade1d0` | MIT | Separation of deterministic signals from editorial judgment, protected Markdown-fence handling, corpus discipline, and explicit limits on authorship classification. |
-| Cursor pstack Unslop | `46125561306434d8a1d7745d540d8932ab0cd2a2` | MIT for `pstack` | Compact pattern catalog, portability test, mechanism-first specificity, and rhythm audit. |
+| Vale | `405a7dabd73651d8ba24c72767a70c065aa6716a` | MIT | Markup-aware deterministic linting and small inspectable rules. |
+| Avoid AI Writing | `40328bd292bc682d46010a6f9ac2cdbf4fb4ceca` | MIT | Separation of deterministic signals from editorial judgment, protected Markdown-fence handling, corpus discipline, and explicit limits on authorship classification. |
+| Cursor pstack Unslop | `799151d91b6e12ee7dbd09f708eec108d7de9b3b` | MIT for `pstack` | Compact pattern catalog, portability test, mechanism-first specificity, and rhythm audit. |
 | Better Writing | `0f6ea786b644928b2c047cf0407ba6f2f3190c6e` | MIT | Preservation contract, context dials, genre exemptions, voice fixtures, and preflight checks. |
-| Harper | `3486414b5756f579c4fdf268173dcbb6cbf00ec6` | Apache-2.0 | Private, low-latency English mechanics and structured, markup-aware diagnostics. |
+| Harper | `1b7669236cb5aaa1a8f680c73f2844bfef2e6dfb` | Apache-2.0 | Private, low-latency English mechanics and structured, markup-aware diagnostics. |
 | No AI Slop | `d30eddb9e04562234f2070b5ee63ca4649d9a05e` | MIT | Audit-only mode, minimum-effective editing, named findings, and no authorship guesses. |
 | Humanizer | `e2e92e7b4b8229253ed5c8e81dc65463fdeddda5` | MIT | Cross-client packaging, author-sample calibration, broad pattern coverage, and non-fabrication guidance. |
 | AntiSlop Sampler | `0ae330e98fbe6f09351f2d1063a51956378a44b2` | Apache-2.0 | Phrase-level prevention research and the warning that generated slop lists require curation rather than blanket adoption. |
-| LanguageTool | `86c5f3a966621dcacdf910e5a9a7e0d69d949842` | LGPL-2.1-or-later | Multilingual grammar/style architecture; referenced as an optional external tool and not redistributed. |
-| Promptfoo | `127d90534b9c1b1ba4554f007dd4b5fd2c8bf1b4` | MIT | Deterministic assertions, model-graded evaluation boundaries, and repeatable regression configuration. |
+| LanguageTool | `eea6b35ac428a3d2230e1585444e70cff2ae5992` | LGPL-2.1-or-later | Multilingual grammar/style architecture; referenced as an optional external tool and not redistributed. |
+| Promptfoo | `e3b36451f4a2e587e819b2c4a19313003d68cde5` | MIT | Deterministic assertions, model-graded evaluation boundaries, and repeatable regression configuration. |
 | Stop Slop | `8da1f030185bdfe8471220585162991eaeb970e9` | MIT | Compact structural catalog and the lineage source for several later skills. Blanket bans on adverbs, passive voice, and individual punctuation remain outside the Nuko Nova standard. |
 | Slopbeth | `b33718bb9283c11b09567dc714f92d90ffb7bd16` | MIT | Brief-versus-artifact separation, evidence-bound rewriting, sentence-load and topic-swap tests, preservation benchmarks, and dated detector-evidence hygiene. |
-| Adam Boudjemaa Humanizer | `9a7f35b7b9ad8c3abd71f10757ec9f91fb8ae165` | MIT | Broad cross-harness catalog, voice profiles, cluster-based false-positive checks, and always-on instruction patterns. Self-scoring remains a review signal, never an authorship verdict. |
+| Adam Boudjemaa Humanizer | `98d27388c85dcccb0f7cf58cc22f4ef879c3c78b` | MIT | Broad cross-harness catalog, voice profiles, cluster-based false-positive checks, and always-on instruction patterns. Self-scoring remains a review signal, never an authorship verdict. |
 | Stephen Turner Deslop | `48287d806e61534bc14939b55b72c3f3f11a7db5` | MIT | Scientific-writing examples, register-aware exceptions, and a derivative Stop Slop and tropes catalog. It is tracked as derivative evidence, not an independent vote for shared rules. |
 | Elithrar Anti-Slop | `36b4a7e8d41b55ff5dff568a22f62bb0214967df` | MIT | Surgical edits and the author-defendability test for separating intentional voice from disposable formula. |
 | SoundsHuman | `a45cfbba9fde843d670e553a0aa98f6a23d7fb28` | MIT | Explicit lineage, thresholded vocabulary tiers, conservative mechanical fixes, and a local scanner split from editorial judgment. Its merged catalogs are treated as derivative evidence. |
