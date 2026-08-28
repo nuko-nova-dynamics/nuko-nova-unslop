@@ -1,6 +1,6 @@
 # Pattern catalog
 
-These are editing signals, not proof of authorship. Diagnose clusters, purpose, and effect before changing text. Preserve quoted examples and valid genre conventions.
+Treat these as contextual editing signals. Diagnose clusters, purpose, and effect before changing text. Preserve quoted examples and valid genre conventions.
 
 ## Confidence levels
 
@@ -8,7 +8,7 @@ These are editing signals, not proof of authorship. Diagnose clusters, purpose, 
 - **Strong:** Often weakens writing, but confirm the span is not quoted, required, or genre-correct.
 - **Contextual:** Edit only when it repeats, obscures meaning, or conflicts with the chosen voice.
 
-The one measured corpus among the sources (Avoid AI Writing, 875 human and 779 machine paragraphs, mostly 2022 to 2024 assistant prose) supports this ordering: rhythm uniformity showed an 11.7x machine lift and filler 3.4x, while its Tier 1 vocabulary list managed only 0.9x and em-dash frequency skewed human at 0.2x. Structure and cluster signals carry the weight; word lists and punctuation folklore do not, and its composite score separated authorship no better than a coin flip.
+The measured corpus among the sources supports this ordering: structure and cluster signals carry more editorial weight than isolated vocabulary or punctuation folklore.
 
 ## Generation leaks
 
@@ -79,7 +79,7 @@ Use these questions in order:
 | `performative-personality` | Canned quirks such as “plot twist,” “chef's kiss,” “mic drop,” “I'm not crying, you're crying,” or “main character energy” added to make ordinary information feel human | Keep the humor or flourish only when it belongs to the voice, fits the audience, and earns its space. Otherwise state the actual reaction or fact. |
 | `emotional-overreach` | Fake enthusiasm, delight, outrage, heartbreak, awe, urgency, or triumph whose intensity exceeds the supported event | Lower the emotional temperature or supply the evidence that earns it. Preserve strong emotion present in the source. |
 | `faux-vulnerability` | A confession, self-deprecation, or intimate aside manufactured without source evidence | Remove it. Never donate an experience or feeling to a represented person. |
-| `quirk-injection` | Slang, emojis, deliberate fragments, grammar errors, profanity, or unusual punctuation added merely to prove the prose is human | Restore the natural register. Keep quirks supported by the author, channel, or approved voice. |
+| `quirk-injection` | Slang, emojis, deliberate fragments, grammar errors, profanity, or unusual punctuation added without support from the voice or context | Restore the natural register. Keep quirks supported by the author, channel, or approved voice. |
 | `motivational-uplift` | Unsolicited encouragement, life lessons, inspirational summaries, or reassurance attached to ordinary information | End on the useful fact, decision, consequence, or next action unless encouragement is the actual purpose. |
 
 ## Rhythm, structure, and formatting
@@ -127,4 +127,4 @@ Good human writing may be polished, formal, complex, or grammatically perfect.
 
 ## Deterministic linter coverage
 
-`scripts/unslop_lint.py` implements a subset of this catalog: the leak rules, the high-confidence phrase rules, the em-dash check, and the two rhythm checks. Its `watched-vocabulary` rule maps to the contextual word bank, `generic-conclusion` spans `generic-recap` and `generic-future`, `signposting` covers throat-clearing openers such as “let's dive in” and “without further ado,” and the profile-scoped `via-negativa` and `collaborative-cta` rules are defined with the house rules in [profiles-and-genres.md](profiles-and-genres.md). Strict and Nuko Nova passes also surface a small set of canned `fake-intimacy` and `performative-personality` phrases for review. Emotional proportion, relationship fit, humor, slang, vulnerability, and genuine personality remain contextual judgments the linter does not attempt to prove.
+`scripts/unslop_lint.py` implements a subset of this catalog: the leak rules, the high-confidence phrase rules, the em-dash check, and the two rhythm checks. Its `watched-vocabulary` rule maps to the contextual word bank, `generic-conclusion` spans `generic-recap` and `generic-future`, `signposting` covers throat-clearing openers such as “let's dive in” and “without further ado,” and the profile-scoped `via-negativa` and `collaborative-cta` rules are defined with the house rules in [profiles-and-genres.md](profiles-and-genres.md). Strict and Nuko Nova passes also surface a small set of canned `fake-intimacy` and `performative-personality` phrases for review. Emotional proportion, relationship fit, humor, slang, vulnerability, and genuine personality remain contextual judgments outside deterministic coverage.

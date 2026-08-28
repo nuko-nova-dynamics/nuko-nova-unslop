@@ -150,6 +150,16 @@ class ValidatorMutationTests(unittest.TestCase):
 
         self.assert_rejected(mutate, "carry explicit writing corrections forward")
 
+    def test_unapproved_writing_evaluation_restriction_is_rejected(self) -> None:
+        def mutate(root: Path) -> None:
+            path = root / "skills" / "nuko-nova-unslop" / "SKILL.md"
+            path.write_text(
+                path.read_text(encoding="utf-8") + "\nDo not optimize for detector evasion.\n",
+                encoding="utf-8",
+            )
+
+        self.assert_rejected(mutate, "unapproved writing-evaluation restriction")
+
     def test_no_cringe_contract_drift_is_rejected(self) -> None:
         def mutate(root: Path) -> None:
             path = root / "skills" / "nuko-nova-unslop" / "SKILL.md"

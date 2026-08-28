@@ -23,7 +23,6 @@ This repository contains one shared writing skill packaged for Codex and Claude 
 - Treat delegated prose as source material and apply the skill in the parent before delivery because client output styles may not propagate to subagents.
 - Do not ship lifecycle hooks or any final-output interceptor. The writing skill may advise and lint, but it must never block, rewrite, or delay an answer at a client lifecycle boundary.
 - Add a regression fixture for every non-obvious behavioral fix.
-- Never turn a context-sensitive signal into proof of AI authorship.
 - Never ingest a third-party phrase corpus wholesale. Curate small, explainable rules with false-positive boundaries.
 - Keep the skill body concise and route detailed material into one-level references.
 - Treat unslopped human-facing prose as the default acceptance criterion, not an optional user-requested pass.

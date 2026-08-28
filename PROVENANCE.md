@@ -6,7 +6,7 @@ Nuko Nova Unslop is an original, human-directed synthesis published by Nuko Nova
 
 The local `/Users/judiazm/Projects/no-ai-copy` corpus supplied Nuko Nova and Miami Web AI preferences derived from real editing sessions. Those preferences include reader-outcome framing, resistance to via-negativa value propositions, avoidance of manufactured triplets and contrastive countdowns, direct calls to action, and specific language over vague promotion.
 
-The owner also directed the standing product target as human writing with no slop or cringe. The public rule generalizes that correction into observable checks for voice ownership, emotional proportion, audience relationship, and substance. It does not publish private conversation text or treat a subjective reaction as an authorship label.
+The owner also directed the standing product target as human writing with no slop or cringe. The public rule generalizes that correction into observable checks for voice ownership, emotional proportion, audience relationship, and substance. It does not publish private conversation text.
 
 Private Codex and Claude Code interaction review is used only to validate generalized preference-continuity behavior. Raw messages, excerpts, personal identifiers, client facts, and local source paths are not distributed with this plugin. Public rules are independently worded, and regression cases use synthetic examples.
 
@@ -24,7 +24,7 @@ The projects were used according to their strengths:
 
 ## Reuse policy
 
-The plugin's prose, rule organization, Python helpers, tests, and workflows were written for this project. Third-party phrase corpora, detector engines, language models, grammar engines, and source code are not copied into the distribution.
+The plugin's prose, rule organization, Python helpers, tests, and workflows were written for this project. Third-party phrase corpora, language models, grammar engines, and source code are not copied into the distribution.
 
 Short conventional phrases such as pattern names and examples may overlap with public editorial guidance because they describe common writing structures. The package preserves the applicable license notices and identifies upstream influence even where the implementation was independently written.
 
@@ -37,10 +37,6 @@ LanguageTool is research-only in this package because its LGPL implementation an
 The marketplace mark in `assets/icon.png`, `assets/logo.png`, and `assets/logo-dark.png` was created for this project on August 13, 2026. OpenAI's built-in image-generation tool produced the original transparent raster mark from a human-directed brief for an abstract editorial-page form resolving around a single nova. The brief required an original design, Nuko Nova violet, warm ivory, no text, no third-party marks, and no robot or generic AI imagery.
 
 The selected mark was composited locally onto light and dark square backgrounds and resized for the compact icon. No third-party image, logo, font, or stock asset is included. Nuko Nova Dynamics owns or controls the generated and composited artwork to the extent permitted by applicable terms and law.
-
-## Claims boundary
-
-The linter detects explicit phrases and document-shape signals. It cannot determine who wrote a text, and its output must not be described as an authorship score. A clean scan does not prove good writing; a flagged sentence does not prove AI involvement.
 
 ## License scope
 

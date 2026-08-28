@@ -53,7 +53,7 @@ A rule must answer all of these:
 - What is the smallest fix?
 - What clean-human fixture prevents overreach?
 
-Reject rules based only on folklore, a single disliked word, detector scores, or “humans never write this.”
+Reject rules based only on folklore, a single disliked word, or “humans never write this.”
 
 ## Source handling
 
@@ -68,7 +68,6 @@ Reject rules based only on folklore, a single disliked word, detector scores, or
 
 Every accepted evolution must preserve these guarantees:
 
-- no authorship classification or detector-evasion promise
 - no invented facts, sources, stance, or personality
 - personality stays with an owned voice: the author, the assistant as itself, an approved brand voice, or an authorized genre
 - source facts and fixed strings outrank style rules

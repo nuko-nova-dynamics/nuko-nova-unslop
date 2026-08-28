@@ -42,6 +42,14 @@ IGNORED_CONTENT_PARTS = {
     "dist",
     "node_modules",
 }
+FORBIDDEN_WRITING_RESTRICTIONS = (
+    re.compile(r"\bdetector[- ]evasion\b", re.IGNORECASE),
+    re.compile(r"\b(?:score|classify)\s+authorship\b", re.IGNORECASE),
+    re.compile(r"\bAI probability\b", re.IGNORECASE),
+    re.compile(r"\bAI score\b", re.IGNORECASE),
+    re.compile(r"\bauthorship signal\b", re.IGNORECASE),
+    re.compile(r"\bprove (?:the )?prose is human\b", re.IGNORECASE),
+)
 
 
 def fail(message: str) -> None:
@@ -249,6 +257,10 @@ def check_content() -> None:
             fail(f"{path.relative_to(ROOT)}: editorial placeholder remains")
         if path.suffix in {".md", ".yaml", ".yml", ".py"} and "\t" in text:
             fail(f"{path.relative_to(ROOT)}: tab character found")
+        if "tests" not in path.parts:
+            for pattern in FORBIDDEN_WRITING_RESTRICTIONS:
+                if pattern.search(text):
+                    fail(f"{path.relative_to(ROOT)}: unapproved writing-evaluation restriction remains")
     workflow = (ROOT / ".github" / "workflows" / "upstream-review.yml").read_text(encoding="utf-8")
     if "86400 % 2" not in workflow or "schedule:" not in workflow:
         fail("upstream workflow must enforce its every-two-days cadence")

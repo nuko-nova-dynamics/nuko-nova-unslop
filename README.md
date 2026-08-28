@@ -32,7 +32,7 @@ The standard and the linter are separate. The standard shapes prose when the ski
 - Drafts and rewrites mutable prose from supplied facts, audience, channel, and voice, with zero em dashes or spaced double-hyphen substitutes and flowing constructions instead of staccato fragments.
 - Applies an explicit no-cringe test based on voice ownership, emotional proportion, audience relationship, and substance.
 - Rejects fake intimacy, forced cleverness, canned vulnerability, motivational uplift, theatrical reveals, borrowed slang, and unsupported quirks while preserving personality the voice has earned.
-- Audits observable writing patterns without guessing who or what wrote the text.
+- Audits observable writing patterns and explains their effects.
 - Allows real judgment, warmth, humor, and point of view only in an owned voice: the actual author, the assistant as itself, an approved brand voice, or an authorized genre.
 - Rewrites with minimum-effective edits and an explicit preservation contract.
 - Calibrates to author samples instead of forcing a generic casual voice.
@@ -51,7 +51,7 @@ python3 tests/validate_bundle.py
 python3 -m unittest discover -s tests -p 'test_*.py'
 ```
 
-The linter reports writing signals. It does not classify authorship and does not produce an “AI score.”
+The linter reports writing signals for editorial review.
 
 The scripts make no network or model calls. They run only when invoked and never block a client response.
 
@@ -118,7 +118,7 @@ After creating a release commit, render aligned immutable catalog entries with:
 ```bash
 python3 scripts/render_marketplace_entries.py \
   --sha <40-character-release-commit> \
-  --ref nuko-nova-unslop-marketplace-v0.6.2
+  --ref nuko-nova-unslop-marketplace-v0.6.3
 ```
 
 ## License

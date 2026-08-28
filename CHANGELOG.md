@@ -1,7 +1,8 @@
 # Changelog
 
-## Unreleased
+## 0.6.3 - 2026-08-28
 
+- Remove an unapproved restriction on how users may evaluate or optimize writing, together with equivalent audit, linter, contributor, provenance, and evolution language.
 - Add seven reviewed anti-slop repositories to the controlled evolution source set, with exact commit pins, monitored paths, license findings, and derivative-lineage boundaries.
 - Keep the plugin behavior unchanged because the useful guidance is already covered and the remaining proposals fail the existing false-positive, preservation, or evidence tests.
 

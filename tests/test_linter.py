@@ -81,12 +81,6 @@ class LinterTests(unittest.TestCase):
         )
         self.assertNotIn("watched-vocabulary", rule_ids(unclosed, "strict"))
 
-    def test_output_has_no_ai_score(self) -> None:
-        findings = MODULE.lint_text("Certainly! I hope this helps.", "balanced")
-        rendered = MODULE.render_text("draft.md", findings).lower()
-        self.assertNotIn("ai score", rendered)
-        self.assertNotIn("probability", rendered)
-
     def test_sentence_initial_chatbot_openers_match(self) -> None:
         self.assertIn("chatbot-artifact", rule_ids("Certainly, the report is attached.", "balanced"))
         self.assertIn("chatbot-artifact", rule_ids("Of course! The rollout is on track.", "balanced"))

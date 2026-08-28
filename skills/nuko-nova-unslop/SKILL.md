@@ -13,7 +13,7 @@ Apply this skill to every human-facing sentence produced while it is available. 
 
 Apply the standard while drafting, not as cosmetic cleanup after the content is complete. Direct, specific, natural writing is the acceptance criterion. Do not confuse unslopped writing with extreme brevity, casual language, low detail, deliberate imperfection, or a flattened voice.
 
-Human writing does not mean adding slang, contractions, fragments, jokes, warmth, vulnerability, or quirks on demand. It means that someone with a real purpose is speaking at the right emotional temperature to a particular reader. Preserve earned personality and irregularity. Never manufacture them to prove the prose is human.
+Human writing does not mean adding slang, contractions, fragments, jokes, warmth, vulnerability, or quirks on demand. It means that someone with a real purpose is speaking at the right emotional temperature to a particular reader. Preserve earned personality and irregularity, and do not add quirks the voice has not earned.
 
 Apply the no-cringe standard as a context test, not a forbidden-word list. Remove fake intimacy, fake enthusiasm, forced cleverness, exaggerated emotion, canned vulnerability, motivational uplift, theatrical reveals, and attempts to sound profound, cool, quirky, or relatable when the source, author, relationship, or genre has not earned them. Judge four things: who owns the voice, whether the intensity fits the facts, whether the language fits the reader relationship, and whether each flourish communicates substance. When personality is unsupported or unnecessary, choose natural restraint rather than sterile neutrality.
 
@@ -21,7 +21,7 @@ Carry explicit writing corrections forward through the conversation so the user 
 
 Treat delegated prose as unreviewed source material. When a child agent or external tool writes text, ask it to follow this skill when possible, then apply the standard again in the parent before delivering or saving the result. Never assume a client output style propagates into subagents.
 
-Draft and rewrite mutable prose without em dashes or spaced double-hyphen substitutes. This is a house style preference, not an authorship signal; measured corpora show em dashes skew human. Where a dash would have gone, choose the connective that keeps the sentence natural: a comma, a colon, parentheses, a semicolon, or a separate sentence. Never satisfy the preference with a run of staccato fragments, and never alter quotations, code, commands, flags, link targets, proper titles, contractual text, fixed wording, or valid en-dash ranges to remove a dash. A voice sample informs cadence and syntax but does not override this preference. Only an explicit request to use em dashes in the current piece overrides it.
+Draft and rewrite mutable prose without em dashes or spaced double-hyphen substitutes. This is a house style preference, not a universal writing rule. Where a dash would have gone, choose the connective that keeps the sentence natural: a comma, a colon, parentheses, a semicolon, or a separate sentence. Never satisfy the preference with a run of staccato fragments, and never alter quotations, code, commands, flags, link targets, proper titles, contractual text, fixed wording, or valid en-dash ranges to remove a dash. A voice sample informs cadence and syntax but does not override this preference. Only an explicit request to use em dashes in the current piece overrides it.
 
 Keep code, commands, machine-readable data, quotations, citations, and fixed strings outside the prose pass unless the user explicitly includes them.
 
@@ -31,8 +31,7 @@ Keep code, commands, machine-readable data, quotations, citations, and fixed str
 2. Never invent a source, metric, anecdote, opinion, emotional reaction, or concrete detail to make prose sound human. Ask, mark a gap, or write around missing evidence.
 3. Treat user-provided voice samples and explicit house style as higher authority than generic pattern rules.
 4. Keep necessary legal, medical, financial, academic, scientific, and technical caveats. Neutral prose can be excellent human prose.
-5. Do not claim that prose was written by AI and do not optimize for detector evasion. Report observable writing patterns and their effects.
-6. Leave quotations, code, data, frontmatter, link targets, and deliberately fixed wording untouched unless the request includes them.
+5. Leave quotations, code, data, frontmatter, link targets, and deliberately fixed wording untouched unless the request includes them.
 
 Read [editorial-contract.md](references/editorial-contract.md) before high-stakes, fact-dense, quoted, or heavily formatted work.
 
@@ -53,7 +52,7 @@ When writing as yourself, take a position instead of hiding behind neutral conne
 
 - **Draft:** Create new prose from supplied facts, purpose, audience, and voice. Surface material gaps instead of filling them.
 - **Rewrite:** Make the minimum effective changes. Return the finished prose first.
-- **Audit:** Name each verified pattern, quote the affected span, explain its effect, and suggest a focused fix. Do not rewrite, score authorship, or assign an AI probability.
+- **Audit:** Name each verified pattern, quote the affected span, explain its effect, and suggest a focused fix. Do not rewrite.
 - **File:** Read the file, preserve its non-prose structure, edit only authorized prose, and write only the final version back. Summarize the change in chat.
 - **Embedded:** When another task invokes the skill for a description, message, comment, or document section, run the checks internally and return only the requested artifact.
 - **Evolve:** Follow [evolution.md](references/evolution.md). An upstream change is evidence to review, not permission to absorb it.
@@ -110,7 +109,7 @@ Use [pattern-catalog.md](references/pattern-catalog.md) for definitions, fixes, 
 python3 scripts/unslop_lint.py --profile balanced path/to/draft.md
 ```
 
-Use `--profile balanced` to audit supplied text. Use `--profile strict` on newly drafted or rewritten general prose, and `--profile nuko-nova` on Nuko Nova or Miami Web AI copy. Never present the linter as an AI detector.
+Use `--profile balanced` to audit supplied text. Use `--profile strict` on newly drafted or rewritten general prose, and `--profile nuko-nova` on Nuko Nova or Miami Web AI copy.
 
 ### Apply the linter proportionately
 

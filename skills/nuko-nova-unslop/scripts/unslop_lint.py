@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 """Dependency-free writing-signal linter for Nuko Nova Unslop.
 
-This tool reports explicit patterns and document-shape signals. It does not
-classify authorship and intentionally leaves context-sensitive editorial
-decisions to the skill.
+This tool reports explicit patterns and document-shape signals while leaving
+context-sensitive editorial decisions to the skill.
 """
 
 from __future__ import annotations
@@ -445,7 +444,7 @@ def render_text(source: str, findings: list[Finding]) -> str:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
-        description="Report anti-slop writing signals without classifying authorship."
+        description="Report deterministic anti-slop writing signals for editorial review."
     )
     parser.add_argument("paths", nargs="*", help="UTF-8 text or Markdown files; reads stdin when omitted")
     parser.add_argument("--profile", choices=sorted(PROFILE_LEVEL), default="balanced")
