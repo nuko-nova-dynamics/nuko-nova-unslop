@@ -227,6 +227,7 @@ LINK_TARGET_RE = re.compile(r"(?<=\]\()[^)]+(?=\))")
 URL_RE = re.compile(r"https?://[^\s)>]+")
 QUOTED_SPAN_RE = re.compile(r'"[^"\n]*"|“[^”\n]*”')
 BLOCKQUOTE_RE = re.compile(r"^\s{0,3}>[^\n]*$", re.MULTILINE)
+FRONTMATTER_KEY_RE = re.compile(r"^[ \t]*[A-Za-z_][A-Za-z0-9_-]*[ \t]*:")
 
 
 def fenced_code_ranges(text: str) -> list[tuple[int, int]]:
@@ -255,17 +256,71 @@ def fenced_code_ranges(text: str) -> list[tuple[int, int]]:
     return ranges
 
 
-def mask_exempt_spans(text: str) -> str:
-    chars = list(text)
-    for start, end in fenced_code_ranges(text):
+def frontmatter_range(text: str) -> tuple[int, int] | None:
+    """Return leading YAML frontmatter only when it contains a mapping key."""
+    lines = text.splitlines(keepends=True)
+    if not lines or lines[0].rstrip("\r\n").lstrip("\ufeff") != "---":
+        return None
+
+    offset = len(lines[0])
+    has_mapping_key = False
+    for line in lines[1:]:
+        body = line.rstrip("\r\n")
+        if body == "---":
+            return (0, offset + len(line)) if has_mapping_key else None
+        if FRONTMATTER_KEY_RE.match(body):
+            has_mapping_key = True
+        offset += len(line)
+    return None
+
+
+def html_comment_ranges(text: str, protected_ranges: list[tuple[int, int]]) -> list[tuple[int, int]]:
+    """Find Markdown HTML comments without treating code examples as comments."""
+    ranges: list[tuple[int, int]] = []
+    cursor = 0
+    while True:
+        start = text.find("<!--", cursor)
+        if start < 0:
+            break
+
+        protected_end = next(
+            (end for protected_start, end in protected_ranges if protected_start <= start < end),
+            None,
+        )
+        if protected_end is not None:
+            cursor = protected_end
+            continue
+
+        closing = text.find("-->", start + 4)
+        if closing < 0:
+            ranges.append((start, len(text)))
+            break
+        end = closing + 3
+        ranges.append((start, end))
+        cursor = end
+    return ranges
+
+
+def mask_ranges(chars: list[str], ranges: Iterable[tuple[int, int]]) -> None:
+    for start, end in ranges:
         for index in range(start, end):
             if chars[index] != "\n":
                 chars[index] = " "
-    for pattern in (INLINE_CODE_RE, LINK_TARGET_RE, URL_RE, QUOTED_SPAN_RE, BLOCKQUOTE_RE):
+
+
+def mask_exempt_spans(text: str) -> str:
+    chars = list(text)
+    fenced_ranges = fenced_code_ranges(text)
+    inline_ranges = [(match.start(), match.end()) for match in INLINE_CODE_RE.finditer(text)]
+    protected_ranges = [*fenced_ranges, *inline_ranges]
+    source_only_ranges = html_comment_ranges(text, protected_ranges)
+    if leading_frontmatter := frontmatter_range(text):
+        source_only_ranges.append(leading_frontmatter)
+
+    mask_ranges(chars, [*protected_ranges, *source_only_ranges])
+    for pattern in (LINK_TARGET_RE, URL_RE, QUOTED_SPAN_RE, BLOCKQUOTE_RE):
         for match in pattern.finditer(text):
-            for index in range(match.start(), match.end()):
-                if chars[index] != "\n":
-                    chars[index] = " "
+            mask_ranges(chars, [(match.start(), match.end())])
     return "".join(chars)
 
 

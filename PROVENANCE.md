@@ -22,6 +22,8 @@ The projects were used according to their strengths:
 - evaluation frameworks informed fixture design and preservation assertions
 - cross-client packages informed manifest synchronization and validation
 
+The August 29, 2026 evolution review generalized one markup-boundary lesson into original local handling for leading YAML frontmatter and Markdown HTML comments. It did not copy upstream implementation code, rhetorical phrase corpora, language-specific dictionaries, or optional grammar rules. Synthetic tests define the adopted behavior and its false-positive boundaries.
+
 ## Reuse policy
 
 The plugin's prose, rule organization, Python helpers, tests, and workflows were written for this project. Third-party phrase corpora, language models, grammar engines, and source code are not copied into the distribution.

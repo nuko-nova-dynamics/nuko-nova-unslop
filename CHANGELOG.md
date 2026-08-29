@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.6.4 - 2026-08-29
+
+- Keep leading YAML frontmatter and Markdown HTML comments outside deterministic prose findings without shifting reported source locations.
+- Preserve leading thematic breaks and visible prose when comment syntax appears inside an inline-code example.
+- Advance seven fully reviewed upstream pins. The new behavior generalizes one markup-boundary lesson; unrelated language rules, optional grammar checks, rhetorical phrase corpora, and monitored-path no-ops remain outside the plugin.
+
 ## 0.6.3 - 2026-08-28
 
 - Remove an unapproved restriction on how users may evaluate or optimize writing, together with equivalent audit, linter, contributor, provenance, and evolution language.

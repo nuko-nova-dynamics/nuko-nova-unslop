@@ -81,6 +81,46 @@ class LinterTests(unittest.TestCase):
         )
         self.assertNotIn("watched-vocabulary", rule_ids(unclosed, "strict"))
 
+    def test_frontmatter_and_html_comments_are_exempt(self) -> None:
+        text = (
+            "\ufeff---\r\n"
+            "title: Delve into the launch\r\n"
+            "todo: TODO\r\n"
+            "---\r\n"
+            "<!-- Certainly! Leverage this hidden note. -->\r\n"
+            "The visible prose says leverage.\r\n"
+        )
+        findings = MODULE.lint_text(text, "strict")
+        vocabulary = [finding for finding in findings if finding.rule_id == "watched-vocabulary"]
+        self.assertEqual([(finding.line, finding.excerpt) for finding in vocabulary], [(6, "The visible prose says leverage.")])
+        ids = {finding.rule_id for finding in findings}
+        self.assertNotIn("placeholder-leak", ids)
+        self.assertNotIn("chatbot-artifact", ids)
+
+    def test_leading_thematic_break_is_not_frontmatter(self) -> None:
+        text = "---\nDelve into the details.\n---\nThe rest is ordinary prose.\n"
+        findings = MODULE.lint_text(text, "strict")
+        vocabulary_lines = [
+            finding.line for finding in findings if finding.rule_id == "watched-vocabulary"
+        ]
+        self.assertEqual(vocabulary_lines, [2])
+
+    def test_comment_marker_inside_inline_code_does_not_hide_prose(self) -> None:
+        text = "Use `<!--` as the token. The visible prose says leverage."
+        findings = MODULE.lint_text(text, "strict")
+        vocabulary = [finding for finding in findings if finding.rule_id == "watched-vocabulary"]
+        self.assertEqual(len(vocabulary), 1)
+        self.assertEqual(vocabulary[0].line, 1)
+
+    def test_unclosed_html_comment_is_protected_to_end(self) -> None:
+        text = "Visible leverage.\n<!-- TODO: delve into the hidden draft.\n"
+        findings = MODULE.lint_text(text, "strict")
+        vocabulary_lines = [
+            finding.line for finding in findings if finding.rule_id == "watched-vocabulary"
+        ]
+        self.assertEqual(vocabulary_lines, [1])
+        self.assertNotIn("placeholder-leak", {finding.rule_id for finding in findings})
+
     def test_sentence_initial_chatbot_openers_match(self) -> None:
         self.assertIn("chatbot-artifact", rule_ids("Certainly, the report is attached.", "balanced"))
         self.assertIn("chatbot-artifact", rule_ids("Of course! The rollout is on track.", "balanced"))

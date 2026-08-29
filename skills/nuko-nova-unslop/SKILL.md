@@ -120,6 +120,7 @@ The editorial standard is always active; the linter is a fast local backstop, no
 - In mutable prose you drafted or rewrote, treat any remaining em dash or spaced double-hyphen substitute as a defect to restructure before delivery. In protected source material, dashes are contextual evidence rather than proof of a writing problem.
 - For fact-dense source-to-rewrite work, also run the preservation guard.
 - Review every finding in context. Fix justified findings and retain intentional language. Zero findings are not a substitute for editorial judgment.
+- YAML frontmatter and HTML comments are source-only Markdown. Keep them outside deterministic prose findings while preserving visible prose locations.
 - Keep the checks local. Do not add a network request or another model call merely to enforce this standard.
 
 ### 4. Rewrite for the job
