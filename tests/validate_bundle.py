@@ -184,6 +184,8 @@ def check_skill() -> None:
         fail("skill must carry explicit writing corrections forward")
     if "Apply the no-cringe standard as a context test" not in skill_body:
         fail("skill must define the no-cringe context test")
+    if "Keep caveats, risk framing, and process notes only when" not in skill_body:
+        fail("skill must keep caveats and process notes relevant")
 
     alias_entrypoint = ALIAS_SKILL / "SKILL.md"
     if not alias_entrypoint.is_file():

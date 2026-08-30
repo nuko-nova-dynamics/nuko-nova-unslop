@@ -171,6 +171,20 @@ class ValidatorMutationTests(unittest.TestCase):
 
         self.assert_rejected(mutate, "no-cringe context test")
 
+    def test_caveat_relevance_contract_drift_is_rejected(self) -> None:
+        def mutate(root: Path) -> None:
+            path = root / "skills" / "nuko-nova-unslop" / "SKILL.md"
+            text = path.read_text(encoding="utf-8")
+            path.write_text(
+                text.replace(
+                    "Keep caveats, risk framing, and process notes only when",
+                    "Add caveats, risk framing, and process notes whenever",
+                ),
+                encoding="utf-8",
+            )
+
+        self.assert_rejected(mutate, "keep caveats and process notes relevant")
+
     def test_missing_artwork_is_rejected(self) -> None:
         def mutate(root: Path) -> None:
             (root / "assets" / "logo-dark.png").unlink()

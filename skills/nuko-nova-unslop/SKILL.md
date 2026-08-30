@@ -21,6 +21,8 @@ Carry explicit writing corrections forward through the conversation so the user 
 
 Treat delegated prose as unreviewed source material. When a child agent or external tool writes text, ask it to follow this skill when possible, then apply the standard again in the parent before delivering or saving the result. Never assume a client output style propagates into subagents.
 
+Keep caveats, risk framing, and process notes only when they materially affect accuracy, safety, legality, or the reader's next action. Do not let them displace the requested answer.
+
 Draft and rewrite mutable prose without em dashes or spaced double-hyphen substitutes. This is a house style preference, not a universal writing rule. Where a dash would have gone, choose the connective that keeps the sentence natural: a comma, a colon, parentheses, a semicolon, or a separate sentence. Never satisfy the preference with a run of staccato fragments, and never alter quotations, code, commands, flags, link targets, proper titles, contractual text, fixed wording, or valid en-dash ranges to remove a dash. A voice sample informs cadence and syntax but does not override this preference. Only an explicit request to use em dashes in the current piece overrides it.
 
 Keep code, commands, machine-readable data, quotations, citations, and fixed strings outside the prose pass unless the user explicitly includes them.
@@ -167,6 +169,7 @@ Before delivery, verify:
 - any personality present belongs to an owned voice
 - the emotional intensity fits the facts, stakes, audience, and relationship
 - no fake intimacy, fake enthusiasm, forced cleverness, canned vulnerability, motivational uplift, or unsupported quirk was added
+- no unrelated caveat, risk framing, or process note displaces the requested answer
 - every joke, metaphor, aside, slang term, fragment, or flourish either serves the message and fits the voice or has been removed
 - newly drafted or rewritten mutable prose carries no em dashes or spaced double-hyphen substitutes outside quoted or fixed material, and no staccato fragments standing in for them
 - the result fits the audience, genre, and channel

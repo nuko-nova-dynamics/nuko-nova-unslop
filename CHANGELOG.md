@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.6.5 - 2026-08-30
+
+- Keep caveats, risk framing, and process notes only when they materially affect accuracy, safety, legality, or the reader's next action.
+- Prevent unrelated warnings or background from displacing the requested answer while preserving necessary high-stakes caveats.
+- Add synthetic validation coverage for this scope-discipline rule.
+
 ## 0.6.4 - 2026-08-29
 
 - Keep leading YAML frontmatter and Markdown HTML comments outside deterministic prose findings without shifting reported source locations.
