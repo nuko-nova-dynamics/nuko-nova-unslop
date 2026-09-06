@@ -97,6 +97,34 @@ class LinterTests(unittest.TestCase):
         self.assertNotIn("placeholder-leak", ids)
         self.assertNotIn("chatbot-artifact", ids)
 
+    def test_non_prose_markdown_syntax_is_exempt(self) -> None:
+        text = (
+            "<section data-term='delve'>Visible copy says leverage.</section>\n"
+            "\n"
+            "[delve]: https://example.com/reference\n"
+            "\n"
+            "    delve = config['value']\n"
+            "\n"
+            "Visible prose says robust.\n"
+        )
+        findings = MODULE.lint_text(text, "strict")
+        vocabulary = [finding for finding in findings if finding.rule_id == "watched-vocabulary"]
+        self.assertEqual(
+            [(finding.line, finding.column, finding.excerpt) for finding in vocabulary],
+            [
+                (1, 46, "<section data-term='delve'>Visible copy says leverage.</section>"),
+                (7, 20, "Visible prose says robust."),
+            ],
+        )
+
+    def test_angle_bracket_prose_is_not_mistaken_for_an_html_tag(self) -> None:
+        text = 'For n < Node, the robust tail remains visible > baseline.'
+        self.assertIn("watched-vocabulary", rule_ids(text, "strict"))
+
+    def test_indented_list_prose_remains_lintable(self) -> None:
+        text = "- Review notes\n\n    This robust plan is still list prose.\n"
+        self.assertIn("watched-vocabulary", rule_ids(text, "strict"))
+
     def test_leading_thematic_break_is_not_frontmatter(self) -> None:
         text = "---\nDelve into the details.\n---\nThe rest is ordinary prose.\n"
         findings = MODULE.lint_text(text, "strict")

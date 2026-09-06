@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "review_cadence": "every-two-days",
-  "research_cutoff": "2026-09-04",
+  "research_cutoff": "2026-09-06",
   "sources": [
     {
       "id": "vale",
@@ -9,8 +9,8 @@
       "url": "https://github.com/vale-cli/vale.git",
       "branch": "refs/heads/v3",
       "checkout": "vale",
-      "reviewed_sha": "fdc4cc754f58d953f668586dc1891064a746e0a2",
-      "reviewed_at": "2026-09-04",
+      "reviewed_sha": "1e4f6edc258e114065b70952cdad4a93b14a92ae",
+      "reviewed_at": "2026-09-06",
       "license": "MIT",
       "monitored_paths": [
         "README.md",
@@ -24,11 +24,12 @@
       "url": "https://github.com/conorbronsdon/avoid-ai-writing.git",
       "branch": "refs/heads/main",
       "checkout": "avoid-ai-writing",
-      "reviewed_sha": "788c6675c18d99fb00b100ce589f644639c46a15",
-      "reviewed_at": "2026-09-04",
+      "reviewed_sha": "801c2360f360e38d4316a271b953138e5e166d54",
+      "reviewed_at": "2026-09-06",
       "license": "MIT",
       "monitored_paths": [
         "SKILL.md",
+        "references",
         "detector",
         "scripts/check-style.js",
         "corpus",
@@ -41,8 +42,8 @@
       "url": "https://github.com/cursor/plugins.git",
       "branch": "refs/heads/main",
       "checkout": "cursor-plugins",
-      "reviewed_sha": "7314f723a487ec406b6369fe5865ba034cfed166",
-      "reviewed_at": "2026-09-04",
+      "reviewed_sha": "93b00b89ef425a9c1bac0d0b317dfc49c930ac99",
+      "reviewed_at": "2026-09-06",
       "license": "MIT (pstack)",
       "monitored_paths": [
         "pstack/skills/unslop/SKILL.md",
@@ -71,8 +72,8 @@
       "url": "https://github.com/Automattic/harper.git",
       "branch": "refs/heads/master",
       "checkout": "harper",
-      "reviewed_sha": "eca88ee46fecec7865e05ac9195d8ae018784146",
-      "reviewed_at": "2026-09-04",
+      "reviewed_sha": "5fe7d5ab76492d83f3ecdbc3f1da83c75dcb6f83",
+      "reviewed_at": "2026-09-06",
       "license": "Apache-2.0",
       "monitored_paths": [
         "README.md",
@@ -134,8 +135,8 @@
       "url": "https://github.com/languagetool-org/languagetool.git",
       "branch": "refs/heads/master",
       "checkout": "languagetool",
-      "reviewed_sha": "96ebabe1bbdb0f47f64128f4f486ba50b992bf81",
-      "reviewed_at": "2026-09-04",
+      "reviewed_sha": "1934acfd30070d1e9d0b5ff3b06aba7b91a9da68",
+      "reviewed_at": "2026-09-06",
       "license": "LGPL-2.1-or-later",
       "monitored_paths": [
         "README.md",
@@ -150,8 +151,8 @@
       "url": "https://github.com/promptfoo/promptfoo.git",
       "branch": "refs/heads/main",
       "checkout": "promptfoo",
-      "reviewed_sha": "2e05188e25d691956661a35c4627ac423852c082",
-      "reviewed_at": "2026-09-04",
+      "reviewed_sha": "6d0395a20520e19cf8889d572b879ec9c2831a52",
+      "reviewed_at": "2026-09-06",
       "license": "MIT",
       "monitored_paths": [
         "site/docs/configuration/expected-outputs",
@@ -231,8 +232,8 @@
       "url": "https://github.com/elithrar/dotfiles.git",
       "branch": "refs/heads/main",
       "checkout": "elithrar-dotfiles",
-      "reviewed_sha": "835c793b02034ff44e673e8c475670177707757f",
-      "reviewed_at": "2026-09-04",
+      "reviewed_sha": "eb215a9ec348a93bf3f1463f06bd9c9a757713f7",
+      "reviewed_at": "2026-09-06",
       "license": "MIT",
       "monitored_paths": [
         ".agents/skills/anti-slop/SKILL.md",

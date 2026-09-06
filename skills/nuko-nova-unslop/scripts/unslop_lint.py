@@ -228,6 +228,18 @@ URL_RE = re.compile(r"https?://[^\s)>]+")
 QUOTED_SPAN_RE = re.compile(r'"[^"\n]*"|“[^”\n]*”')
 BLOCKQUOTE_RE = re.compile(r"^\s{0,3}>[^\n]*$", re.MULTILINE)
 FRONTMATTER_KEY_RE = re.compile(r"^[ \t]*[A-Za-z_][A-Za-z0-9_-]*[ \t]*:")
+HTML_TAG_RE = re.compile(
+    r"</?[A-Za-z][A-Za-z0-9-]*"
+    r"(?:[ \t]+[A-Za-z_:][A-Za-z0-9_.:-]*"
+    r"(?:[ \t]*=[ \t]*(?:\"[^\"\n]*\"|'[^'\n]*'|[^\s\"'=<>`]+))?)*"
+    r"[ \t]*/?>"
+)
+REFERENCE_DEFINITION_RE = re.compile(
+    r"^[ \t]{0,3}\[[^\]\r\n]+\]:[ \t]+(?:<[^>\r\n]*>|\S+)"
+    r"(?:[ \t]+(?:\"[^\"\r\n]*\"|'[^'\r\n]*'|\([^\)\r\n]*\)))?[ \t]*$",
+    re.MULTILINE,
+)
+LIST_MARKER_RE = re.compile(r"^ {0,3}(?:[-*+]|\d{1,9}[.)])(?:[ \t]+|$)")
 
 
 def fenced_code_ranges(text: str) -> list[tuple[int, int]]:
@@ -301,6 +313,36 @@ def html_comment_ranges(text: str, protected_ranges: list[tuple[int, int]]) -> l
     return ranges
 
 
+def indented_code_ranges(text: str) -> list[tuple[int, int]]:
+    """Find top-level Markdown indented code without hiding list prose."""
+    ranges: list[tuple[int, int]] = []
+    start: int | None = None
+    offset = 0
+    previous_blank = True
+    previous_nonblank_was_list = False
+
+    for line in text.splitlines(keepends=True):
+        body = line.rstrip("\r\n")
+        blank = not body.strip()
+        indented = body.startswith("    ") or body.startswith("\t")
+
+        if start is not None and not (blank or indented):
+            ranges.append((start, offset))
+            start = None
+
+        if start is None and indented and previous_blank and not previous_nonblank_was_list:
+            start = offset
+
+        if not blank:
+            previous_nonblank_was_list = bool(LIST_MARKER_RE.match(body))
+        previous_blank = blank
+        offset += len(line)
+
+    if start is not None:
+        ranges.append((start, len(text)))
+    return ranges
+
+
 def mask_ranges(chars: list[str], ranges: Iterable[tuple[int, int]]) -> None:
     for start, end in ranges:
         for index in range(start, end):
@@ -317,7 +359,12 @@ def mask_exempt_spans(text: str) -> str:
     if leading_frontmatter := frontmatter_range(text):
         source_only_ranges.append(leading_frontmatter)
 
-    mask_ranges(chars, [*protected_ranges, *source_only_ranges])
+    syntax_ranges = [
+        *indented_code_ranges(text),
+        *((match.start(), match.end()) for match in HTML_TAG_RE.finditer(text)),
+        *((match.start(), match.end()) for match in REFERENCE_DEFINITION_RE.finditer(text)),
+    ]
+    mask_ranges(chars, [*protected_ranges, *source_only_ranges, *syntax_ranges])
     for pattern in (LINK_TARGET_RE, URL_RE, QUOTED_SPAN_RE, BLOCKQUOTE_RE):
         for match in pattern.finditer(text):
             mask_ranges(chars, [(match.start(), match.end())])

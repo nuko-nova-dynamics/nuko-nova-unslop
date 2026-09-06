@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.6.6 - 2026-09-06
+
+- Keep HTML tags, Markdown reference definitions, and top-level indented code outside deterministic prose findings while continuing to lint visible text around them.
+- Preserve angle-bracket prose and indented list content through narrow syntax recognition and synthetic false-positive coverage.
+- Advance seven fully reviewed upstream pins. The accepted behavior generalizes one Markdown-boundary safeguard; optional style machinery, language mechanics, detector catalogs, and unmonitored repository churn remain outside the plugin.
+
 ## 0.6.5 - 2026-08-30
 
 - Keep caveats, risk framing, and process notes only when they materially affect accuracy, safety, legality, or the reader's next action.

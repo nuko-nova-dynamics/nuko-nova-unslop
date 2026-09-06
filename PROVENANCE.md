@@ -26,6 +26,8 @@ The projects were used according to their strengths:
 
 The August 29, 2026 evolution review generalized one markup-boundary lesson into original local handling for leading YAML frontmatter and Markdown HTML comments. It did not copy upstream implementation code, rhetorical phrase corpora, language-specific dictionaries, or optional grammar rules. Synthetic tests define the adopted behavior and its false-positive boundaries.
 
+The September 6, 2026 evolution review extended that boundary handling to HTML tags, Markdown reference definitions, and top-level indented code. The implementation and synthetic tests were written for this plugin after reviewing upstream source-boundary safeguards; no upstream parser, prompt, detector catalog, or phrase corpus was copied.
+
 ## Reuse policy
 
 The plugin's prose, rule organization, Python helpers, tests, and workflows were written for this project. Third-party phrase corpora, language models, grammar engines, and source code are not copied into the distribution.
