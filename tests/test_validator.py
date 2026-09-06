@@ -185,6 +185,34 @@ class ValidatorMutationTests(unittest.TestCase):
 
         self.assert_rejected(mutate, "keep caveats and process notes relevant")
 
+    def test_reader_context_contract_drift_is_rejected(self) -> None:
+        def mutate(root: Path) -> None:
+            path = root / "skills" / "nuko-nova-unslop" / "SKILL.md"
+            text = path.read_text(encoding="utf-8")
+            path.write_text(
+                text.replace(
+                    "When a reader may not know a term, label, or technical choice",
+                    "Assume every reader already knows each term, label, and technical choice",
+                ),
+                encoding="utf-8",
+            )
+
+        self.assert_rejected(mutate, "explain unfamiliar terms with reader context")
+
+    def test_reader_context_output_style_drift_is_rejected(self) -> None:
+        def mutate(root: Path) -> None:
+            path = root / "output-styles" / "nuko-nova-unslop.md"
+            text = path.read_text(encoding="utf-8")
+            path.write_text(
+                text.replace(
+                    "When a term, label, or technical choice may be unfamiliar",
+                    "Assume every term, label, and technical choice is familiar",
+                ),
+                encoding="utf-8",
+            )
+
+        self.assert_rejected(mutate, "Claude output style must explain unfamiliar terms with reader context")
+
     def test_missing_artwork_is_rejected(self) -> None:
         def mutate(root: Path) -> None:
             (root / "assets" / "logo-dark.png").unlink()

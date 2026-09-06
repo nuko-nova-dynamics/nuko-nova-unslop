@@ -12,6 +12,8 @@ Private Codex and Claude Code interaction review is used only to validate genera
 
 The August 30, 2026 interaction review supported one additional scope-discipline rule: preserve necessary caveats while removing unrelated risk, permission, and process framing that displaces the requested answer. The public rule is independently worded and the regression test contains no private interaction text.
 
+The September 6, 2026 interaction review supported a reader-context rule: explain unfamiliar terms and technical choices in plain language before adding detail, while preserving accurate terminology. The pattern appeared across multiple unrelated tasks and dates. The public rule and synthetic regression contain no private interaction text.
+
 ## Public research sources
 
 The source set began with the ten repositories in the August 13, 2026 research report: Vale, Avoid AI Writing, Cursor pstack Unslop, Better Writing, Harper, No AI Slop, Humanizer, AntiSlop Sampler, LanguageTool, and Promptfoo. On August 21, 2026, the owner added seven repositories from a public anti-slop skills list: Stop Slop, Slopbeth, Adam Boudjemaa Humanizer, Stephen Turner Deslop, Elithrar Anti-Slop, SoundsHuman, and Anti-AI-Slop Writing. The exact reviewed commits, license findings, lineage notes, and monitored paths live in `upstreams.lock.json` and the source map.

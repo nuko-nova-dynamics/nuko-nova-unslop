@@ -177,6 +177,8 @@ def check_skill() -> None:
         fail("Claude output style is missing the default writing contract")
     if "Human does not mean" not in style_body or "fake intimacy" not in style_body:
         fail("Claude output style is missing the human-writing and no-cringe contract")
+    if "When a term, label, or technical choice may be unfamiliar" not in style_body:
+        fail("Claude output style must explain unfamiliar terms with reader context")
     skill_body = (SKILL / "SKILL.md").read_text(encoding="utf-8")
     if "Treat delegated prose as unreviewed source material" not in skill_body:
         fail("skill must require parent review of delegated prose")
@@ -186,6 +188,8 @@ def check_skill() -> None:
         fail("skill must define the no-cringe context test")
     if "Keep caveats, risk framing, and process notes only when" not in skill_body:
         fail("skill must keep caveats and process notes relevant")
+    if "When a reader may not know a term, label, or technical choice" not in skill_body:
+        fail("skill must explain unfamiliar terms with reader context")
 
     alias_entrypoint = ALIAS_SKILL / "SKILL.md"
     if not alias_entrypoint.is_file():

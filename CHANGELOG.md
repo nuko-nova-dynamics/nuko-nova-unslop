@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.6.7 - 2026-09-06
+
+- Explain unfamiliar terms, labels, cost models, and technical choices in plain language before adding detail.
+- Give readers the practical consequence and missing context without flattening accurate terminology or overexplaining to experts.
+- Add synthetic regression coverage for the reader-context rule.
+
 ## 0.6.6 - 2026-09-06
 
 - Keep HTML tags, Markdown reference definitions, and top-level indented code outside deterministic prose findings while continuing to lint visible text around them.
