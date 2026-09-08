@@ -26,6 +26,7 @@ Before a material rewrite, identify these protected classes:
 - code identifiers, commands, flags, filenames, API names, and exact UI labels
 - legal definitions, regulatory language, warnings, commitments, and disclaimers
 - modality and uncertainty: `may`, `likely`, `estimated`, `alleged`, `subject to`, and similar limits
+- claim relationships: rankings, superlatives, exclusivity, and simultaneity, including `first`, `most`, `least`, `only`, `both`, `simultaneously`, and `at once`
 - scope: who or what a claim covers, and what it excludes
 - user-marked fixed language and contractual text
 
@@ -74,6 +75,7 @@ Check these failure modes after rewriting:
 - a proposal became a commitment
 - a group, geography, time period, or product scope widened
 - a negative or exception disappeared
+- a ranking, exclusivity, or simultaneity claim disappeared during simplification
 - a useful detail became a generic statement
 - a list lost an item because three felt too formulaic
 

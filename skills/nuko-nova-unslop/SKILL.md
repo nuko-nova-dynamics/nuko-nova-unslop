@@ -31,7 +31,7 @@ Keep code, commands, machine-readable data, quotations, citations, and fixed str
 
 ## Non-negotiable contract
 
-1. Preserve every supported fact, name, number, date, price, quotation, citation, URL, code identifier, product name, UI label, commitment, uncertainty marker, and scope boundary unless the user explicitly authorizes a change.
+1. Preserve every supported fact, name, number, date, price, quotation, citation, URL, code identifier, product name, UI label, commitment, uncertainty marker, ranking, exclusivity claim, simultaneity claim, and scope boundary unless the user explicitly authorizes a change.
 2. Never invent a source, metric, anecdote, opinion, emotional reaction, or concrete detail to make prose sound human. Ask, mark a gap, or write around missing evidence.
 3. Treat user-provided voice samples and explicit house style as higher authority than generic pattern rules.
 4. Keep necessary legal, medical, financial, academic, scientific, and technical caveats. Neutral prose can be excellent human prose.

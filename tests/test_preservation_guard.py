@@ -51,6 +51,26 @@ class PreservationTests(unittest.TestCase):
             {},
         )
 
+    def test_claim_scope_drift_is_reported(self) -> None:
+        differences = MODULE.compare(
+            "Only the first migration ran; both workers updated the cache simultaneously.",
+            "The migration ran; the workers updated the cache.",
+        )
+        self.assertEqual(
+            differences["claim_scope"]["missing"],
+            {"only": 1, "first": 1, "both": 1, "simultaneously": 1},
+        )
+        self.assertEqual(differences["claim_scope"]["added"], {})
+
+    def test_preserved_claim_scope_passes_case_changes(self) -> None:
+        self.assertEqual(
+            MODULE.compare(
+                "Only the first migration ran; both workers finished at once.",
+                "The first migration was the only one to run; at once, both workers finished.",
+            ),
+            {},
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.6.8 - 2026-09-08
+
+- Preserve ranking, exclusivity, and simultaneity claims when simplifying formulaic prose.
+- Extend the local preservation guard to surface removed or added claim-scope markers for review, with synthetic coverage for real drift and harmless capitalization changes.
+- Advance nine fully reviewed upstream pins. The accepted behavior generalizes one preservation safeguard; notebook tooling, style detectors, grammar rules, catalog changes, and unmonitored repository churn remain outside the plugin.
+
 ## 0.6.7 - 2026-09-06
 
 - Explain unfamiliar terms, labels, cost models, and technical choices in plain language before adding detail.

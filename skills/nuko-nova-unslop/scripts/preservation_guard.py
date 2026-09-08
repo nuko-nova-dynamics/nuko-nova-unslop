@@ -28,6 +28,10 @@ PATTERNS = {
     ),
     "number": re.compile(r"(?<![\w.-])(?:[$€£])?\d+(?:[,.]\d+)*(?:\s?(?:%|ms|s|sec(?:onds?)?|minutes?|hours?|days?|weeks?|months?|years?|KB|MB|GB|TB|px|qt|lb|kg|mi))?(?![\w-])", re.IGNORECASE),
     "range": re.compile(r"(?<![\w.-])\d+(?:\.\d+)*\s?[–—-]\s?\d+(?:\.\d+)*(?![\w-])"),
+    "claim_scope": re.compile(
+        r"\b(?:only|both|first|last|most|least|simultaneously)\b|\bat[ \t]+once\b",
+        re.IGNORECASE,
+    ),
     "quote": re.compile(r"(?:\"([^\"\n]{3,})\"|“([^”\n]{3,})”)"),
     "markdown_target": re.compile(r"\[[^\]]*\]\(([^)]+)\)"),
 }
@@ -38,6 +42,8 @@ def normalize(kind: str, match: re.Match[str]) -> str:
         return match.group(1).strip()
     if kind == "quote":
         return next(group for group in match.groups() if group is not None).strip()
+    if kind == "claim_scope":
+        return match.group(0).lower()
     return match.group(0).rstrip(".,;:")
 
 

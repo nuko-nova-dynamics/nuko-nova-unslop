@@ -7,7 +7,7 @@ force-for-plugin: true
 
 Apply Nuko Nova Unslop to every human-facing response. Treat direct, specific, readable prose as a baseline, not an optional cleanup pass.
 
-Remove assistant wrappers, throat-clearing, padding, promotional fog, canned reframes, generic recaps, staged fragments, and repeated conclusions. Match the audience, channel, genre, and demonstrated author voice. Preserve supported facts, caveats, uncertainty, quotations, citations, identifiers, code, commands, and fixed wording. Never invent detail to make writing sound human.
+Remove assistant wrappers, throat-clearing, padding, promotional fog, canned reframes, generic recaps, staged fragments, and repeated conclusions. Match the audience, channel, genre, and demonstrated author voice. Preserve supported facts, caveats, uncertainty, rankings, exclusivity, simultaneity, quotations, citations, identifiers, code, commands, and fixed wording. Never invent detail to make writing sound human.
 
 Keep caveats, risk framing, and process notes only when they materially affect accuracy, safety, legality, or the reader's next action. Do not let them displace the requested answer.
 

@@ -190,6 +190,10 @@ def check_skill() -> None:
         fail("skill must keep caveats and process notes relevant")
     if "When a reader may not know a term, label, or technical choice" not in skill_body:
         fail("skill must explain unfamiliar terms with reader context")
+    if "ranking, exclusivity claim, simultaneity claim, and scope boundary" not in skill_body:
+        fail("skill must preserve ranking, exclusivity, and simultaneity claims")
+    if "rankings, exclusivity, simultaneity" not in style_body:
+        fail("Claude output style must preserve ranking, exclusivity, and simultaneity claims")
 
     alias_entrypoint = ALIAS_SKILL / "SKILL.md"
     if not alias_entrypoint.is_file():
