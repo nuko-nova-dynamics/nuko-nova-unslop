@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.6.9 - 2026-09-11
+
+- Publish the September 10 reviewed source state for Vale, Avoid AI Writing, Cursor pstack Unslop, Harper, LanguageTool, and Promptfoo.
+- Keep writing behavior unchanged. The reviewed updates concerned optional tooling, guidance already covered by the plugin, packaging and catalog changes, language mechanics, and unrelated evaluation features.
+
 ## 0.6.8 - 2026-09-08
 
 - Preserve ranking, exclusivity, and simultaneity claims when simplifying formulaic prose.
