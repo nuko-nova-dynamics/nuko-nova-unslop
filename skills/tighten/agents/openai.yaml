@@ -1,0 +1,7 @@
+interface:
+  display_name: "Tighten"
+  short_description: "Make every word justify its existence"
+  default_prompt: "Use $tighten: Make sure each word in this text justifies its existence."
+
+policy:
+  allow_implicit_invocation: false

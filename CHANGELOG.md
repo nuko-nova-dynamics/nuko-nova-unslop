@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.7.0 - 2026-09-11
+
+- Add `tighten` as a focused command for applying the strictest useful compression pass to supplied text.
+- Define the command with one direct instruction: “Make sure each word in this text justifies its existence.”
+- Keep the Codex `$tighten` entry point explicit-only so ordinary writing is not aggressively compressed.
+- Keep facts, scope, voice, rhythm, readability, and necessary context intact instead of treating the shortest result as the best result.
+- Align Codex default prompts with their literal `$skill` invocation names.
+
 ## 0.6.9 - 2026-09-11
 
 - Publish the September 10 reviewed source state for Vale, Avoid AI Writing, Cursor pstack Unslop, Harper, LanguageTool, and Promptfoo.

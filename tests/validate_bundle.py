@@ -15,6 +15,7 @@ from urllib.parse import unquote
 ROOT = Path(__file__).resolve().parents[1]
 SKILL = ROOT / "skills" / "nuko-nova-unslop"
 ALIAS_SKILL = ROOT / "skills" / "unslop"
+TIGHTEN_SKILL = ROOT / "skills" / "tighten"
 OUTPUT_STYLE = ROOT / "output-styles" / "nuko-nova-unslop.md"
 SEMVER = re.compile(r"^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:[-+][0-9A-Za-z.-]+)?$")
 SHA = re.compile(r"^[0-9a-f]{40}$")
@@ -154,8 +155,8 @@ def check_skill() -> None:
     if scripts != REQUIRED_SCRIPTS:
         fail(f"script set mismatch: {sorted(scripts)}")
     agent = (SKILL / "agents" / "openai.yaml").read_text(encoding="utf-8")
-    if "Use Unslop" not in agent:
-        fail("OpenAI default prompt must name Unslop")
+    if "Use $nuko-nova-unslop" not in agent:
+        fail("OpenAI default prompt must name $nuko-nova-unslop")
     if not re.search(r"^\s*allow_implicit_invocation:\s*true\s*$", agent, re.MULTILINE):
         fail("OpenAI implicit invocation must remain enabled")
     match = re.search(r'^\s*short_description:\s*"([^"]+)"', agent, re.MULTILINE)
@@ -192,6 +193,10 @@ def check_skill() -> None:
         fail("skill must explain unfamiliar terms with reader context")
     if "ranking, exclusivity claim, simultaneity claim, and scope boundary" not in skill_body:
         fail("skill must preserve ranking, exclusivity, and simultaneity claims")
+    if "**Tighten:**" not in skill_body or "Make sure each word in this text justifies its existence." not in skill_body:
+        fail("canonical skill must define the tighten mode and its direct instruction")
+    if "Remove words only when meaning, factual scope, intent, voice, rhythm, readability, and necessary context remain intact." not in skill_body:
+        fail("tighten mode must preserve meaning, scope, voice, readability, and context")
     if "rankings, exclusivity, simultaneity" not in style_body:
         fail("Claude output style must preserve ranking, exclusivity, and simultaneity claims")
 
@@ -213,12 +218,43 @@ def check_skill() -> None:
     alias_agent = (ALIAS_SKILL / "agents" / "openai.yaml").read_text(encoding="utf-8")
     if not re.search(r"^\s*display_name:\s*\"Unslop\"\s*$", alias_agent, re.MULTILINE):
         fail("alias OpenAI metadata must display Unslop")
+    if "Use $unslop" not in alias_agent:
+        fail("alias OpenAI default prompt must name $unslop")
     if not re.search(r"^\s*allow_implicit_invocation:\s*false\s*$", alias_agent, re.MULTILINE):
         fail("alias OpenAI invocation must remain explicit")
+
+    tighten_entrypoint = TIGHTEN_SKILL / "SKILL.md"
+    if not tighten_entrypoint.is_file():
+        fail("tighten command skill is missing")
+    tighten_frontmatter = parse_frontmatter(tighten_entrypoint)
+    if set(tighten_frontmatter) != {"name", "description"}:
+        fail("tighten skill frontmatter must contain only name and description")
+    if tighten_frontmatter["name"] != "tighten":
+        fail("tighten skill name mismatch")
+    if not tighten_frontmatter["description"].startswith("Focused command for tightening supplied prose"):
+        fail("tighten skill description must declare its focused purpose")
+    tighten_body = tighten_entrypoint.read_text(encoding="utf-8")
+    if "../nuko-nova-unslop/SKILL.md" not in tighten_body:
+        fail("tighten command must route to the canonical skill")
+    if "Make sure each word in this text justifies its existence." not in tighten_body:
+        fail("tighten command must preserve its direct instruction")
+    if len(tighten_body) > 1_000 or "## Non-negotiable contract" in tighten_body:
+        fail("tighten command must not duplicate canonical behavior")
+    tighten_agent_path = TIGHTEN_SKILL / "agents" / "openai.yaml"
+    if not tighten_agent_path.is_file():
+        fail("tighten OpenAI metadata is missing")
+    tighten_agent = tighten_agent_path.read_text(encoding="utf-8")
+    if not re.search(r'^\s*display_name:\s*"Tighten"\s*$', tighten_agent, re.MULTILINE):
+        fail("tighten OpenAI metadata must display Tighten")
+    if 'default_prompt: "Use $tighten: Make sure each word in this text justifies its existence."' not in tighten_agent:
+        fail("tighten OpenAI default prompt must name $tighten and preserve its direct instruction")
+    if not re.search(r"^\s*allow_implicit_invocation:\s*false\s*$", tighten_agent, re.MULTILINE):
+        fail("tighten OpenAI invocation must remain explicit")
 
     for path in [SKILL / "SKILL.md", *(SKILL / "references").glob("*.md")]:
         check_links(path)
     check_links(ALIAS_SKILL / "SKILL.md")
+    check_links(TIGHTEN_SKILL / "SKILL.md")
     for path in (SKILL / "scripts").glob("*.py"):
         try:
             ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
@@ -282,7 +318,7 @@ def main() -> int:
     check_no_hooks()
     check_upstreams()
     check_content()
-    print("PASS: dual manifests, forced Claude output style, hook-free packaging, one canonical skill, one short alias, six references, two helpers, seventeen source pins, links, metadata, and cadence verified")
+    print("PASS: dual manifests, forced Claude output style, hook-free packaging, one canonical skill, one short alias, one focused command, six references, two helpers, seventeen source pins, links, metadata, and cadence verified")
     return 0
 
 

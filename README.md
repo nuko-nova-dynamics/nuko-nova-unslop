@@ -27,6 +27,16 @@ The clients use different prefix characters, but `unslop` is the shared trigger.
 
 The standard and the linter are separate. The standard shapes prose when the skill or output style is active. The linter runs only when invoked for a writing task or file. It does not scan final conversational output automatically. Use it for prose files, multi-paragraph deliverables, and text that will be sent, submitted, published, or reused.
 
+## Tighten command
+
+Use `tighten` when the text needs a stricter compression pass:
+
+- ChatGPT: invoke `@Unslop` and ask for Tighten mode
+- Codex: type `$tighten` and select Tighten
+- Claude Code: `/nuko-nova-unslop:tighten`
+
+Tighten mode runs only when the user asks for it, so ordinary writing does not receive an aggressive compression pass. Codex also keeps the `$tighten` entry point explicit-only. The command gives the AI one direct instruction: “Make sure each word in this text justifies its existence.” It removes words that do not contribute meaning while preserving facts, scope, intent, voice, rhythm, readability, and necessary context.
+
 ## What it does
 
 - Drafts and rewrites mutable prose from supplied facts, audience, channel, and voice, with zero em dashes or spaced double-hyphen substitutes and flowing constructions instead of staccato fragments.
@@ -118,7 +128,7 @@ After creating a release commit, render aligned immutable catalog entries with:
 ```bash
 python3 scripts/render_marketplace_entries.py \
   --sha <40-character-release-commit> \
-  --ref nuko-nova-unslop-marketplace-v0.6.9
+  --ref nuko-nova-unslop-marketplace-v0.7.0
 ```
 
 ## License

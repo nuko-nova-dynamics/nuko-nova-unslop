@@ -106,6 +106,56 @@ class ValidatorMutationTests(unittest.TestCase):
 
         self.assert_rejected(mutate, "alias OpenAI invocation must remain explicit")
 
+    def test_missing_tighten_command_is_rejected(self) -> None:
+        def mutate(root: Path) -> None:
+            shutil.rmtree(root / "skills" / "tighten")
+
+        self.assert_rejected(mutate, "tighten command skill is missing")
+
+    def test_tighten_instruction_drift_is_rejected(self) -> None:
+        def mutate(root: Path) -> None:
+            path = root / "skills" / "tighten" / "SKILL.md"
+            text = path.read_text(encoding="utf-8")
+            path.write_text(
+                text.replace(
+                    "Make sure each word in this text justifies its existence.",
+                    "Shorten the text as much as possible.",
+                ),
+                encoding="utf-8",
+            )
+
+        self.assert_rejected(mutate, "tighten command must preserve its direct instruction")
+
+    def test_tighten_preservation_drift_is_rejected(self) -> None:
+        def mutate(root: Path) -> None:
+            path = root / "skills" / "nuko-nova-unslop" / "SKILL.md"
+            text = path.read_text(encoding="utf-8")
+            path.write_text(
+                text.replace(
+                    "Remove words only when meaning, factual scope, intent, voice, rhythm, readability, and necessary context remain intact.",
+                    "Remove words even when meaning or factual scope changes.",
+                ),
+                encoding="utf-8",
+            )
+
+        self.assert_rejected(mutate, "tighten mode must preserve meaning, scope, voice, readability, and context")
+
+    def test_tighten_implicit_invocation_is_rejected(self) -> None:
+        def mutate(root: Path) -> None:
+            path = root / "skills" / "tighten" / "agents" / "openai.yaml"
+            text = path.read_text(encoding="utf-8")
+            path.write_text(text.replace("allow_implicit_invocation: false", "allow_implicit_invocation: true"), encoding="utf-8")
+
+        self.assert_rejected(mutate, "tighten OpenAI invocation must remain explicit")
+
+    def test_tighten_default_prompt_drift_is_rejected(self) -> None:
+        def mutate(root: Path) -> None:
+            path = root / "skills" / "tighten" / "agents" / "openai.yaml"
+            text = path.read_text(encoding="utf-8")
+            path.write_text(text.replace("Use $tighten:", "Use Tighten to"), encoding="utf-8")
+
+        self.assert_rejected(mutate, "tighten OpenAI default prompt must name $tighten and preserve its direct instruction")
+
     def test_forced_output_style_drift_is_rejected(self) -> None:
         def mutate(root: Path) -> None:
             path = root / "output-styles" / "nuko-nova-unslop.md"
