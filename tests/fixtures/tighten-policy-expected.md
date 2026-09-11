@@ -1,0 +1,1 @@
+Only the signed-in workspace owner may publish billing changes. Editors may save drafts but not publish them. Early results from 86 workspaces suggest the new review step may reduce billing errors by about 12%, but do not yet establish that it will reduce errors for every workspace. Review, then publish. Review, then publish. The repetition is deliberate and should remain.

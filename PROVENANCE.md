@@ -14,7 +14,7 @@ The August 30, 2026 interaction review supported one additional scope-discipline
 
 The September 6, 2026 interaction review supported a reader-context rule: explain unfamiliar terms and technical choices in plain language before adding detail, while preserving accurate terminology. The pattern appeared across multiple unrelated tasks and dates. The public rule and synthetic regression contain no private interaction text.
 
-The owner supplied the September 11, 2026 `tighten` command for publication as product behavior, with the instruction: “Make sure each word in this text justifies its existence.” This is not private interaction-review evidence.
+The owner supplied the September 11, 2026 `tighten` command for publication as product behavior, with the instruction: “Make sure each word in this text justifies its existence.” The owner then clarified that Tighten must apply the complete Nuko Nova Unslop standard before a broader second-stage removal pass. The public rules generalize that direction without publishing private interaction text.
 
 ## Public research sources
 

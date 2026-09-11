@@ -14,7 +14,7 @@ describe("Nuko Nova Unslop skill package", () => {
     const skill = getPrimarySkill();
 
     expect(skill.name).toBe("nuko-nova-unslop");
-    expect(skill.version).toBe("0.7.0");
+    expect(skill.version).toBe("0.8.0");
     expect(skill.uri).toBe("skill://nuko-nova-unslop/nuko-nova-unslop/SKILL.md");
     expect(skill.content).toContain("# Nuko Nova Unslop");
     expect(skill.content).toContain("## Always-on human-writing standard");
@@ -26,6 +26,7 @@ describe("Nuko Nova Unslop skill package", () => {
     expect(resources.length).toBeGreaterThan(5);
     expect(resources.every((resource) => resource.uri.startsWith("skill://nuko-nova-unslop/nuko-nova-unslop/"))).toBe(true);
     expect(resources.some((resource) => resource.uri.endsWith("references/pattern-catalog.md"))).toBe(true);
+    expect(resources.some((resource) => resource.uri.endsWith("references/tighten.md"))).toBe(true);
     expect(resources.some((resource) => resource.uri.endsWith("scripts/unslop_lint.py"))).toBe(true);
     expect(resources.some((resource) => resource.uri.includes("__pycache__"))).toBe(false);
     expect(resources.some((resource) => resource.uri.endsWith(".pyc"))).toBe(false);

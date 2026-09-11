@@ -126,6 +126,34 @@ class ValidatorMutationTests(unittest.TestCase):
 
         self.assert_rejected(mutate, "tighten command must preserve its direct instruction")
 
+    def test_tighten_route_drift_is_rejected(self) -> None:
+        def mutate(root: Path) -> None:
+            path = root / "skills" / "tighten" / "SKILL.md"
+            text = path.read_text(encoding="utf-8")
+            path.write_text(
+                text.replace("../nuko-nova-unslop/SKILL.md", "../unslop/SKILL.md"),
+                encoding="utf-8",
+            )
+
+        self.assert_rejected(mutate, "tighten command must route to the canonical skill")
+
+    def test_tighten_second_stage_drift_is_rejected(self) -> None:
+        def mutate(root: Path) -> None:
+            path = root / "skills" / "nuko-nova-unslop" / "SKILL.md"
+            text = path.read_text(encoding="utf-8")
+            path.write_text(
+                text.replace(
+                    "first apply the complete Nuko Nova Unslop workflow",
+                    "skip the normal workflow",
+                ),
+                encoding="utf-8",
+            )
+
+        self.assert_rejected(
+            mutate,
+            "tighten mode must run the complete unslop workflow before its second-stage removal pass",
+        )
+
     def test_tighten_preservation_drift_is_rejected(self) -> None:
         def mutate(root: Path) -> None:
             path = root / "skills" / "nuko-nova-unslop" / "SKILL.md"

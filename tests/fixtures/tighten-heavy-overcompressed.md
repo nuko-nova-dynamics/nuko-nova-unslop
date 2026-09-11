@@ -1,0 +1,1 @@
+The September 18 launch. The team is reviewing 14 support tickets to identify the most common setup problem and decide whether to revise the onboarding guide. The team will share its decision on September 16.

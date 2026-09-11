@@ -27,6 +27,7 @@ REQUIRED_REFERENCES = {
     "pattern-catalog.md",
     "profiles-and-genres.md",
     "source-map.md",
+    "tighten.md",
 }
 REQUIRED_SCRIPTS = {"preservation_guard.py", "unslop_lint.py"}
 PROFILES = {"balanced", "strict", "nuko-nova"}
@@ -195,6 +196,8 @@ def check_skill() -> None:
         fail("skill must preserve ranking, exclusivity, and simultaneity claims")
     if "**Tighten:**" not in skill_body or "Make sure each word in this text justifies its existence." not in skill_body:
         fail("canonical skill must define the tighten mode and its direct instruction")
+    if "first apply the complete Nuko Nova Unslop workflow" not in skill_body or "[tighten.md](references/tighten.md)" not in skill_body:
+        fail("tighten mode must run the complete unslop workflow before its second-stage removal pass")
     if "Remove words only when meaning, factual scope, intent, voice, rhythm, readability, and necessary context remain intact." not in skill_body:
         fail("tighten mode must preserve meaning, scope, voice, readability, and context")
     if "rankings, exclusivity, simultaneity" not in style_body:
@@ -238,7 +241,9 @@ def check_skill() -> None:
         fail("tighten command must route to the canonical skill")
     if "Make sure each word in this text justifies its existence." not in tighten_body:
         fail("tighten command must preserve its direct instruction")
-    if len(tighten_body) > 1_000 or "## Non-negotiable contract" in tighten_body:
+    if "Finish its normal workflow" not in tighten_body or "references/tighten.md" not in tighten_body:
+        fail("tighten command must add its second-stage rules after the complete canonical workflow")
+    if len(tighten_body) > 1_200 or "## Non-negotiable contract" in tighten_body:
         fail("tighten command must not duplicate canonical behavior")
     tighten_agent_path = TIGHTEN_SKILL / "agents" / "openai.yaml"
     if not tighten_agent_path.is_file():
@@ -318,7 +323,7 @@ def main() -> int:
     check_no_hooks()
     check_upstreams()
     check_content()
-    print("PASS: dual manifests, forced Claude output style, hook-free packaging, one canonical skill, one short alias, one focused command, six references, two helpers, seventeen source pins, links, metadata, and cadence verified")
+    print("PASS: dual manifests, forced Claude output style, hook-free packaging, one canonical skill, one short alias, one focused command, seven references, two helpers, seventeen source pins, links, metadata, and cadence verified")
     return 0
 
 

@@ -1,0 +1,73 @@
+[
+  {
+    "name": "remove-repetition-and-indirection",
+    "source": "tighten-heavy.md",
+    "expected": "tighten-heavy-expected.md",
+    "protected": [
+      "The September 18 launch remains on schedule.",
+      "14 support tickets",
+      "most common setup problem",
+      "whether to revise the onboarding guide",
+      "September 16"
+    ],
+    "removed": [
+      "Before we get into the details",
+      "it is important to note",
+      "currently in the process of",
+      "in order to",
+      "very important",
+      "Overall, the main takeaway"
+    ],
+    "maximum_word_ratio": 0.65
+  },
+  {
+    "name": "preserve-voice-scope-and-ownership",
+    "source": "tighten-voice.md",
+    "expected": "tighten-voice-expected.md",
+    "protected": [
+      "I don't like this trade-off.",
+      "48 hours",
+      "24 hours",
+      "one day",
+      "could increase",
+      "billing error",
+      "Maya owns the final decision"
+    ],
+    "removed": [
+      "To be completely honest",
+      "It is important to remember"
+    ],
+    "maximum_word_ratio": 0.75
+  },
+  {
+    "name": "preserve-permissions-uncertainty-and-deliberate-repetition",
+    "source": "tighten-policy.md",
+    "expected": "tighten-policy-expected.md",
+    "protected": [
+      "Only the signed-in workspace owner may publish billing changes",
+      "Editors may save drafts but not publish them",
+      "86 workspaces",
+      "suggest",
+      "may reduce",
+      "about 12%",
+      "every workspace",
+      "Review, then publish. Review, then publish.",
+      "The repetition is deliberate and should remain"
+    ],
+    "removed": [
+      "but they may not",
+      "the evidence does not yet establish"
+    ],
+    "maximum_word_ratio": 0.96
+  },
+  {
+    "name": "allow-a-no-op-when-every-word-is-needed",
+    "source": "tighten-no-op.md",
+    "expected": "tighten-no-op.md",
+    "protected": [
+      "Only Maya may approve refunds over $500."
+    ],
+    "removed": [],
+    "maximum_word_ratio": 1.0
+  }
+]

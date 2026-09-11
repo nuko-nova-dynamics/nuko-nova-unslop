@@ -1,0 +1,1 @@
+I don't like this trade-off. To be completely honest, cutting the review window from 48 hours to 24 hours would save one day, but it could also increase the chance that we miss a billing error. It is important to remember that Maya owns the final decision.

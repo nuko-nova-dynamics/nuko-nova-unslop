@@ -5,8 +5,8 @@ description: Focused command for tightening supplied prose until each word justi
 
 # Tighten
 
-Read and follow [Nuko Nova Unslop](../nuko-nova-unslop/SKILL.md) completely, then apply its **Tighten** mode to the user’s supplied text.
+Read and apply [Nuko Nova Unslop](../nuko-nova-unslop/SKILL.md) completely. Finish its normal workflow and applicable profile before running the dedicated second-stage rules in [tighten.md](../nuko-nova-unslop/references/tighten.md).
 
 Make sure each word in this text justifies its existence.
 
-This command changes only the invocation and mode. The canonical skill remains the source of truth for preservation, voice, context, and delivery rules.
+This command adds a removal pass to the full standard. It does not replace the unslop audit, preservation contract, voice calibration, context checks, or quality gate.

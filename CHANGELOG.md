@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.8.0 - 2026-09-11
+
+- Make Tighten run the complete Nuko Nova Unslop workflow and applicable profile before its aggressive removal pass.
+- Add second-stage rules for cutting throat-clearing, repetition, empty qualifiers, indirect phrasing, vague stacks, and unnecessary structural scaffolding.
+- Add a counterfactual removal test at the passage, structural, sentence, clause, phrase, and word levels.
+- Add a compression-damage check that restores language needed for accuracy, context, natural rhythm, voice, and usability.
+- Keep the Codex command explicit-only and scope the Claude Code command description to requests that explicitly ask for Tighten or its strictest useful compression.
+- Add synthetic regression cases for heavy compression and preservation of facts, claim scope, ownership, and voice.
+
 ## 0.7.0 - 2026-09-11
 
 - Add `tighten` as a focused command for applying the strictest useful compression pass to supplied text.

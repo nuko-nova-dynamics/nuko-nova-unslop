@@ -56,7 +56,7 @@ When writing as yourself, take a position instead of hiding behind neutral conne
 
 - **Draft:** Create new prose from supplied facts, purpose, audience, and voice. Surface material gaps instead of filling them.
 - **Rewrite:** Make the minimum effective changes. Return the finished prose first.
-- **Tighten:** Apply the strongest useful compression pass when the user explicitly invokes `tighten` or asks for that level of compression: “Make sure each word in this text justifies its existence.” Remove words only when meaning, factual scope, intent, voice, rhythm, readability, and necessary context remain intact. Return only the tightened text unless the user requests another format or supporting output, or a material ambiguity requires a brief note.
+- **Tighten:** When the user explicitly invokes `tighten` or asks for that level of compression, first apply the complete Nuko Nova Unslop workflow and the appropriate profile. Then read and apply [tighten.md](references/tighten.md) as a distinct second pass: “Make sure each word in this text justifies its existence.” Remove words only when meaning, factual scope, intent, voice, rhythm, readability, and necessary context remain intact. Return only the tightened text unless the user requests another format or supporting output, or a material ambiguity requires a brief note.
 - **Audit:** Name each verified pattern, quote the affected span, explain its effect, and suggest a focused fix. Do not rewrite.
 - **File:** Read the file, preserve its non-prose structure, edit only authorized prose, and write only the final version back. Summarize the change in chat.
 - **Embedded:** When another task invokes the skill for a description, message, comment, or document section, run the checks internally and return only the requested artifact.
@@ -191,5 +191,6 @@ A no-op or a few precise edits are valid outcomes.
 - [interaction-calibration.md](references/interaction-calibration.md): carry corrections forward, preserve scope, and resolve preference conflicts.
 - [pattern-catalog.md](references/pattern-catalog.md): observable patterns, remedies, and false positives.
 - [profiles-and-genres.md](references/profiles-and-genres.md): balanced, strict, and Nuko Nova profiles plus genre-specific defaults.
+- [tighten.md](references/tighten.md): explicit second-stage removal rules and the compression-damage check.
 - [evolution.md](references/evolution.md): controlled upstream review and improvement protocol.
 - [source-map.md](references/source-map.md): source provenance, role, license, and limits.

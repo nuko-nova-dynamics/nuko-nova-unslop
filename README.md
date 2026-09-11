@@ -35,7 +35,7 @@ Use `tighten` when the text needs a stricter compression pass:
 - Codex: type `$tighten` and select Tighten
 - Claude Code: `/nuko-nova-unslop:tighten`
 
-Tighten mode runs only when the user asks for it, so ordinary writing does not receive an aggressive compression pass. Codex also keeps the `$tighten` entry point explicit-only. The command gives the AI one direct instruction: “Make sure each word in this text justifies its existence.” It removes words that do not contribute meaning while preserving facts, scope, intent, voice, rhythm, readability, and necessary context.
+Tighten mode runs only when the user asks for it, so ordinary writing does not receive an aggressive compression pass. Codex keeps the `$tighten` entry point explicit-only, while Claude Code exposes the namespaced command for requests that explicitly ask for Tighten or its strictest useful compression. Tighten first applies the complete Nuko Nova Unslop workflow and the appropriate profile. It then runs a separate removal pass built around one direct instruction: “Make sure each word in this text justifies its existence.” The second pass removes throat-clearing, repetition, empty qualifiers, indirect phrasing, vague stacks, and unnecessary structural scaffolding while preserving facts, scope, intent, voice, rhythm, readability, and necessary context. A final compression-damage check restores any language needed for accuracy or natural prose.
 
 ## What it does
 
@@ -128,7 +128,7 @@ After creating a release commit, render aligned immutable catalog entries with:
 ```bash
 python3 scripts/render_marketplace_entries.py \
   --sha <40-character-release-commit> \
-  --ref nuko-nova-unslop-marketplace-v0.7.0
+  --ref nuko-nova-unslop-marketplace-v0.8.0
 ```
 
 ## License
