@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.8.1 - 2026-09-16
+
+- Protect complete fenced Markdown code blocks during source-to-rewrite preservation checks.
+- Match closing fences only when their marker type matches the opener, their run is at least as long, and the closing line has no payload.
+- Keep top-level, block-quote, list-item, indented, and unclosed fences protected; normalize CRLF and LF line endings; and report drift without printing code contents.
+- Add synthetic coverage for nested, mixed-marker, container, indented, unclosed, redaction, invalid-opener, and cross-platform fence cases.
+- Advance five fully reviewed upstream pins. Only the fence-boundary safeguard changed local behavior; repository churn, English mechanics, language-specific grammar data, and evaluation-engine details remain outside the plugin.
+
 ## 0.8.0 - 2026-09-11
 
 - Make Tighten run the complete Nuko Nova Unslop workflow and applicable profile before its aggressive removal pass.

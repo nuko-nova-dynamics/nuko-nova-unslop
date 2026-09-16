@@ -34,6 +34,8 @@ The September 6, 2026 evolution review extended that boundary handling to HTML t
 
 The September 8, 2026 evolution review generalized a public preservation safeguard for rankings, exclusivity, and simultaneity. The local contract, guard, and synthetic tests were written for this plugin; no upstream prompt, detector implementation, or phrase catalog was copied.
 
+The September 16, 2026 evolution review generalized a fenced-code preservation safeguard into an exact local comparison for complete Markdown fence spans. The implementation extends this plugin's existing marker-aware boundary handling and uses synthetic regressions for mixed markers, longer openers, block-quote and list-item containers, indentation, unclosed fences, redacted diagnostics, invalid openers, and line-ending normalization. No upstream implementation, prompt, detector catalog, or phrase corpus was copied.
+
 ## Reuse policy
 
 The plugin's prose, rule organization, Python helpers, tests, and workflows were written for this project. Third-party phrase corpora, language models, grammar engines, and source code are not copied into the distribution.
