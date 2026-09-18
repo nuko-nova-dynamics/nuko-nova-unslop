@@ -36,6 +36,8 @@ The September 8, 2026 evolution review generalized a public preservation safegua
 
 The September 16, 2026 evolution review generalized a fenced-code preservation safeguard into an exact local comparison for complete Markdown fence spans. The implementation extends this plugin's existing marker-aware boundary handling and uses synthetic regressions for mixed markers, longer openers, block-quote and list-item containers, indentation, unclosed fences, redacted diagnostics, invalid openers, and line-ending normalization. No upstream implementation, prompt, detector catalog, or phrase corpus was copied.
 
+The September 18, 2026 evolution review generalized a Markdown-table preservation safeguard into an original local scanner for table content and structure. It recognizes pipe variants and common quote/list containers, distinguishes tables from code and raw HTML, preserves overflow cells, and keeps changed cell values out of diagnostics. The implementation and synthetic regressions were written for this plugin; no upstream parser, prompt, detector implementation, test corpus, or phrase list was copied.
+
 ## Reuse policy
 
 The plugin's prose, rule organization, Python helpers, tests, and workflows were written for this project. Third-party phrase corpora, language models, grammar engines, and source code are not copied into the distribution.

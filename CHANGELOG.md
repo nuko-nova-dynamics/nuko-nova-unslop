@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.8.2 - 2026-09-18
+
+- Protect Markdown table cell content during source-to-rewrite preservation checks.
+- Recognize tables with or without outer pipes, compact delimiters, escaped pipes, block-quote and list containers, and body rows with missing or extra cells.
+- Allow cell padding, delimiter width, and outer-pipe formatting changes while reporting content, alignment, row, and overflow-cell drift.
+- Keep fenced code, indented code, comments, and raw HTML outside table parsing; report table drift without printing cell contents while preserving unrelated diagnostics.
+- Add synthetic coverage for malformed transitions, duplicate tables, nested containers, source boundaries, line endings, redaction, and false-positive cases.
+- Advance six fully reviewed upstream pins. Only the table-boundary safeguard changed local behavior; parser mechanics, grammar rules, language data, and evaluation-engine changes remain outside the plugin.
+
 ## 0.8.1 - 2026-09-16
 
 - Protect complete fenced Markdown code blocks during source-to-rewrite preservation checks.
