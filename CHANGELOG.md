@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.8.3 - 2026-09-22
+
+- Share Markdown source recognition between the linter and preservation guard, removing duplicate fence, comment, and masking implementations.
+- Keep nested list and quote fences outside lint findings while retaining visible prose after a closing fence or container exit; reject invalid backtick openers and preserve original line positions.
+- Keep table prose lintable and retain the existing code and table preservation checks.
+- Add synthetic regressions, checks for copied helper execution, and package validation for the shared module.
+- Document the plugin blueprint and domain terms, and use one portable `pnpm check` command locally and in CI.
+
 ## 0.8.2 - 2026-09-18
 
 - Protect Markdown table cell content during source-to-rewrite preservation checks.

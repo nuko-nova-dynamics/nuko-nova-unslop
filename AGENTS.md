@@ -10,6 +10,7 @@ This repository contains one shared writing skill packaged for Codex and Claude 
 - `output-styles/nuko-nova-unslop.md` makes the standard apply to every Claude Code response while the plugin is enabled.
 - `skills/nuko-nova-unslop/agents/openai.yaml` keeps implicit Codex invocation enabled.
 - The files under `skills/nuko-nova-unslop/references/` hold detailed rules and maintenance guidance.
+- `skills/nuko-nova-unslop/scripts/markdown_source.py` owns shared Markdown recognition and offset-preserving masking. The linter and preservation guard apply their own editorial policies to its results.
 - `.codex-plugin/plugin.json` and `.claude-plugin/plugin.json` must keep name, version, description, author, repository, and license aligned.
 - `upstreams.lock.json` records reviewed upstream state; a new SHA is not accepted until its relevant diff has been reviewed and the package gates pass.
 - A recurring owner-created automation may publish only when its prompt explicitly grants the exact Nuko Nova Unslop push, release, marketplace, and client-update actions and every target is reverified during that run.
@@ -34,12 +35,13 @@ This repository contains one shared writing skill packaged for Codex and Claude 
 Run these before committing:
 
 ```bash
-python3 tests/validate_bundle.py
-python3 -m unittest discover -s tests -p 'test_*.py'
+pnpm check
 python3 /Users/judiazm/.codex/skills/.system/skill-creator/scripts/quick_validate.py skills/nuko-nova-unslop
 python3 /Users/judiazm/.codex/skills/.system/skill-creator/scripts/quick_validate.py skills/unslop
 python3 /Users/judiazm/.codex/skills/.system/skill-creator/scripts/quick_validate.py skills/tighten
 python3 /Users/judiazm/.codex/skills/.system/plugin-creator/scripts/validate_plugin.py .
 ```
+
+`pnpm check` runs the portable bundle, Python, and MCP checks and is also the CI entry point. Install workspace dependencies with `pnpm install --frozen-lockfile` first. The creator checks above depend on the local Codex installation and remain separate.
 
 Run `claude plugin validate .` when Claude Code is available. Treat package validation, marketplace registration, installation, and client reload as separate states.

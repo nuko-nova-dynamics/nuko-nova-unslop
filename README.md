@@ -57,13 +57,15 @@ Run the deterministic checks directly:
 ```bash
 python3 skills/nuko-nova-unslop/scripts/unslop_lint.py --profile balanced draft.md
 python3 skills/nuko-nova-unslop/scripts/preservation_guard.py source.md rewrite.md
-python3 tests/validate_bundle.py
-python3 -m unittest discover -s tests -p 'test_*.py'
 ```
 
 The linter reports writing signals for editorial review.
 
 The scripts make no network or model calls. They run only when invoked and never block a client response.
+
+Both helpers share Markdown source recognition, so fenced code has the same meaning in lint and preservation checks. The linter still checks visible table prose; the preservation guard checks table content for drift. Keep the bundled `scripts` directory together when copying the helpers.
+
+For development, run `pnpm install --frozen-lockfile` and `pnpm check`. See [CONTRIBUTING.md](CONTRIBUTING.md) for the plugin blueprint and [AGENTS.md](AGENTS.md) for the additional local checks.
 
 ## ChatGPT web plugin
 
@@ -128,7 +130,7 @@ After creating a release commit, render aligned immutable catalog entries with:
 ```bash
 python3 scripts/render_marketplace_entries.py \
   --sha <40-character-release-commit> \
-  --ref nuko-nova-unslop-marketplace-v0.8.2
+  --ref nuko-nova-unslop-marketplace-v0.8.3
 ```
 
 ## License

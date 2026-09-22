@@ -29,7 +29,7 @@ REQUIRED_REFERENCES = {
     "source-map.md",
     "tighten.md",
 }
-REQUIRED_SCRIPTS = {"preservation_guard.py", "unslop_lint.py"}
+REQUIRED_SCRIPTS = {"markdown_source.py", "preservation_guard.py", "unslop_lint.py"}
 PROFILES = {"balanced", "strict", "nuko-nova"}
 ARTWORK = {
     "composerIcon": ("./assets/icon.png", 256),
@@ -323,7 +323,7 @@ def main() -> int:
     check_no_hooks()
     check_upstreams()
     check_content()
-    print("PASS: dual manifests, forced Claude output style, hook-free packaging, one canonical skill, one short alias, one focused command, seven references, two helpers, seventeen source pins, links, metadata, and cadence verified")
+    print("PASS: dual manifests, forced Claude output style, hook-free packaging, one canonical skill, one short alias, one focused command, seven references, two helpers with shared Markdown recognition, seventeen source pins, links, metadata, and cadence verified")
     return 0
 
 

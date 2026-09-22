@@ -24,9 +24,5 @@ jobs:
           corepack prepare pnpm@10.34.5 --activate
       - name: Install MCP dependencies
         run: pnpm install --frozen-lockfile --ignore-scripts
-      - name: Validate bundle
-        run: python3 tests/validate_bundle.py
-      - name: Run tests
-        run: python3 -m unittest discover -s tests -p 'test_*.py'
-      - name: Validate MCP host
-        run: pnpm mcp:check
+      - name: Check plugin and MCP host
+        run: pnpm check

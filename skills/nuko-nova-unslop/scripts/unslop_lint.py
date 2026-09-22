@@ -16,6 +16,8 @@ from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Iterable
 
+from markdown_source import fenced_code_spans, html_comment_spans, mask_spans
+
 
 PROFILE_LEVEL = {"balanced": 1, "strict": 2, "nuko-nova": 3}
 
@@ -221,7 +223,6 @@ RULES = (
 )
 
 
-FENCE_LINE_RE = re.compile(r"^[ \t]{0,3}(`{3,}|~{3,})([^\r\n]*)\r?$", re.MULTILINE)
 INLINE_CODE_RE = re.compile(r"`[^`\n]+`")
 LINK_TARGET_RE = re.compile(r"(?<=\]\()[^)]+(?=\))")
 URL_RE = re.compile(r"https?://[^\s)>]+")
@@ -242,32 +243,6 @@ REFERENCE_DEFINITION_RE = re.compile(
 LIST_MARKER_RE = re.compile(r"^ {0,3}(?:[-*+]|\d{1,9}[.)])(?:[ \t]+|$)")
 
 
-def fenced_code_ranges(text: str) -> list[tuple[int, int]]:
-    ranges: list[tuple[int, int]] = []
-    opening: tuple[str, int, int] | None = None
-
-    for match in FENCE_LINE_RE.finditer(text):
-        marker = match.group(1)
-        suffix = match.group(2)
-        if opening is None:
-            opening = (marker[0], len(marker), match.start())
-            continue
-
-        marker_char, marker_length, start = opening
-        if marker[0] != marker_char or len(marker) < marker_length:
-            continue
-        if suffix.strip(" \t"):
-            continue
-
-        ranges.append((start, match.end()))
-        opening = None
-
-    if opening is not None:
-        ranges.append((opening[2], len(text)))
-
-    return ranges
-
-
 def frontmatter_range(text: str) -> tuple[int, int] | None:
     """Return leading YAML frontmatter only when it contains a mapping key."""
     lines = text.splitlines(keepends=True)
@@ -284,33 +259,6 @@ def frontmatter_range(text: str) -> tuple[int, int] | None:
             has_mapping_key = True
         offset += len(line)
     return None
-
-
-def html_comment_ranges(text: str, protected_ranges: list[tuple[int, int]]) -> list[tuple[int, int]]:
-    """Find Markdown HTML comments without treating code examples as comments."""
-    ranges: list[tuple[int, int]] = []
-    cursor = 0
-    while True:
-        start = text.find("<!--", cursor)
-        if start < 0:
-            break
-
-        protected_end = next(
-            (end for protected_start, end in protected_ranges if protected_start <= start < end),
-            None,
-        )
-        if protected_end is not None:
-            cursor = protected_end
-            continue
-
-        closing = text.find("-->", start + 4)
-        if closing < 0:
-            ranges.append((start, len(text)))
-            break
-        end = closing + 3
-        ranges.append((start, end))
-        cursor = end
-    return ranges
 
 
 def indented_code_ranges(text: str) -> list[tuple[int, int]]:
@@ -343,19 +291,11 @@ def indented_code_ranges(text: str) -> list[tuple[int, int]]:
     return ranges
 
 
-def mask_ranges(chars: list[str], ranges: Iterable[tuple[int, int]]) -> None:
-    for start, end in ranges:
-        for index in range(start, end):
-            if chars[index] != "\n":
-                chars[index] = " "
-
-
 def mask_exempt_spans(text: str) -> str:
-    chars = list(text)
-    fenced_ranges = fenced_code_ranges(text)
+    fenced_ranges = fenced_code_spans(text)
     inline_ranges = [(match.start(), match.end()) for match in INLINE_CODE_RE.finditer(text)]
     protected_ranges = [*fenced_ranges, *inline_ranges]
-    source_only_ranges = html_comment_ranges(text, protected_ranges)
+    source_only_ranges = html_comment_spans(text, protected_ranges)
     if leading_frontmatter := frontmatter_range(text):
         source_only_ranges.append(leading_frontmatter)
 
@@ -364,11 +304,11 @@ def mask_exempt_spans(text: str) -> str:
         *((match.start(), match.end()) for match in HTML_TAG_RE.finditer(text)),
         *((match.start(), match.end()) for match in REFERENCE_DEFINITION_RE.finditer(text)),
     ]
-    mask_ranges(chars, [*protected_ranges, *source_only_ranges, *syntax_ranges])
+    ranges = [*protected_ranges, *source_only_ranges, *syntax_ranges]
     for pattern in (LINK_TARGET_RE, URL_RE, QUOTED_SPAN_RE, BLOCKQUOTE_RE):
         for match in pattern.finditer(text):
-            mask_ranges(chars, [(match.start(), match.end())])
-    return "".join(chars)
+            ranges.append((match.start(), match.end()))
+    return mask_spans(text, ranges)
 
 
 def position(text: str, offset: int) -> tuple[int, int]:

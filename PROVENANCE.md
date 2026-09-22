@@ -40,6 +40,8 @@ The September 18, 2026 evolution review generalized a Markdown-table preservatio
 
 ## Reuse policy
 
+The September 22, 2026 architecture review found divergent fence handling in the two local helpers. The correction shares this project's existing Markdown scanner and adds synthetic regressions for lint visibility and package execution. It introduces no new upstream rules, source pins, or third-party code.
+
 The plugin's prose, rule organization, Python helpers, tests, and workflows were written for this project. Third-party phrase corpora, language models, grammar engines, and source code are not copied into the distribution.
 
 Short conventional phrases such as pattern names and examples may overlap with public editorial guidance because they describe common writing structures. The package preserves the applicable license notices and identifies upstream influence even where the implementation was independently written.

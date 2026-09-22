@@ -77,6 +77,12 @@ class ValidatorMutationTests(unittest.TestCase):
 
         self.assert_rejected(mutate, "reference set mismatch")
 
+    def test_missing_shared_markdown_module_is_rejected(self) -> None:
+        def mutate(root: Path) -> None:
+            (root / "skills" / "nuko-nova-unslop" / "scripts" / "markdown_source.py").unlink()
+
+        self.assert_rejected(mutate, "script set mismatch")
+
     def test_missing_short_alias_is_rejected(self) -> None:
         def mutate(root: Path) -> None:
             shutil.rmtree(root / "skills" / "unslop")

@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import importlib.util
 import json
 import sys
 import unittest
@@ -10,11 +9,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 FIXTURES = ROOT / "tests" / "fixtures"
 SCRIPT = ROOT / "skills" / "nuko-nova-unslop" / "scripts" / "unslop_lint.py"
-SPEC = importlib.util.spec_from_file_location("unslop_lint", SCRIPT)
-MODULE = importlib.util.module_from_spec(SPEC)
-assert SPEC and SPEC.loader
-sys.modules[SPEC.name] = MODULE
-SPEC.loader.exec_module(MODULE)
+sys.path.insert(0, str(SCRIPT.parent))
+import unslop_lint as MODULE
 
 
 def rule_ids(text: str, profile: str) -> set[str]:
@@ -80,6 +76,79 @@ class LinterTests(unittest.TestCase):
             "The delve example stays protected to the end.\n"
         )
         self.assertNotIn("watched-vocabulary", rule_ids(unclosed, "strict"))
+
+    def test_nested_markdown_fences_leave_following_prose_visible(self) -> None:
+        text = (FIXTURES / "markdown-source.md").read_text(encoding="utf-8")
+        vocabulary = [
+            (finding.line, finding.column, finding.excerpt)
+            for finding in MODULE.lint_text(text, "strict")
+            if finding.rule_id == "watched-vocabulary"
+        ]
+        self.assertEqual(
+            vocabulary,
+            [
+                (6, 26, "The visible summary says leverage."),
+                (13, 24, "The next sentence says streamline."),
+                (18, 23, "A final sentence says empower."),
+                (22, 10, "| Copy | seamless |"),
+            ],
+        )
+
+    def test_fenced_code_in_list_and_quote_containers(self) -> None:
+        cases = (
+            ("- ```text\n  delve\n  ```\nOutside prose says leverage.\n", 4),
+            ("1. item\n\n   ```text\n   delve\n   ```\nOutside prose says leverage.\n", 6),
+            ("> ```text\n> delve\n> ```\nOutside prose says leverage.\n", 4),
+            ("- > ```text\n  > delve\n  > ```\nOutside prose says leverage.\n", 4),
+        )
+        for text, visible_line in cases:
+            with self.subTest(markdown=text):
+                vocabulary = [
+                    (finding.line, finding.excerpt)
+                    for finding in MODULE.lint_text(text, "strict")
+                    if finding.rule_id == "watched-vocabulary"
+                ]
+                self.assertEqual(vocabulary, [(visible_line, "Outside prose says leverage.")])
+
+    def test_unclosed_container_fence_ends_when_container_exits(self) -> None:
+        for text in (
+            "- ```text\n  delve\nOutside prose says leverage.\n",
+            "> ```text\n> delve\nOutside prose says leverage.\n",
+        ):
+            with self.subTest(markdown=text):
+                vocabulary_lines = [
+                    finding.line
+                    for finding in MODULE.lint_text(text, "strict")
+                    if finding.rule_id == "watched-vocabulary"
+                ]
+                self.assertEqual(vocabulary_lines, [3])
+
+    def test_backtick_in_fence_info_string_does_not_hide_prose(self) -> None:
+        text = "```bad`info\nThe prose says leverage.\n"
+        vocabulary = [
+            (finding.line, finding.column)
+            for finding in MODULE.lint_text(text, "strict")
+            if finding.rule_id == "watched-vocabulary"
+        ]
+        self.assertEqual(vocabulary, [(2, 16)])
+
+    def test_nested_fence_crlf_offsets_follow_original_text(self) -> None:
+        text = "- ```text\r\n  delve\r\n  ```\r\nOutside prose says leverage.\r\n"
+        vocabulary = [
+            (finding.line, finding.column, finding.excerpt)
+            for finding in MODULE.lint_text(text, "strict")
+            if finding.rule_id == "watched-vocabulary"
+        ]
+        self.assertEqual(vocabulary, [(4, 20, "Outside prose says leverage.")])
+
+    def test_independent_table_prose_remains_lintable(self) -> None:
+        text = "| Area | Description |\n| --- | --- |\n| Copy | leverage |\n"
+        vocabulary = [
+            (finding.line, finding.column)
+            for finding in MODULE.lint_text(text, "strict")
+            if finding.rule_id == "watched-vocabulary"
+        ]
+        self.assertEqual(vocabulary, [(3, 10)])
 
     def test_frontmatter_and_html_comments_are_exempt(self) -> None:
         text = (

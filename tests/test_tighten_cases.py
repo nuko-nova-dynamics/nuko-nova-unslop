@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import importlib.util
 import json
 import sys
 import unittest
@@ -10,11 +9,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 FIXTURES = ROOT / "tests" / "fixtures"
 SCRIPT = ROOT / "skills" / "nuko-nova-unslop" / "scripts" / "preservation_guard.py"
-SPEC = importlib.util.spec_from_file_location("tighten_preservation_guard", SCRIPT)
-MODULE = importlib.util.module_from_spec(SPEC)
-assert SPEC and SPEC.loader
-sys.modules[SPEC.name] = MODULE
-SPEC.loader.exec_module(MODULE)
+sys.path.insert(0, str(SCRIPT.parent))
+import preservation_guard as MODULE
 
 
 def case_errors(source: str, candidate: str, case: dict) -> list[str]:
