@@ -109,7 +109,7 @@ RULES = (
     Rule(
         "negative-reframe",
         "Negative reframe",
-        rx(r"\b(?:it(?:'s| is) not (?:just |only )?[^.!?;]{2,90}[,;:]\s*(?:it(?:'s| is) |but )|not [^.!?]{2,55}\.\s*not [^.!?]{2,55}\.\s*(?:just |only )|not only\b[^.!?]{2,100}\bbut also\b)"),
+        rx(r"\b(?:it(?:'s| is) not (?!only\b)(?:just )?[^.!?;]{2,90}[,;:]\s*(?:it(?:'s| is) |but (?!also\b))|not [^.!?]{2,55}\.\s*not [^.!?]{2,55}\.\s*(?:just |only ))"),
         "State the positive claim directly unless the contrast carries real information.",
     ),
     Rule(
@@ -226,7 +226,8 @@ RULES = (
 INLINE_CODE_RE = re.compile(r"`[^`\n]+`")
 LINK_TARGET_RE = re.compile(r"(?<=\]\()[^)]+(?=\))")
 URL_RE = re.compile(r"https?://[^\s)>]+")
-QUOTED_SPAN_RE = re.compile(r'"[^"\n]*"|“[^”\n]*”')
+# A straight quote attached to a word or number is not a prose opener (13").
+QUOTED_SPAN_RE = re.compile(r'(?<!\w)"[^"\r\n]*"|“[^”\r\n]*”')
 BLOCKQUOTE_RE = re.compile(r"^\s{0,3}>[^\n]*$", re.MULTILINE)
 FRONTMATTER_KEY_RE = re.compile(r"^[ \t]*[A-Za-z_][A-Za-z0-9_-]*[ \t]*:")
 HTML_TAG_RE = re.compile(
@@ -305,10 +306,12 @@ def mask_exempt_spans(text: str) -> str:
         *((match.start(), match.end()) for match in REFERENCE_DEFINITION_RE.finditer(text)),
     ]
     ranges = [*protected_ranges, *source_only_ranges, *syntax_ranges]
-    for pattern in (LINK_TARGET_RE, URL_RE, QUOTED_SPAN_RE, BLOCKQUOTE_RE):
+    for pattern in (LINK_TARGET_RE, URL_RE, BLOCKQUOTE_RE):
         for match in pattern.finditer(text):
             ranges.append((match.start(), match.end()))
-    return mask_spans(text, ranges)
+    # Quotes in protected syntax must not pair with quotes in visible prose.
+    prose = mask_spans(text, ranges)
+    return mask_spans(prose, [match.span() for match in QUOTED_SPAN_RE.finditer(prose)])
 
 
 def position(text: str, offset: int) -> tuple[int, int]:

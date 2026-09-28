@@ -233,6 +233,15 @@ class LinterTests(unittest.TestCase):
         self.assertIn("collaborative-cta", rule_ids("Let’s build something together.", "nuko-nova"))
         self.assertIn("negative-reframe", rule_ids("It’s not just a dashboard; it’s a platform.", "balanced"))
 
+    def test_ordinary_correlatives_are_not_negative_reframes(self) -> None:
+        text = (FIXTURES / "ordinary-correlatives.md").read_text(encoding="utf-8")
+        for profile in ("balanced", "strict", "nuko-nova"):
+            with self.subTest(profile=profile):
+                self.assertNotIn("negative-reframe", rule_ids(text, profile))
+                self.assertIn("negative-reframe", rule_ids(
+                    "It's not just a calendar; it's a revolution.", profile
+                ))
+
     def test_cutoff_disclaimer_is_flagged(self) -> None:
         self.assertIn("cutoff-disclaimer", rule_ids("As of my last knowledge update, the API had no retry limit.", "balanced"))
 
@@ -260,6 +269,28 @@ class LinterTests(unittest.TestCase):
         text = 'The contract says, “No prep — no fees.” Keep that language exact.'
         self.assertNotIn("dash-cluster", rule_ids(text, "nuko-nova"))
         self.assertNotIn("via-negativa", rule_ids(text, "nuko-nova"))
+
+    def test_quote_boundaries_do_not_hide_visible_prose(self) -> None:
+        text = (FIXTURES / "quote-boundaries.md").read_text(encoding="utf-8")
+        expected_words = ["leverage"] * 5 + ["robust"] * 2
+        expected = [
+            (line_number, line.index(word) + 1)
+            for line_number, (line, word) in enumerate(
+                zip(text.splitlines(), expected_words), start=1
+            )
+        ]
+        actual = [
+            (finding.line, finding.column)
+            for finding in MODULE.lint_text(text, "strict")
+            if finding.rule_id == "watched-vocabulary"
+        ]
+        self.assertEqual(actual, expected)
+        masked = MODULE.mask_exempt_spans(text)
+        self.assertEqual(len(masked), len(text))
+        self.assertEqual(
+            [i for i, char in enumerate(masked) if char == "\n"],
+            [i for i, char in enumerate(text) if char == "\n"],
+        )
 
     def test_markdown_blockquotes_are_exempt(self) -> None:
         text = "> Certainly! No prep — no fees.\n\nThe quoted wording must remain exact."

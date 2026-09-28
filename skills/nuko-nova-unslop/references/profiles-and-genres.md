@@ -60,6 +60,10 @@ A three-item list can be a real product flow. A negative line can define a categ
 - Do not turn a personal message into polished corporate copy.
 - Do not claim closeness or shared experience the relationship has not earned.
 
+### Replies in an existing conversation
+
+Use the visible thread to judge what the reader already knows. Lead with the answer or decision and remove repeated setup that delays it. Keep any context needed to understand the answer, act on it, or preserve uncertainty and scope, including exact identifiers and necessary reminders. If earlier messages are unavailable or the reply must stand alone, do not assume the reader has that context. A requested recap or handoff may deliberately repeat established facts.
+
 ### Product and marketing copy
 
 - Make one clear promise and support it with mechanism or evidence.

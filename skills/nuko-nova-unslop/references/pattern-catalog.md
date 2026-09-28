@@ -37,7 +37,7 @@ The measured corpus among the sources supports this ordering: structure and clus
 
 | ID | Signal | Focused response |
 | --- | --- | --- |
-| `negative-reframe` | “It's not X; it's Y,” “not only X but Y,” or “not X. Not Y. Just Z.” | State the positive claim unless the contrast is real and useful. |
+| `negative-reframe` | A staged reversal such as “It's not X; it's Y” or “not X. Not Y. Just Z.” | State the positive claim unless the contrast is real and useful. Ordinary “not only X but also Y” additions are not a finding by themselves. |
 | `via-negativa` | Value expressed mainly as “No fees. No fuss. No surprises.” | Describe what the reader gets. This is strict in the Nuko Nova profile. |
 | `forced-three` | Three qualities, clauses, or fragments assembled for rhetorical completeness | Use the natural number of supported ideas. Keep real three-item sets. |
 | `staccato-drama` | Runs of tiny declarative sentences or fragments built to sound quotable | Join related thoughts and let one short sentence earn emphasis. |

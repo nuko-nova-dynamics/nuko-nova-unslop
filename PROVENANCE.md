@@ -38,6 +38,8 @@ The September 16, 2026 evolution review generalized a fenced-code preservation s
 
 The September 18, 2026 evolution review generalized a Markdown-table preservation safeguard into an original local scanner for table content and structure. It recognizes pipe variants and common quote/list containers, distinguishes tables from code and raw HTML, preserves overflow cells, and keeps changed cell values out of diagnostics. The implementation and synthetic regressions were written for this plugin; no upstream parser, prompt, detector implementation, test corpus, or phrase list was copied.
 
+The September 28, 2026 evolution review used Avoid AI Writing's quote and correlative safeguards to identify two local lint defects, and Better Writing and Humanizer's reply guidance to clarify context-aware editing. The corrections use this plugin's existing masking helpers, independently worded guidance, and synthetic regression cases. No upstream detector, prompt, phrase corpus, or private interaction evidence was copied.
+
 ## Reuse policy
 
 The September 22, 2026 architecture review found divergent fence handling in the two local helpers. The correction shares this project's existing Markdown scanner and adds synthetic regressions for lint visibility and package execution. It introduces no new upstream rules, source pins, or third-party code.

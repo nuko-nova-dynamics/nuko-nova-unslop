@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.8.4 - 2026-09-28
+
+- Keep ordinary prose visible to linting when inch marks or quotes inside protected Markdown syntax would otherwise start a quotation; preserve genuine quoted prose and source locations.
+- Stop treating ordinary “not only X but also Y” additions as negative reframes by themselves.
+- Clarify reply editing against visible thread context: remove repeated setup without dropping necessary reminders, conditions, identifiers, requested recaps, or standalone context.
+- Add synthetic lint regressions and editorial cases for each correction. Advance eight fully reviewed upstream pins without importing prompts, phrase corpora, optional grammar rules, or grading engines.
+
 ## 0.8.3 - 2026-09-22
 
 - Share Markdown source recognition between the linter and preservation guard, removing duplicate fence, comment, and masking implementations.

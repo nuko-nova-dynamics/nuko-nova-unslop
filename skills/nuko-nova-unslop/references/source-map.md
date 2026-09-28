@@ -1,19 +1,19 @@
 # Source map
 
-Research cutoff: September 24, 2026. `upstreams.lock.json` is the machine-readable source of reviewed commit pins and monitored paths.
+Research cutoff: September 28, 2026. `upstreams.lock.json` is the machine-readable source of reviewed commit pins and monitored paths.
 
 | Source | Reviewed commit | License | Reviewed value |
 | --- | --- | --- | --- |
-| Vale | `275cd4c74d4353b01191b34a133008860389abf7` | MIT | Markup-aware deterministic linting, quote and source-boundary tests, and small inspectable rules. |
-| Avoid AI Writing | `020f4a4a3e2ca722a4b1d9e9e1457f960b327b1c` | MIT | Separation of deterministic signals from editorial judgment, protected Markdown source boundaries, and corpus discipline. |
-| Cursor pstack Unslop | `12d587dfb20741cafc376c42c696c5f6e2a64487` | MIT for `pstack` | Compact pattern catalog, portability test, mechanism-first specificity, and rhythm audit. |
-| Better Writing | `e8fcfeb4220291b619c651b2fd83bf814ba0890e` | MIT | Preservation contract, context dials, genre exemptions, voice fixtures, and preflight checks. |
-| Harper | `35096b011f8c349e262982850104e495ac9d7fff` | Apache-2.0 | Private, low-latency English mechanics and structured, markup-aware diagnostics. |
+| Vale | `2753160f8e5835976340183ddc4a91ed10b7d3ed` | MIT | Markup-aware deterministic linting, quote and source-boundary tests, and small inspectable rules. |
+| Avoid AI Writing | `7cd166c32e91573734f6ed37f4aa4d9e23b18400` | MIT | Separation of deterministic signals from editorial judgment, protected Markdown source boundaries, and corpus discipline. |
+| Cursor pstack Unslop | `ecc249f1e306fc64ddf83c7bed16cacf7c2239db` | MIT for `pstack` | Compact pattern catalog, portability test, mechanism-first specificity, and rhythm audit. |
+| Better Writing | `124b953b38ce90e22474665dc1a16ddf52279abb` | MIT | Preservation contract, context dials, genre exemptions, voice fixtures, and preflight checks. |
+| Harper | `f41bec48c0257bac762915f02bfe122b21624109` | Apache-2.0 | Private, low-latency English mechanics and structured, markup-aware diagnostics. |
 | No AI Slop | `000650b156983f5159695b441477f4e63b25dc85` | MIT | Audit-only mode, minimum-effective editing, and named findings. |
-| Humanizer | `9862685f575c65a8247f90369951df1b3416e3d6` | MIT | Cross-client packaging, author-sample calibration, broad pattern coverage, and non-fabrication guidance. |
+| Humanizer | `225a6f39ac85f76ee48dbad772ea4abe4ed6c9d8` | MIT | Cross-client packaging, author-sample calibration, broad pattern coverage, and non-fabrication guidance. |
 | AntiSlop Sampler | `0ae330e98fbe6f09351f2d1063a51956378a44b2` | Apache-2.0 | Phrase-level prevention research and the warning that generated slop lists require curation rather than blanket adoption. |
-| LanguageTool | `89e680440f90e5a7127bfb3bf465085bd0f6ca5e` | LGPL-2.1-or-later | Multilingual grammar/style architecture; referenced as an optional external tool and not redistributed. |
-| Promptfoo | `4f7c400e4e54374b86eebca6e125ef5e9108d4e3` | MIT | Deterministic assertions, model-graded evaluation boundaries, and repeatable regression configuration. |
+| LanguageTool | `442be2371d1a313d5d0ca521e361f1a5cc27493f` | LGPL-2.1-or-later | Multilingual grammar/style architecture; referenced as an optional external tool and not redistributed. |
+| Promptfoo | `1c6df33c595dec16be356f1c4fd78cc777bcc43a` | MIT | Deterministic assertions, model-graded evaluation boundaries, and repeatable regression configuration. |
 | Stop Slop | `8da1f030185bdfe8471220585162991eaeb970e9` | MIT | Compact structural catalog and the lineage source for several later skills. Blanket bans on adverbs, passive voice, and individual punctuation remain outside the Nuko Nova standard. |
 | Slopbeth | `b33718bb9283c11b09567dc714f92d90ffb7bd16` | MIT | Brief-versus-artifact separation, evidence-bound rewriting, sentence-load and topic-swap tests, preservation benchmarks, and dated evaluation hygiene. |
 | Adam Boudjemaa Humanizer | `a58df065367550b6ce40ff3f648335018d8e0589` | MIT | Broad cross-harness catalog, voice profiles, cluster-based false-positive checks, and always-on instruction patterns. |
