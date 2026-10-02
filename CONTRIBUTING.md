@@ -18,10 +18,10 @@ The Python helpers separate Markdown recognition from editorial decisions:
 
 Keep scanner details inside `markdown_source.py`; test editorial outcomes through `lint_text` and `compare`. Add a synthetic fixture for each non-obvious correction, including nearby prose that must remain visible. The command-line tests also run copied helpers from another directory to verify the installed package can resolve its shared module.
 
-The MCP host embeds the canonical skill directory and serves the same public files. It accepts no user prose. The bundle validator checks the exact shipped file set, and the MCP checks verify that its catalog includes the shared helper. New helper files must pass both checks.
+The MCP host embeds the canonical skill directory and serves the same public files. It accepts no user prose. The bundle validator checks the exact canonical reference and Python helper filenames, and the MCP checks verify that its catalog includes the shared helper. New helper files must pass both checks.
 
 Keep the helpers dependency-free and local. The plugin has no lifecycle hooks. Prefer a shared implementation only when existing callers need the same behavior; keep caller-specific policies with their caller.
 
 ## Validation
 
-Run `pnpm install --frozen-lockfile`, then `pnpm check` for the same portable gates used by CI: bundle integrity, Python behavior tests, and MCP tests and type checks. Run the additional client and creator checks in [AGENTS.md](AGENTS.md) before committing.
+Run `pnpm install --frozen-lockfile`, then `pnpm check` for the same portable gates used by CI: bundle integrity, Python behavior tests, and MCP tests and type checks. `tests/validate_bundle.py` owns plugin validation, including both manifests, required metadata, packaged resources, and the prohibition on lifecycle hooks. Run the additional client and skill creator checks in [AGENTS.md](AGENTS.md) before committing.

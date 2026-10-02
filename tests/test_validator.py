@@ -62,6 +62,47 @@ class ValidatorMutationTests(unittest.TestCase):
 
         self.assert_rejected(mutate, "client manifests disagree on version")
 
+    def test_inline_hooks_are_rejected_in_either_manifest(self) -> None:
+        for client in (".codex-plugin", ".claude-plugin"):
+            with self.subTest(client=client):
+                def mutate(root: Path) -> None:
+                    path = root / client / "plugin.json"
+                    data = json.loads(path.read_text(encoding="utf-8"))
+                    data["hooks"] = {"Stop": [{"hooks": [{"type": "command", "command": "exit 0"}]}]}
+                    path.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
+
+                self.assert_rejected(mutate, "lifecycle hooks must not be declared")
+
+    def test_matching_missing_manifest_metadata_is_rejected(self) -> None:
+        for field in ("author", "homepage", "repository"):
+            with self.subTest(field=field):
+                def mutate(root: Path) -> None:
+                    for client in (".codex-plugin", ".claude-plugin"):
+                        path = root / client / "plugin.json"
+                        data = json.loads(path.read_text(encoding="utf-8"))
+                        del data[field]
+                        path.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
+
+                self.assert_rejected(mutate, f"invalid manifest {field}")
+
+    def test_matching_invalid_manifest_metadata_is_rejected(self) -> None:
+        for field, value in (("author", {"name": ""}), ("homepage", []), ("repository", " ")):
+            with self.subTest(field=field):
+                def mutate(root: Path) -> None:
+                    for client in (".codex-plugin", ".claude-plugin"):
+                        path = root / client / "plugin.json"
+                        data = json.loads(path.read_text(encoding="utf-8"))
+                        data[field] = value
+                        path.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
+
+                self.assert_rejected(mutate, f"invalid manifest {field}")
+
+    def test_manifest_json_must_be_an_object(self) -> None:
+        def mutate(root: Path) -> None:
+            (root / ".codex-plugin" / "plugin.json").write_text("[]\n", encoding="utf-8")
+
+        self.assert_rejected(mutate, "expected a JSON object")
+
     def test_bad_source_pin_is_rejected(self) -> None:
         def mutate(root: Path) -> None:
             path = root / "upstreams.lock.json"

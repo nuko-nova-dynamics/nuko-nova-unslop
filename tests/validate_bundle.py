@@ -60,9 +60,12 @@ def fail(message: str) -> None:
 
 def load_json(path: Path) -> dict:
     try:
-        return json.loads(path.read_text(encoding="utf-8"))
+        data = json.loads(path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as exc:
         fail(f"{path.relative_to(ROOT)}: invalid JSON: {exc}")
+    if not isinstance(data, dict):
+        fail(f"{path.relative_to(ROOT)}: expected a JSON object")
+    return data
 
 
 def check_links(path: Path) -> None:
@@ -104,6 +107,16 @@ def png_dimensions(path: Path) -> tuple[int, int]:
 def check_manifests() -> None:
     codex = load_json(ROOT / ".codex-plugin" / "plugin.json")
     claude = load_json(ROOT / ".claude-plugin" / "plugin.json")
+    for client, manifest in (("Codex", codex), ("Claude", claude)):
+        if "hooks" in manifest:
+            fail(f"{client}: lifecycle hooks must not be declared")
+        for field in ("name", "version", "description", "homepage", "repository", "license"):
+            value = manifest.get(field)
+            if not isinstance(value, str) or not value.strip():
+                fail(f"{client}: invalid manifest {field}; expected a nonempty string")
+        author = manifest.get("author")
+        if not isinstance(author, dict) or not isinstance(author.get("name"), str) or not author["name"].strip():
+            fail(f"{client}: invalid manifest author; expected an object with a nonempty name")
     for field in ("name", "version", "description", "author", "homepage", "repository", "license"):
         if codex.get(field) != claude.get(field):
             fail(f"client manifests disagree on {field}")

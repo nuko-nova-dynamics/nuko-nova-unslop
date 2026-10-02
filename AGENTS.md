@@ -39,9 +39,8 @@ pnpm check
 python3 /Users/judiazm/.codex/skills/.system/skill-creator/scripts/quick_validate.py skills/nuko-nova-unslop
 python3 /Users/judiazm/.codex/skills/.system/skill-creator/scripts/quick_validate.py skills/unslop
 python3 /Users/judiazm/.codex/skills/.system/skill-creator/scripts/quick_validate.py skills/tighten
-python3 /Users/judiazm/.codex/skills/.system/plugin-creator/scripts/validate_plugin.py .
 ```
 
-`pnpm check` runs the portable bundle, Python, and MCP checks and is also the CI entry point. Install workspace dependencies with `pnpm install --frozen-lockfile` first. The creator checks above depend on the local Codex installation and remain separate.
+`pnpm check` runs the portable bundle, Python, and MCP checks and is also the CI entry point. `tests/validate_bundle.py` is the required repository-owned plugin validator; it checks both client manifests, shipped resources, invocation metadata, and hook-free packaging. Install workspace dependencies with `pnpm install --frozen-lockfile` first. The skill creator checks above depend on the local Codex installation and remain separate.
 
 Run `claude plugin validate .` when Claude Code is available. Treat package validation, marketplace registration, installation, and client reload as separate states.
