@@ -40,6 +40,8 @@ The September 18, 2026 evolution review generalized a Markdown-table preservatio
 
 The September 28, 2026 evolution review used Avoid AI Writing's quote and correlative safeguards to identify two local lint defects, and Better Writing and Humanizer's reply guidance to clarify context-aware editing. The corrections use this plugin's existing masking helpers, independently worded guidance, and synthetic regression cases. No upstream detector, prompt, phrase corpus, or private interaction evidence was copied.
 
+The October 4, 2026 evolution review used Vale's multiline source-boundary fixture to identify a local HTML-attribute false positive and a tag-closer masking error. The correction extends this plugin's existing tag recognition, rejects matches that cross protected Markdown source boundaries, and checks blockquote markers against protected source spans. Independently written synthetic tests cover visible prose locations, quoted attribute values, line endings, malformed tags, and false-positive boundaries. No upstream parser, prompt, detector implementation, or phrase corpus was copied.
+
 ## Reuse policy
 
 The September 22, 2026 architecture review found divergent fence handling in the two local helpers. The correction shares this project's existing Markdown scanner and adds synthetic regressions for lint visibility and package execution. It introduces no new upstream rules, source pins, or third-party code.

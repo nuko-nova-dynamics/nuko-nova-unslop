@@ -232,9 +232,9 @@ BLOCKQUOTE_RE = re.compile(r"^\s{0,3}>[^\n]*$", re.MULTILINE)
 FRONTMATTER_KEY_RE = re.compile(r"^[ \t]*[A-Za-z_][A-Za-z0-9_-]*[ \t]*:")
 HTML_TAG_RE = re.compile(
     r"</?[A-Za-z][A-Za-z0-9-]*"
-    r"(?:[ \t]+[A-Za-z_:][A-Za-z0-9_.:-]*"
-    r"(?:[ \t]*=[ \t]*(?:\"[^\"\n]*\"|'[^'\n]*'|[^\s\"'=<>`]+))?)*"
-    r"[ \t]*/?>"
+    r"(?:[ \t\r\n\f]+[A-Za-z_:][A-Za-z0-9_.:-]*"
+    r"(?:[ \t\r\n\f]*=[ \t\r\n\f]*(?:\"[^\"]*\"|'[^']*'|[^\s\"'=<>`]+))?)*"
+    r"[ \t\r\n\f]*/?>"
 )
 REFERENCE_DEFINITION_RE = re.compile(
     r"^[ \t]{0,3}\[[^\]\r\n]+\]:[ \t]+(?:<[^>\r\n]*>|\S+)"
@@ -300,17 +300,36 @@ def mask_exempt_spans(text: str) -> str:
     if leading_frontmatter := frontmatter_range(text):
         source_only_ranges.append(leading_frontmatter)
 
+    indented_ranges = indented_code_ranges(text)
+    non_prose_ranges = [*protected_ranges, *source_only_ranges, *indented_ranges]
+    html_ranges = []
+    for match in HTML_TAG_RE.finditer(text):
+        start, end = match.span()
+        # Attributes may contain literal markup, but tags cannot start or end
+        # inside another protected source span.
+        if any(
+            protected_start < end and start < protected_end
+            and not (start <= protected_start and protected_end <= end)
+            for protected_start, protected_end in non_prose_ranges
+        ):
+            continue
+        html_ranges.append((start, end))
+
     syntax_ranges = [
-        *indented_code_ranges(text),
-        *((match.start(), match.end()) for match in HTML_TAG_RE.finditer(text)),
+        *indented_ranges,
+        *html_ranges,
         *((match.start(), match.end()) for match in REFERENCE_DEFINITION_RE.finditer(text)),
     ]
     ranges = [*protected_ranges, *source_only_ranges, *syntax_ranges]
-    for pattern in (LINK_TARGET_RE, URL_RE, BLOCKQUOTE_RE):
+    for pattern in (LINK_TARGET_RE, URL_RE):
         for match in pattern.finditer(text):
             ranges.append((match.start(), match.end()))
-    # Quotes in protected syntax must not pair with quotes in visible prose.
+    # Tag closers and quotes in protected syntax are not prose quote openers.
     prose = mask_spans(text, ranges)
+    prose = mask_spans(prose, [
+        match.span() for match in BLOCKQUOTE_RE.finditer(text)
+        if prose[match.start() + match.group().index(">")] == ">"
+    ])
     return mask_spans(prose, [match.span() for match in QUOTED_SPAN_RE.finditer(prose)])
 
 

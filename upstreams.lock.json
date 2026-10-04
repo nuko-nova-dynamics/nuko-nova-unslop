@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "review_cadence": "every-two-days",
-  "research_cutoff": "2026-10-02",
+  "research_cutoff": "2026-10-04",
   "sources": [
     {
       "id": "vale",
@@ -9,8 +9,8 @@
       "url": "https://github.com/vale-cli/vale.git",
       "branch": "refs/heads/v3",
       "checkout": "vale",
-      "reviewed_sha": "c74f4da2263d94d49b6aadf4b07a1ccf9df3980b",
-      "reviewed_at": "2026-10-02",
+      "reviewed_sha": "cfb21a4ce87238bcfb44b90e8e0db9e0e91d6c09",
+      "reviewed_at": "2026-10-04",
       "license": "MIT",
       "monitored_paths": [
         "README.md",
@@ -24,8 +24,8 @@
       "url": "https://github.com/conorbronsdon/avoid-ai-writing.git",
       "branch": "refs/heads/main",
       "checkout": "avoid-ai-writing",
-      "reviewed_sha": "bdeb726580634868b254972d8eab1a9340d9db16",
-      "reviewed_at": "2026-10-02",
+      "reviewed_sha": "42e4f76e92af3ac41d17cee545046d8d399c59a6",
+      "reviewed_at": "2026-10-04",
       "license": "MIT",
       "monitored_paths": [
         "SKILL.md",
@@ -42,8 +42,8 @@
       "url": "https://github.com/cursor/plugins.git",
       "branch": "refs/heads/main",
       "checkout": "cursor-plugins",
-      "reviewed_sha": "c47b12849e43f18d5c374c7069c744cc55b0ea00",
-      "reviewed_at": "2026-10-02",
+      "reviewed_sha": "e43c7ee26e0038c6c1fa8380dd34ce86ff94cb2a",
+      "reviewed_at": "2026-10-04",
       "license": "MIT (pstack)",
       "monitored_paths": [
         "pstack/skills/unslop/SKILL.md",
@@ -72,8 +72,8 @@
       "url": "https://github.com/Automattic/harper.git",
       "branch": "refs/heads/master",
       "checkout": "harper",
-      "reviewed_sha": "88c53331ebb6c353d6c5168c3f2191983239a11a",
-      "reviewed_at": "2026-10-02",
+      "reviewed_sha": "710faea914dec1fbf0fbd497fd587a1506cc2dcf",
+      "reviewed_at": "2026-10-04",
       "license": "Apache-2.0",
       "monitored_paths": [
         "README.md",
@@ -151,8 +151,8 @@
       "url": "https://github.com/promptfoo/promptfoo.git",
       "branch": "refs/heads/main",
       "checkout": "promptfoo",
-      "reviewed_sha": "8e6b3fa79d882ed5c83ccdb8656d3bd0648dbd9d",
-      "reviewed_at": "2026-10-02",
+      "reviewed_sha": "5fde786d0c296339be3fd189d1542157e1d4217a",
+      "reviewed_at": "2026-10-04",
       "license": "MIT",
       "monitored_paths": [
         "site/docs/configuration/expected-outputs",

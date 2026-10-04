@@ -190,6 +190,129 @@ class LinterTests(unittest.TestCase):
         text = 'For n < Node, the robust tail remains visible > baseline.'
         self.assertIn("watched-vocabulary", rule_ids(text, "strict"))
 
+    def test_multiline_html_attributes_are_not_prose(self) -> None:
+        for newline in ("\n", "\r\n"):
+            for tag in ("input", "section"):
+                with self.subTest(newline=newline, tag=tag):
+                    text = newline.join((
+                        f"<{tag}",
+                        "  data-term='leverage'",
+                        "  disabled",
+                        ">Visible prose says leverage.",
+                        f"</{tag}>",
+                        "Visible prose says leverage.",
+                        "",
+                    ))
+                    vocabulary = [
+                        (finding.line, finding.column)
+                        for finding in MODULE.lint_text(text, "strict")
+                        if finding.rule_id == "watched-vocabulary"
+                    ]
+                    self.assertEqual(vocabulary, [(4, 21), (6, 20)])
+
+    def test_multiline_html_values_and_self_closing_tags_are_exempt(self) -> None:
+        for quote in ("'", '"'):
+            with self.subTest(quote=quote):
+                text = (
+                    "<input\n"
+                    "  data-term\n"
+                    f"  = {quote}leverage\n"
+                    f"TODO > delve{quote}\n"
+                    "/>\n"
+                    "Visible prose says leverage.\n"
+                )
+                findings = MODULE.lint_text(text, "strict")
+                self.assertEqual(
+                    [(finding.line, finding.column) for finding in findings
+                     if finding.rule_id == "watched-vocabulary"],
+                    [(6, 20)],
+                )
+                self.assertNotIn("placeholder-leak", {finding.rule_id for finding in findings})
+
+    def test_multiline_tag_masking_preserves_offsets_and_line_endings(self) -> None:
+        text = "<input\r\n\tdata-term='leverage'\r\n/>\r\nVisible prose says leverage.\r\n"
+        masked = MODULE.mask_exempt_spans(text)
+        self.assertEqual(len(masked), len(text))
+        self.assertEqual(
+            [(index, char) for index, char in enumerate(masked) if char in "\r\n"],
+            [(index, char) for index, char in enumerate(text) if char in "\r\n"],
+        )
+        self.assertEqual(masked.index("leverage"), text.rindex("leverage"))
+
+    def test_multiline_angle_prose_and_incomplete_tags_stay_visible(self) -> None:
+        for text in (
+            "For n < Node,\nthe robust tail remains visible > baseline.",
+            "<input\n  data-term='leverage'\n",
+            "<input\n  @invalid='leverage'\n/>",
+            "<section\n  title='leverage\n>",
+        ):
+            with self.subTest(text=text):
+                self.assertIn("watched-vocabulary", rule_ids(text, "strict"))
+
+    def test_protected_prefix_does_not_invent_a_blockquote(self) -> None:
+        for text in (
+            "<b>>Visible prose says leverage.</b>\n",
+            "`x`>Visible prose says leverage.\n",
+        ):
+            with self.subTest(text=text):
+                vocabulary = [
+                    (finding.line, finding.column)
+                    for finding in MODULE.lint_text(text, "strict")
+                    if finding.rule_id == "watched-vocabulary"
+                ]
+                self.assertEqual(vocabulary, [(1, 24)])
+        quoted = ">Visible prose says leverage.\nVisible prose says robust.\n"
+        vocabulary = [
+            (finding.line, finding.column)
+            for finding in MODULE.lint_text(quoted, "strict")
+            if finding.rule_id == "watched-vocabulary"
+        ]
+        self.assertEqual(vocabulary, [(2, 20)])
+
+    def test_html_openers_in_protected_source_do_not_hide_later_prose(self) -> None:
+        cases = (
+            ('```html\n<input title="\n```\n', 4),
+            ('`<input title="`\n', 2),
+            ('<!-- <input title=" -->\n', 2),
+            ('---\ntitle: <input title="\n---\n', 4),
+            ('    <input title="\n\n', 3),
+        )
+        for prefix, line in cases:
+            with self.subTest(prefix=prefix):
+                text = prefix + 'Visible prose says leverage."> tail.\n'
+                vocabulary = [
+                    (finding.line, finding.column)
+                    for finding in MODULE.lint_text(text, "strict")
+                    if finding.rule_id == "watched-vocabulary"
+                ]
+                self.assertEqual(vocabulary, [(line, 20)])
+
+    def test_html_closers_in_protected_source_do_not_hide_earlier_prose(self) -> None:
+        for suffix in ("`'>`\n", "```html\n'>\n```\n", "<!-- '> -->\n"):
+            with self.subTest(suffix=suffix):
+                text = "<input title='\nVisible prose says leverage.\n" + suffix
+                vocabulary = [
+                    (finding.line, finding.column)
+                    for finding in MODULE.lint_text(text, "strict")
+                    if finding.rule_id == "watched-vocabulary"
+                ]
+                self.assertEqual(vocabulary, [(2, 20)])
+
+    def test_literal_markup_inside_html_attributes_remains_exempt(self) -> None:
+        cases = (
+            ("<span data-term='leverage' data-code='`x`'>Visible prose says robust.</span>\n", 1, 63),
+            ("<span data-term='leverage' title='<!-- note -->'>Visible prose says robust.</span>\n", 1, 69),
+            ('<span title="leverage\n```text\nliteral\n```\n">Visible prose says robust.</span>\n', 5, 22),
+        )
+        for text, line, column in cases:
+            with self.subTest(text=text):
+                vocabulary = [
+                    (finding.line, finding.column)
+                    for finding in MODULE.lint_text(text, "strict")
+                    if finding.rule_id == "watched-vocabulary"
+                ]
+                self.assertEqual(vocabulary, [(line, column)])
+
     def test_indented_list_prose_remains_lintable(self) -> None:
         text = "- Review notes\n\n    This robust plan is still list prose.\n"
         self.assertIn("watched-vocabulary", rule_ids(text, "strict"))

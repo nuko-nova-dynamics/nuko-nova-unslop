@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.8.5 - 2026-10-04
+
+- Keep complete multiline HTML tags outside prose lint findings, including line breaks around attribute assignments and inside quoted values.
+- Keep visible prose after a tag closer lintable without treating the closer as a blockquote. Preserve genuine blockquotes, nearby angle-bracket prose, and original source positions.
+- Prevent tag matches from crossing protected Markdown source boundaries. Add synthetic regressions for attribute boundaries, duplicate visible text, incomplete tags, line endings, and short protected prefixes. Advance five fully reviewed upstream pins without importing parsers, phrase corpora, vocabulary scoring, or optional grammar rules.
+
 ## 0.8.4 - 2026-09-28
 
 - Keep ordinary prose visible to linting when inch marks or quotes inside protected Markdown syntax would otherwise start a quotation; preserve genuine quoted prose and source locations.

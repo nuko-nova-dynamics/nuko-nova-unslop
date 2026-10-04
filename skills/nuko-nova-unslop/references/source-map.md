@@ -1,19 +1,19 @@
 # Source map
 
-Research cutoff: October 2, 2026. `upstreams.lock.json` is the machine-readable source of reviewed commit pins and monitored paths.
+Research cutoff: October 4, 2026. `upstreams.lock.json` is the machine-readable source of reviewed commit pins and monitored paths.
 
 | Source | Reviewed commit | License | Reviewed value |
 | --- | --- | --- | --- |
-| Vale | `c74f4da2263d94d49b6aadf4b07a1ccf9df3980b` | MIT | Markup-aware deterministic linting, quote and source-boundary tests, and small inspectable rules. |
-| Avoid AI Writing | `bdeb726580634868b254972d8eab1a9340d9db16` | MIT | Separation of deterministic signals from editorial judgment, protected Markdown source boundaries, and corpus discipline. |
-| Cursor pstack Unslop | `c47b12849e43f18d5c374c7069c744cc55b0ea00` | MIT for `pstack` | Compact pattern catalog, portability test, mechanism-first specificity, and rhythm audit. |
+| Vale | `cfb21a4ce87238bcfb44b90e8e0db9e0e91d6c09` | MIT | Markup-aware deterministic linting, quote and source-boundary tests, and small inspectable rules. |
+| Avoid AI Writing | `42e4f76e92af3ac41d17cee545046d8d399c59a6` | MIT | Separation of deterministic signals from editorial judgment, protected Markdown source boundaries, and corpus discipline. |
+| Cursor pstack Unslop | `e43c7ee26e0038c6c1fa8380dd34ce86ff94cb2a` | MIT for `pstack` | Compact pattern catalog, portability test, mechanism-first specificity, and rhythm audit. |
 | Better Writing | `d77d4c074f8a1a51045a2f089d763fb5b78c1875` | MIT | Preservation contract, context dials, genre exemptions, voice fixtures, and preflight checks. |
-| Harper | `88c53331ebb6c353d6c5168c3f2191983239a11a` | Apache-2.0 | Private, low-latency English mechanics and structured, markup-aware diagnostics. |
+| Harper | `710faea914dec1fbf0fbd497fd587a1506cc2dcf` | Apache-2.0 | Private, low-latency English mechanics and structured, markup-aware diagnostics. |
 | No AI Slop | `000650b156983f5159695b441477f4e63b25dc85` | MIT | Audit-only mode, minimum-effective editing, and named findings. |
 | Humanizer | `225a6f39ac85f76ee48dbad772ea4abe4ed6c9d8` | MIT | Cross-client packaging, author-sample calibration, broad pattern coverage, and non-fabrication guidance. |
 | AntiSlop Sampler | `0ae330e98fbe6f09351f2d1063a51956378a44b2` | Apache-2.0 | Phrase-level prevention research and the warning that generated slop lists require curation rather than blanket adoption. |
 | LanguageTool | `bd0b8ccdedbe426094049e2ccda5230ce36fc4c4` | LGPL-2.1-or-later | Multilingual grammar/style architecture; referenced as an optional external tool and not redistributed. |
-| Promptfoo | `8e6b3fa79d882ed5c83ccdb8656d3bd0648dbd9d` | MIT | Deterministic assertions, model-graded evaluation boundaries, and repeatable regression configuration. |
+| Promptfoo | `5fde786d0c296339be3fd189d1542157e1d4217a` | MIT | Deterministic assertions, model-graded evaluation boundaries, and repeatable regression configuration. |
 | Stop Slop | `8da1f030185bdfe8471220585162991eaeb970e9` | MIT | Compact structural catalog and the lineage source for several later skills. Blanket bans on adverbs, passive voice, and individual punctuation remain outside the Nuko Nova standard. |
 | Slopbeth | `b33718bb9283c11b09567dc714f92d90ffb7bd16` | MIT | Brief-versus-artifact separation, evidence-bound rewriting, sentence-load and topic-swap tests, preservation benchmarks, and dated evaluation hygiene. |
 | Adam Boudjemaa Humanizer | `a58df065367550b6ce40ff3f648335018d8e0589` | MIT | Broad cross-harness catalog, voice profiles, cluster-based false-positive checks, and always-on instruction patterns. |
