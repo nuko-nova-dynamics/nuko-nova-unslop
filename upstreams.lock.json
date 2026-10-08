@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "review_cadence": "every-two-days",
-  "research_cutoff": "2026-10-06",
+  "research_cutoff": "2026-10-08",
   "sources": [
     {
       "id": "vale",
@@ -24,8 +24,8 @@
       "url": "https://github.com/conorbronsdon/avoid-ai-writing.git",
       "branch": "refs/heads/main",
       "checkout": "avoid-ai-writing",
-      "reviewed_sha": "db82bc8a2631f75fa829e97dc811c16a091fe1d9",
-      "reviewed_at": "2026-10-06",
+      "reviewed_sha": "905aca7b8155bf3c5dc6d974303c8e6d61d8831f",
+      "reviewed_at": "2026-10-08",
       "license": "MIT",
       "monitored_paths": [
         "SKILL.md",
@@ -42,8 +42,8 @@
       "url": "https://github.com/cursor/plugins.git",
       "branch": "refs/heads/main",
       "checkout": "cursor-plugins",
-      "reviewed_sha": "df581122cde17e6e27686b5a448bde23e4ad4318",
-      "reviewed_at": "2026-10-06",
+      "reviewed_sha": "ccb5507cec1546dc88135c1139c811e6c59115ba",
+      "reviewed_at": "2026-10-08",
       "license": "MIT (pstack)",
       "monitored_paths": [
         "pstack/skills/unslop/SKILL.md",
@@ -56,12 +56,12 @@
       "url": "https://github.com/forjd/better-writing.git",
       "branch": "refs/heads/main",
       "checkout": "better-writing",
-      "reviewed_sha": "d77d4c074f8a1a51045a2f089d763fb5b78c1875",
-      "reviewed_at": "2026-10-02",
+      "reviewed_sha": "8e45d0b241fc042d39444f499bbce4cfdb7a6c86",
+      "reviewed_at": "2026-10-08",
       "license": "MIT",
       "monitored_paths": [
-        "SKILL.md",
-        "references",
+        "skills/better-writing/SKILL.md",
+        "skills/better-writing/references",
         "evals",
         "scripts/validate.py"
       ]
@@ -72,8 +72,8 @@
       "url": "https://github.com/Automattic/harper.git",
       "branch": "refs/heads/master",
       "checkout": "harper",
-      "reviewed_sha": "ed69387634647a4771fc902a8264f3f8720ad71a",
-      "reviewed_at": "2026-10-06",
+      "reviewed_sha": "b23bb8c5e83d010a6c3447a0e6b9f729da438ecb",
+      "reviewed_at": "2026-10-08",
       "license": "Apache-2.0",
       "monitored_paths": [
         "README.md",
@@ -135,8 +135,8 @@
       "url": "https://github.com/languagetool-org/languagetool.git",
       "branch": "refs/heads/master",
       "checkout": "languagetool",
-      "reviewed_sha": "576225c1df8c572a90ec9250244fdb7912816a03",
-      "reviewed_at": "2026-10-06",
+      "reviewed_sha": "67ed4ad00c2e2794893aa9121a38c6b96ba5f941",
+      "reviewed_at": "2026-10-08",
       "license": "LGPL-2.1-or-later",
       "monitored_paths": [
         "README.md",
@@ -151,8 +151,8 @@
       "url": "https://github.com/promptfoo/promptfoo.git",
       "branch": "refs/heads/main",
       "checkout": "promptfoo",
-      "reviewed_sha": "a65fe81a676e906a304421e7af7423b435f8b882",
-      "reviewed_at": "2026-10-06",
+      "reviewed_sha": "421e7959642c5d4cc1c983259a268de1c6f847b9",
+      "reviewed_at": "2026-10-08",
       "license": "MIT",
       "monitored_paths": [
         "site/docs/configuration/expected-outputs",
@@ -232,8 +232,8 @@
       "url": "https://github.com/elithrar/dotfiles.git",
       "branch": "refs/heads/main",
       "checkout": "elithrar-dotfiles",
-      "reviewed_sha": "4b38887ec969bbc1c97c1434732fac97ea7ff0dd",
-      "reviewed_at": "2026-10-06",
+      "reviewed_sha": "e007b24808a46b506b270a29303dbc642e390e6d",
+      "reviewed_at": "2026-10-08",
       "license": "MIT",
       "monitored_paths": [
         ".agents/skills/anti-slop/SKILL.md",
