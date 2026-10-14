@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.9.0 - 2026-10-14
+
+- Add Super Tighten as an independent skill with embedded human-writing, compression, and ASD-STE100 guidance. Preserve facts, scope, warnings, conditions, and simultaneous actions across all three requirements.
+- Apply STE sentence limits, terminology consistency, approved word-use checks, grammar, counting conventions, and technical-term boundaries. Distinguish full conformance verification from a rewrite with unverified vocabulary.
+- Expose the standalone skill through the MCP skill catalog and a dedicated read-only loader, without changing the existing Unslop tools.
+
 ## 0.8.5 - 2026-10-04
 
 - Keep complete multiline HTML tags outside prose lint findings, including line breaks around attribute assignments and inside quoted values.

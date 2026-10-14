@@ -1,0 +1,26 @@
+[
+  {
+    "name": "preserve-condition-warning-and-simultaneity",
+    "source": "For the purpose of clarification, the Vela unit may restart during the test, but only when the reservoir temperature is less than 40 °C. Press the blue button and hold the lever at the same time for 8 seconds. WARNING: Hot fluid can cause burns. Do not open the drain valve while the unit is hot.",
+    "expected": "The Vela unit may restart during the test only when the reservoir temperature is less than 40 °C. WARNING: Hot fluid can cause burns. Do not open the drain valve while the unit is hot. Press the blue button and hold the lever at the same time for 8 seconds.",
+    "protected": ["may restart", "only when", "less than 40 °C", "at the same time for 8 seconds", "WARNING: Hot fluid can cause burns.", "Do not open the drain valve while the unit is hot."],
+    "forbidden": ["For the purpose of", "then hold"],
+    "invalid": "The Vela unit will restart during the test only when the reservoir temperature is less than 40 °C. Press the blue button, then hold the lever for 8 seconds. WARNING: Hot fluid can cause burns. Do not open the drain valve while the unit is hot."
+  },
+  {
+    "name": "restricted-sense-with-fixed-label-and-quote",
+    "source": "We are absolutely thrilled to inform you that your team has the ability to check the sensor readings by opening the “Check” page. The pressure may fall during calibration, but only Sensor B can issue an alert. We have already sent version 2.4.1 to Priya Sen; her exact quote is “It’s working — don’t reset it.”",
+    "expected": "Your team can open the “Check” page to see the sensor readings. The pressure may decrease during calibration, but only Sensor B can issue an alert. We already sent version 2.4.1 to Priya Sen. Her exact quote is “It’s working — don’t reset it.”",
+    "protected": ["“Check”", "may decrease during calibration", "only Sensor B can issue an alert", "already sent version 2.4.1 to Priya Sen", "“It’s working — don’t reset it.”"],
+    "forbidden": ["absolutely thrilled", "has the ability to", "pressure may fall", "We have already", ";"],
+    "invalid": "Your team can open the “Check” page to see the sensor readings. The pressure may fall during calibration, but only Sensor B can issue an alert. We already sent version 2.4.1 to Priya Sen. Her exact quote is “It’s working — don’t reset it.”"
+  },
+  {
+    "name": "noun-instead-of-command-verb-with-ing-technical-noun",
+    "source": "It is important to check the bearing before commencing the test.",
+    "expected": "Before the test, do a check of the bearing.",
+    "protected": ["Before the test", "do a check of the bearing"],
+    "forbidden": ["important", "commencing", "check the bearing"],
+    "invalid": "Before the test, check the bearing."
+  }
+]

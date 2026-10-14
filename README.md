@@ -37,6 +37,14 @@ Use `tighten` when the text needs a stricter compression pass:
 
 Tighten mode runs only when the user asks for it, so ordinary writing does not receive an aggressive compression pass. Codex keeps the `$tighten` entry point explicit-only, while Claude Code exposes the namespaced command for requests that explicitly ask for Tighten or its strictest useful compression. Tighten first applies the complete Nuko Nova Unslop workflow and the appropriate profile. It then runs a separate removal pass built around one direct instruction: “Make sure each word in this text justifies its existence.” The second pass removes throat-clearing, repetition, empty qualifiers, indirect phrasing, vague stacks, and unnecessary structural scaffolding while preserving facts, scope, intent, voice, rhythm, readability, and necessary context. A final compression-damage check restores any language needed for accuracy or natural prose.
 
+## Super Tighten command
+
+Super Tighten combines the human-writing standard, the strongest useful compression, and ASD-STE100 Simplified Technical English in one standalone skill. Its own `SKILL.md` contains all three workflows; it does not load the Unslop or Tighten entry points or their references.
+
+Use `$super-tighten` in Codex, `/nuko-nova-unslop:super-tighten` in the Claude Code plugin, or `/super-tighten` when installed as a user skill. The MCP package also exposes `load_super_tighten` and a separate skill catalog entry for ChatGPT clients after deployment and tool refresh.
+
+The STE baseline is Issue 9 (January 2025). The skill applies controlled terminology, sentence and paragraph limits, direct instructions, explicit conditions, and safety-preserving edits. Compression must retain facts, scope, uncertainty, simultaneity, and necessary context. Full conformance requires checking the official dictionary and justified technical terms; without that evidence, the skill reports the verification limit instead of claiming compliance. The copyrighted standard and dictionary are not distributed. See the [standalone skill](skills/super-tighten/SKILL.md) and [research record](research/super-tighten.md).
+
 ## What it does
 
 - Drafts and rewrites mutable prose from supplied facts, audience, channel, and voice, with zero em dashes or spaced double-hyphen substitutes and flowing constructions instead of staccato fragments.
@@ -130,7 +138,7 @@ After creating a release commit, render aligned immutable catalog entries with:
 ```bash
 python3 scripts/render_marketplace_entries.py \
   --sha <40-character-release-commit> \
-  --ref nuko-nova-unslop-marketplace-v0.8.5
+  --ref nuko-nova-unslop-marketplace-v0.9.0
 ```
 
 ## License

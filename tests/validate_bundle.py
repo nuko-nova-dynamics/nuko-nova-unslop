@@ -16,6 +16,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SKILL = ROOT / "skills" / "nuko-nova-unslop"
 ALIAS_SKILL = ROOT / "skills" / "unslop"
 TIGHTEN_SKILL = ROOT / "skills" / "tighten"
+SUPER_TIGHTEN_SKILL = ROOT / "skills" / "super-tighten"
 OUTPUT_STYLE = ROOT / "output-styles" / "nuko-nova-unslop.md"
 SEMVER = re.compile(r"^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:[-+][0-9A-Za-z.-]+)?$")
 SHA = re.compile(r"^[0-9a-f]{40}$")
@@ -291,6 +292,30 @@ def check_no_hooks() -> None:
         fail("lifecycle hook bundle must not be shipped")
 
 
+def check_super_tighten() -> None:
+    entrypoint = SUPER_TIGHTEN_SKILL / "SKILL.md"
+    if not entrypoint.is_file():
+        fail("standalone super-tighten skill is missing")
+    frontmatter = parse_frontmatter(entrypoint)
+    if set(frontmatter) != {"name", "description"} or frontmatter["name"] != "super-tighten":
+        fail("super-tighten frontmatter must declare its standalone name and description")
+    if "ASD-STE100" not in frontmatter["description"]:
+        fail("super-tighten discovery must identify its controlled-language purpose")
+    for raw in LINK.findall(entrypoint.read_text(encoding="utf-8")):
+        if not raw.startswith(("https://", "http://", "mailto:", "#")):
+            fail("super-tighten instructions must not depend on another local resource")
+    agent_path = SUPER_TIGHTEN_SKILL / "agents" / "openai.yaml"
+    if not agent_path.is_file():
+        fail("super-tighten OpenAI metadata is missing")
+    agent = agent_path.read_text(encoding="utf-8")
+    if not re.search(r'^\s*display_name:\s*"Super Tighten"\s*$', agent, re.MULTILINE):
+        fail("super-tighten OpenAI display name mismatch")
+    if "Use $super-tighten" not in agent:
+        fail("super-tighten default prompt must name its own invocation")
+    check_links(entrypoint)
+    check_links(ROOT / "research" / "super-tighten.md")
+
+
 def check_upstreams() -> None:
     lock = load_json(ROOT / "upstreams.lock.json")
     if lock.get("review_cadence") != "every-two-days":
@@ -333,10 +358,11 @@ def check_content() -> None:
 def main() -> int:
     check_manifests()
     check_skill()
+    check_super_tighten()
     check_no_hooks()
     check_upstreams()
     check_content()
-    print("PASS: dual manifests, forced Claude output style, hook-free packaging, one canonical skill, one short alias, one focused command, seven references, two helpers with shared Markdown recognition, seventeen source pins, links, metadata, and cadence verified")
+    print("PASS: dual manifests, forced Claude output style, hook-free packaging, canonical skill, short alias, focused command, standalone Super Tighten, seven references, two helpers with shared Markdown recognition, seventeen source pins, links, metadata, and cadence verified")
     return 0
 
 

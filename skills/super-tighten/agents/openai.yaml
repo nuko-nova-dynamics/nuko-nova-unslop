@@ -1,0 +1,7 @@
+interface:
+  display_name: "Super Tighten"
+  short_description: "Human prose, useful compression, and STE rules"
+  default_prompt: "Use $super-tighten to combine human writing, useful compression, and ASD-STE100 rules in this text."
+
+policy:
+  allow_implicit_invocation: true

@@ -7,6 +7,7 @@ This repository contains one shared writing skill packaged for Codex and Claude 
 - `skills/nuko-nova-unslop/SKILL.md` defines runtime behavior.
 - `skills/unslop/SKILL.md` is the short explicit alias and must only route to the canonical skill.
 - `skills/tighten/SKILL.md` is the focused compression command. It must route through the complete canonical skill before the second-stage rules in `skills/nuko-nova-unslop/references/tighten.md`.
+- `skills/super-tighten/SKILL.md` is a standalone combined Unslop, compression, and ASD-STE100 workflow. Its runtime instructions must not route to another writing skill or reference. Preserve the distinction between applying STE rules and verifying full vocabulary conformance against the official standard.
 - `output-styles/nuko-nova-unslop.md` makes the standard apply to every Claude Code response while the plugin is enabled.
 - `skills/nuko-nova-unslop/agents/openai.yaml` keeps implicit Codex invocation enabled.
 - The files under `skills/nuko-nova-unslop/references/` hold detailed rules and maintenance guidance.
@@ -39,6 +40,7 @@ pnpm check
 python3 /Users/judiazm/.codex/skills/.system/skill-creator/scripts/quick_validate.py skills/nuko-nova-unslop
 python3 /Users/judiazm/.codex/skills/.system/skill-creator/scripts/quick_validate.py skills/unslop
 python3 /Users/judiazm/.codex/skills/.system/skill-creator/scripts/quick_validate.py skills/tighten
+python3 /Users/judiazm/.codex/skills/.system/skill-creator/scripts/quick_validate.py skills/super-tighten
 ```
 
 `pnpm check` runs the portable bundle, Python, and MCP checks and is also the CI entry point. `tests/validate_bundle.py` is the required repository-owned plugin validator; it checks both client manifests, shipped resources, invocation metadata, and hook-free packaging. Install workspace dependencies with `pnpm install --frozen-lockfile` first. The skill creator checks above depend on the local Codex installation and remain separate.

@@ -130,6 +130,33 @@ class ValidatorMutationTests(unittest.TestCase):
 
         self.assert_rejected(mutate, "alias skill")
 
+    def test_missing_standalone_super_tighten_is_rejected(self) -> None:
+        def mutate(root: Path) -> None:
+            shutil.rmtree(root / "skills" / "super-tighten")
+
+        self.assert_rejected(mutate, "standalone super-tighten skill is missing")
+
+    def test_super_tighten_cannot_regress_to_a_router(self) -> None:
+        def mutate(root: Path) -> None:
+            path = root / "skills" / "super-tighten" / "SKILL.md"
+            path.write_text(
+                path.read_text(encoding="utf-8")
+                + "\nRead [the full writing workflow](../nuko-nova-unslop/SKILL.md).\n",
+                encoding="utf-8",
+            )
+
+        self.assert_rejected(mutate, "must not depend on another local resource")
+
+    def test_super_tighten_invocation_metadata_cannot_point_to_tighten(self) -> None:
+        def mutate(root: Path) -> None:
+            path = root / "skills" / "super-tighten" / "agents" / "openai.yaml"
+            path.write_text(
+                path.read_text(encoding="utf-8").replace("Use $super-tighten", "Use $tighten"),
+                encoding="utf-8",
+            )
+
+        self.assert_rejected(mutate, "default prompt must name its own invocation")
+
     def test_alias_behavior_duplication_is_rejected(self) -> None:
         def mutate(root: Path) -> None:
             path = root / "skills" / "unslop" / "SKILL.md"

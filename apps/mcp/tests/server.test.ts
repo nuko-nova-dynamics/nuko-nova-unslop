@@ -3,6 +3,8 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { z } from "zod";
 
 import { createNukoNovaUnslopServer } from "../src/server";
+import { getPrimarySkill, getReference, getSkillCatalog, getSuperTightenSkill, listAllSkillResources } from "../src/skill-package";
+import { sha256Digest } from "./skill-sources";
 
 const skillResourceSchema = z.object({
   uri: z.string(),
@@ -49,6 +51,7 @@ describe("Nuko Nova Unslop MCP server", () => {
     });
     expect(client.getInstructions()).toContain("never accepts user prose");
     expect(client.getInstructions()).toContain("invokes Unslop");
+    expect(client.getInstructions()).toContain("load_super_tighten");
   });
 
   it("exposes the complete skill through skills/list and skills/get", async () => {
@@ -56,18 +59,39 @@ describe("Nuko Nova Unslop MCP server", () => {
       { method: "skills/list", params: {} },
       skillsListResultSchema,
     );
-    const entry = listResult.skills[0];
+    expect(listResult).toEqual(getSkillCatalog());
+    expect(listResult.skills.map((entry) => entry.frontmatter.name)).toEqual(["nuko-nova-unslop", "super-tighten"]);
+    for (const entry of listResult.skills) {
+      const getResult = await client.request(
+        { method: "skills/get", params: { uri: entry.uri } },
+        skillGetResultSchema,
+      );
 
-    expect(listResult.skills).toHaveLength(1);
-    expect(entry?.frontmatter.name).toBe("nuko-nova-unslop");
-    expect(entry?.resources.length).toBeGreaterThan(5);
+      expect(getResult.skill).toEqual(entry);
+    }
+  });
 
-    const getResult = await client.request(
-      { method: "skills/get", params: { uri: entry?.uri } },
+  it.each([
+    "skill://nuko-nova-unslop/unknown/SKILL.md",
+    "skill://nuko-nova-unslop/super-tighten/references/tighten.md",
+    "skill://nuko-nova-unslop/nuko-nova-unslop/references/tighten.md",
+    "skill://nuko-nova-unslop/super-tighten/SKILL.md/extra",
+  ])("rejects a non-primary skill URI: %s", async (uri) => {
+    await expect(client.request(
+      { method: "skills/get", params: { uri } },
       skillGetResultSchema,
-    );
+    )).rejects.toMatchObject({ code: -32602 });
+  });
 
-    expect(getResult.skill).toEqual(entry);
+  it("rejects an unrecognized skill page and extra get parameters", async () => {
+    await expect(client.request(
+      { method: "skills/list", params: { cursor: "next" } },
+      skillsListResultSchema,
+    )).rejects.toMatchObject({ code: -32602 });
+    await expect(client.request(
+      { method: "skills/get", params: { uri: getSuperTightenSkill().uri, prose: "Rewrite me" } },
+      skillGetResultSchema,
+    )).rejects.toMatchObject({ code: -32602 });
   });
 
   it("returns every declared skill resource with matching text", async () => {
@@ -75,20 +99,29 @@ describe("Nuko Nova Unslop MCP server", () => {
       { method: "skills/list", params: {} },
       skillsListResultSchema,
     );
-    const primaryResource = listResult.skills[0]?.resources.find((resource) =>
-      resource.uri.endsWith("/SKILL.md"),
-    );
+    const declaredResources = listResult.skills.flatMap((entry) => entry.resources);
+    const { resources: advertisedResources } = await client.listResources();
+    expect(advertisedResources.map(({ uri }) => uri).sort()).toEqual(declaredResources.map(({ uri }) => uri).sort());
+    expect(new Set(advertisedResources.map(({ name }) => name)).size).toBe(advertisedResources.length);
 
-    expect(primaryResource).toBeDefined();
+    for (const resource of declaredResources) {
+      const expected = listAllSkillResources().find(({ uri }) => uri === resource.uri)!;
+      const result = await client.readResource({ uri: resource.uri });
+      expect(result.contents).toHaveLength(1);
+      expect(result.contents[0]).toMatchObject({ uri: resource.uri, text: expected.content });
+      const content = result.contents[0]!;
+      expect("text" in content).toBe(true);
+      if (!("text" in content)) throw new Error("Expected a text skill resource");
+      expect(await sha256Digest(content.text)).toBe(resource.digest);
+      if (resource.uri.endsWith(".md")) {
+        expect(content.mimeType).toBe("text/markdown");
+      }
+    }
+  });
 
-    const result = await client.readResource({ uri: primaryResource!.uri });
-
-    expect(result.contents).toHaveLength(1);
-    expect(result.contents[0]?.uri).toBe(primaryResource?.uri);
-    expect(result.contents[0]).toMatchObject({
-      mimeType: "text/markdown",
-      text: expect.stringContaining("# Nuko Nova Unslop"),
-    });
+  it("does not resolve cross-package or arbitrary resource paths", async () => {
+    await expect(client.readResource({ uri: "skill://nuko-nova-unslop/super-tighten/references/tighten.md" })).rejects.toBeDefined();
+    await expect(client.readResource({ uri: "file:///etc/passwd" })).rejects.toBeDefined();
   });
 
   it("offers only package-loading tools and accepts no writing input", async () => {
@@ -96,18 +129,24 @@ describe("Nuko Nova Unslop MCP server", () => {
 
     expect(tools.map((tool) => tool.name)).toEqual([
       "load_nuko_nova_unslop",
+      "load_super_tighten",
       "read_nuko_nova_reference",
     ]);
-    expect(tools[0]?.annotations).toMatchObject({
-      readOnlyHint: true,
-      destructiveHint: false,
-      openWorldHint: false,
-    });
-    expect(tools[0]?.inputSchema).toMatchObject({
-      type: "object",
-      properties: {},
-      additionalProperties: false,
-    });
+    for (const tool of tools) {
+      expect(tool.annotations).toMatchObject({
+        readOnlyHint: true,
+        destructiveHint: false,
+        idempotentHint: true,
+        openWorldHint: false,
+      });
+      if (tool.name.startsWith("load_")) {
+        expect(tool.inputSchema).toMatchObject({
+          type: "object",
+          properties: {},
+          additionalProperties: false,
+        });
+      }
+    }
     expect(JSON.stringify(tools)).not.toContain("text_to_rewrite");
     expect(JSON.stringify(tools)).not.toContain("user_prose");
     expect(tools[0]?.title).toBe("Load Unslop");
@@ -121,10 +160,14 @@ describe("Nuko Nova Unslop MCP server", () => {
     });
 
     expect(loaded.isError).not.toBe(true);
-    expect(loaded.content[0]).toMatchObject({
-      type: "text",
-      text: expect.stringContaining("# Nuko Nova Unslop"),
+    expect(loaded.content).toEqual([{ type: "text", text: getPrimarySkill().content }]);
+
+    const reference = await client.callTool({
+      name: "read_nuko_nova_reference",
+      arguments: { name: "tighten.md" },
     });
+    expect(reference.isError).not.toBe(true);
+    expect(reference.content).toEqual([{ type: "text", text: getReference("tighten.md").content }]);
 
     const rejected = await client.callTool({
       name: "read_nuko_nova_reference",
@@ -132,5 +175,30 @@ describe("Nuko Nova Unslop MCP server", () => {
     });
 
     expect(rejected.isError).toBe(true);
+  });
+
+  it.each([{}, undefined])("loads the entire standalone skill in one response with arguments %j", async (arguments_) => {
+    const skill = getSuperTightenSkill();
+    const loaded = await client.callTool({ name: "load_super_tighten", arguments: arguments_ });
+
+    expect(loaded.isError).not.toBe(true);
+    expect(loaded.content).toEqual([{ type: "text", text: skill.content }]);
+    expect(loaded.structuredContent).toEqual({
+      name: skill.name,
+      version: skill.version,
+      commitSha: skill.commitSha,
+      uri: skill.uri,
+      digest: skill.digest,
+      instructions: skill.content,
+      references: [],
+    });
+  });
+
+  it.each(["load_nuko_nova_unslop", "load_super_tighten"])("rejects prose and any extra argument on %s", async (name) => {
+    for (const arguments_ of [{ prose: "Rewrite this" }, { name: "tighten.md" }, { skill: "nuko-nova-unslop" }]) {
+      const result = await client.callTool({ name, arguments: arguments_ });
+      expect(result.isError).toBe(true);
+      expect(result.structuredContent).toBeUndefined();
+    }
   });
 });

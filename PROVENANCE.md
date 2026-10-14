@@ -18,6 +18,8 @@ The owner supplied the September 11, 2026 `tighten` command for publication as p
 
 ## Public research sources
 
+On October 14, 2026, the owner requested Super Tighten as an independent combination of Unslop, useful compression, and ASD-STE100. Firecrawl research and direct review of the official Issue 9 PDF, STEMG FAQ, and downloads guidance informed the original standalone instructions. The standard's wording, dictionary, and example corpus are not bundled or relicensed. Synthetic cases exercise preservation, controlled-language boundaries, and honest conformance reporting. The source URLs and implementation decisions are recorded in `research/super-tighten.md`.
+
 The source set began with the ten repositories in the August 13, 2026 research report: Vale, Avoid AI Writing, Cursor pstack Unslop, Better Writing, Harper, No AI Slop, Humanizer, AntiSlop Sampler, LanguageTool, and Promptfoo. On August 21, 2026, the owner added seven repositories from a public anti-slop skills list: Stop Slop, Slopbeth, Adam Boudjemaa Humanizer, Stephen Turner Deslop, Elithrar Anti-Slop, SoundsHuman, and Anti-AI-Slop Writing. The exact reviewed commits, license findings, lineage notes, and monitored paths live in `upstreams.lock.json` and the source map.
 
 The projects were used according to their strengths:
