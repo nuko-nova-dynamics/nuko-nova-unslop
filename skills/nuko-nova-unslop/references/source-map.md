@@ -1,24 +1,24 @@
 # Source map
 
-Research cutoff: October 14, 2026. `upstreams.lock.json` is the machine-readable source of reviewed commit pins and monitored paths.
+Research cutoff: October 16, 2026. `upstreams.lock.json` is the machine-readable source of reviewed commit pins and monitored paths.
 
 | Source | Reviewed commit | License | Reviewed value |
 | --- | --- | --- | --- |
 | Vale | `cfb21a4ce87238bcfb44b90e8e0db9e0e91d6c09` | MIT | Markup-aware deterministic linting, quote and source-boundary tests, and small inspectable rules. |
-| Avoid AI Writing | `2dc826f7b9aea762f5557e56ba88a3e515bd2fed` | MIT | Separation of deterministic signals from editorial judgment, protected Markdown source boundaries, and corpus discipline. |
-| Cursor pstack Unslop | `1e5c90a4b6f249917bd21fe361b3a2a7deb741b8` | MIT for `pstack` | Compact pattern catalog, portability test, mechanism-first specificity, and rhythm audit. |
+| Avoid AI Writing | `0a4f1ad101683fd8734241ed46430a0b4a9af729` | MIT | Separation of deterministic signals from editorial judgment, protected Markdown source boundaries, and corpus discipline. |
+| Cursor pstack Unslop | `f713f14203cd6420cec13cd7c55c32d598dbab68` | MIT for `pstack` | Compact pattern catalog, portability test, mechanism-first specificity, and rhythm audit. |
 | Better Writing | `8e45d0b241fc042d39444f499bbce4cfdb7a6c86` | MIT | Preservation contract, context dials, genre exemptions, voice fixtures, and preflight checks. |
-| Harper | `d49f5b60107fae100cf8976413278cb539b4f1b0` | Apache-2.0 | Private, low-latency English mechanics and structured, markup-aware diagnostics. |
+| Harper | `f4ebc61d77df1fc00b6aa8bc604e91af3534dad1` | Apache-2.0 | Private, low-latency English mechanics and structured, markup-aware diagnostics. |
 | No AI Slop | `000650b156983f5159695b441477f4e63b25dc85` | MIT | Audit-only mode, minimum-effective editing, and named findings. |
 | Humanizer | `225a6f39ac85f76ee48dbad772ea4abe4ed6c9d8` | MIT | Cross-client packaging, author-sample calibration, broad pattern coverage, and non-fabrication guidance. |
 | AntiSlop Sampler | `0ae330e98fbe6f09351f2d1063a51956378a44b2` | Apache-2.0 | Phrase-level prevention research and the warning that generated slop lists require curation rather than blanket adoption. |
-| LanguageTool | `c8d4098fd6b6a8bde224f556fd689ee68e123047` | LGPL-2.1-or-later | Multilingual grammar/style architecture; referenced as an optional external tool and not redistributed. |
-| Promptfoo | `720657dab1e8b6880cd4a9c223e12db4a8c0fe21` | MIT | Deterministic assertions, model-graded evaluation boundaries, and repeatable regression configuration. |
+| LanguageTool | `c5b1ab8731dc63b4492f109acafe027be8e21290` | LGPL-2.1-or-later | Multilingual grammar/style architecture; referenced as an optional external tool and not redistributed. |
+| Promptfoo | `132a2d38b1b0adc953b0db650f950d573bc113c4` | MIT | Deterministic assertions, model-graded evaluation boundaries, and repeatable regression configuration. |
 | Stop Slop | `8da1f030185bdfe8471220585162991eaeb970e9` | MIT | Compact structural catalog and the lineage source for several later skills. Blanket bans on adverbs, passive voice, and individual punctuation remain outside the Nuko Nova standard. |
 | Slopbeth | `b33718bb9283c11b09567dc714f92d90ffb7bd16` | MIT | Brief-versus-artifact separation, evidence-bound rewriting, sentence-load and topic-swap tests, preservation benchmarks, and dated evaluation hygiene. |
 | Adam Boudjemaa Humanizer | `a58df065367550b6ce40ff3f648335018d8e0589` | MIT | Broad cross-harness catalog, voice profiles, cluster-based false-positive checks, and always-on instruction patterns. |
 | Stephen Turner Deslop | `48287d806e61534bc14939b55b72c3f3f11a7db5` | MIT | Scientific-writing examples, register-aware exceptions, and a derivative Stop Slop and tropes catalog. It is tracked as derivative evidence, not an independent vote for shared rules. |
-| Elithrar Anti-Slop | `9a692ad2d352156dc9de570c9f6dcec0ebfaad7e` | MIT | Surgical edits and the author-defendability test for separating intentional voice from disposable formula. |
+| Elithrar Anti-Slop | `1e9402420916e8bb5e4ae7b366ee0694b8d3aca7` | MIT | Surgical edits and the author-defendability test for separating intentional voice from disposable formula. |
 | SoundsHuman | `a45cfbba9fde843d670e553a0aa98f6a23d7fb28` | MIT | Explicit lineage, thresholded vocabulary tiers, conservative mechanical fixes, and a local scanner split from editorial judgment. Its merged catalogs are treated as derivative evidence. |
 | Anti-AI-Slop Writing | `63255f9bbb75a265dc5786a04535cd033f487756` | No detected license file; README states MIT | Always-on activation and destination-specific formatting reminders. Blanket vocabulary bans and invented human detail are not adopted. |
 
