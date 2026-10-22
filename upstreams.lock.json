@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "review_cadence": "every-two-days",
-  "research_cutoff": "2026-10-20",
+  "research_cutoff": "2026-10-22",
   "sources": [
     {
       "id": "vale",
@@ -42,8 +42,8 @@
       "url": "https://github.com/cursor/plugins.git",
       "branch": "refs/heads/main",
       "checkout": "cursor-plugins",
-      "reviewed_sha": "88d47514b82e7c44f00f2b2a72ff6dd12158038c",
-      "reviewed_at": "2026-10-20",
+      "reviewed_sha": "eb4db2b55b2b7dec3d9282754cddf0a56bf4ff10",
+      "reviewed_at": "2026-10-22",
       "license": "MIT (pstack)",
       "monitored_paths": [
         "pstack/skills/unslop/SKILL.md",
@@ -72,8 +72,8 @@
       "url": "https://github.com/Automattic/harper.git",
       "branch": "refs/heads/master",
       "checkout": "harper",
-      "reviewed_sha": "0d6b8698b634c51c016935a4e6577923fd84ab41",
-      "reviewed_at": "2026-10-20",
+      "reviewed_sha": "760378b7ab40639135c5af4e6e6cb0797e16eca4",
+      "reviewed_at": "2026-10-22",
       "license": "Apache-2.0",
       "monitored_paths": [
         "README.md",
@@ -135,8 +135,8 @@
       "url": "https://github.com/languagetool-org/languagetool.git",
       "branch": "refs/heads/master",
       "checkout": "languagetool",
-      "reviewed_sha": "8ed25c5c3f75160edad6c986626aa6edfedd5f1f",
-      "reviewed_at": "2026-10-20",
+      "reviewed_sha": "cf2d010e36714188e35f5c2e45362d4e9478729f",
+      "reviewed_at": "2026-10-22",
       "license": "LGPL-2.1-or-later",
       "monitored_paths": [
         "README.md",
@@ -151,8 +151,8 @@
       "url": "https://github.com/promptfoo/promptfoo.git",
       "branch": "refs/heads/main",
       "checkout": "promptfoo",
-      "reviewed_sha": "b49d55dfdec226bb299afee253122879570cc536",
-      "reviewed_at": "2026-10-20",
+      "reviewed_sha": "03844fb957487102bd21f7434a229915cee90e02",
+      "reviewed_at": "2026-10-22",
       "license": "MIT",
       "monitored_paths": [
         "site/docs/configuration/expected-outputs",
