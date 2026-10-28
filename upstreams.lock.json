@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "review_cadence": "every-two-days",
-  "research_cutoff": "2026-10-26",
+  "research_cutoff": "2026-10-28",
   "sources": [
     {
       "id": "vale",
@@ -24,8 +24,8 @@
       "url": "https://github.com/conorbronsdon/avoid-ai-writing.git",
       "branch": "refs/heads/main",
       "checkout": "avoid-ai-writing",
-      "reviewed_sha": "209815cdeb4af942616daec89a5e0a706c804e3a",
-      "reviewed_at": "2026-10-20",
+      "reviewed_sha": "9cd07215982eca9736e14caaa63241c0264856f3",
+      "reviewed_at": "2026-10-28",
       "license": "MIT",
       "monitored_paths": [
         "SKILL.md",
@@ -42,8 +42,8 @@
       "url": "https://github.com/cursor/plugins.git",
       "branch": "refs/heads/main",
       "checkout": "cursor-plugins",
-      "reviewed_sha": "99b609a72323b70204eab407c622f436e858e112",
-      "reviewed_at": "2026-10-26",
+      "reviewed_sha": "c742dd61706fbacc1b95f1a20b7b988cf096ce6c",
+      "reviewed_at": "2026-10-28",
       "license": "MIT (pstack)",
       "monitored_paths": [
         "pstack/skills/unslop/SKILL.md",
@@ -72,8 +72,8 @@
       "url": "https://github.com/Automattic/harper.git",
       "branch": "refs/heads/master",
       "checkout": "harper",
-      "reviewed_sha": "255dee039a15ec8d652604928ec3d994c0212f9f",
-      "reviewed_at": "2026-10-26",
+      "reviewed_sha": "f4826935b83260166a5257ac1a6b0e22770d6714",
+      "reviewed_at": "2026-10-28",
       "license": "Apache-2.0",
       "monitored_paths": [
         "README.md",
@@ -103,8 +103,8 @@
       "url": "https://github.com/blader/humanizer.git",
       "branch": "refs/heads/main",
       "checkout": "humanizer",
-      "reviewed_sha": "8c307f367c91bd974002f10f2be2965d642c13df",
-      "reviewed_at": "2026-10-18",
+      "reviewed_sha": "0ef9fe5bc3572734fd3ae6c448fe00a30cd5dcf0",
+      "reviewed_at": "2026-10-28",
       "license": "MIT",
       "monitored_paths": [
         "SKILL.md",
@@ -135,8 +135,8 @@
       "url": "https://github.com/languagetool-org/languagetool.git",
       "branch": "refs/heads/master",
       "checkout": "languagetool",
-      "reviewed_sha": "bc7e597ca2a147c1139012fbf5fd9662de8034ad",
-      "reviewed_at": "2026-10-26",
+      "reviewed_sha": "ff39a8e5d4824f38d35d665d74cdc2174cd0472b",
+      "reviewed_at": "2026-10-28",
       "license": "LGPL-2.1-or-later",
       "monitored_paths": [
         "README.md",
@@ -151,8 +151,8 @@
       "url": "https://github.com/promptfoo/promptfoo.git",
       "branch": "refs/heads/main",
       "checkout": "promptfoo",
-      "reviewed_sha": "b4c2404a0dee93dcd4d53a323d6f32f87ee27558",
-      "reviewed_at": "2026-10-26",
+      "reviewed_sha": "e48ed85e08ff8a1ca74fa7d0e41daf47cf155efb",
+      "reviewed_at": "2026-10-28",
       "license": "MIT",
       "monitored_paths": [
         "site/docs/configuration/expected-outputs",
