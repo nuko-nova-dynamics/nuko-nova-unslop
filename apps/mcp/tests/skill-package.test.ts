@@ -17,7 +17,7 @@ describe("Nuko Nova Unslop skill package", () => {
     const skill = getPrimarySkill();
 
     expect(skill.name).toBe("nuko-nova-unslop");
-    expect(skill.version).toBe("0.9.0");
+    expect(skill.version).toBe("0.9.1");
     expect(skill.uri).toBe("skill://nuko-nova-unslop/nuko-nova-unslop/SKILL.md");
     expect(skill.content).toBe(primarySkillSource);
   });

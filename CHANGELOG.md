@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.9.1 - 2026-11-03
+
+- Detect named and numeric HTML character references that render as em dashes in mutable Markdown prose, using the existing profile thresholds and original source locations.
+- Preserve escaped ampersands, literal entity examples, code, quotations, link targets, and comments. Add synthetic coverage for valid references, malformed references, and protected boundaries.
+- Advance five fully reviewed upstream pins. Accept only the encoded-punctuation safeguard; optional style configuration, grammar engines, language data, build dependencies, and evaluation changes remain outside the plugin.
+
 ## 0.9.0 - 2026-10-14
 
 - Add Super Tighten as an independent skill with embedded human-writing, compression, and ASD-STE100 guidance. Preserve facts, scope, warnings, conditions, and simultaneous actions across all three requirements.

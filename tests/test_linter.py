@@ -427,6 +427,24 @@ class LinterTests(unittest.TestCase):
         self.assertIn("dash-substitute", rule_ids(text, "strict"))
         self.assertNotIn("dash-substitute", rule_ids("Run npm install --save-dev today.", "strict"))
 
+    def test_encoded_em_dashes_use_original_positions_and_protected_boundaries(self) -> None:
+        entities = ("&mdash;", "&#8212;", "&#0008212;", "&#x2014;", "&#X002014;")
+        for entity in entities:
+            with self.subTest(entity=entity):
+                text = f"Context.\nThe queue filled {entity} processing stopped."
+                for profile in ("strict", "nuko-nova"):
+                    findings = [f for f in MODULE.lint_text(text, profile) if f.rule_id == "dash-cluster"]
+                    self.assertEqual([(f.line, f.column) for f in findings], [(2, 18)])
+                self.assertNotIn("dash-cluster", rule_ids(text, "balanced"))
+                for protected in (f"`{entity}`", f'"The queue {entity} stopped."',
+                                  f"[queue](https://example.test/{entity})", f"<!-- {entity} -->"):
+                    self.assertNotIn("dash-cluster", rule_ids(protected, "strict"))
+        for literal in ("&amp;mdash;", "&MDASH;", "&#8212", "&#x2013;", "&#00008212;", "&#x0002014;", r"\&mdash;"):
+            self.assertNotIn("dash-cluster", rule_ids(f"The queue {literal} stopped.", "strict"))
+        self.assertIn("dash-cluster", rule_ids(r"The queue \\&mdash; stopped.", "strict"))
+        cluster = " ".join(f"The queue {entity} stopped." for entity in entities)
+        self.assertIn("dash-cluster", rule_ids(cluster, "balanced"))
+
     def test_single_prose_em_dash_flagged_in_house_profile(self) -> None:
         text = "The launch slipped a week — the vendor missed the deadline."
         self.assertIn("dash-cluster", rule_ids(text, "nuko-nova"))

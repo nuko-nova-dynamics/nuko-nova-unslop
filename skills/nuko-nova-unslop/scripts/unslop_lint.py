@@ -391,7 +391,14 @@ def balanced_structural_dash_offsets(masked: str, offsets: list[int]) -> set[int
 
 
 def dash_finding(text: str, masked: str, profile: str) -> Finding | None:
-    offsets = [match.start() for match in re.finditer("—", masked)]
+    # Match rendered dashes without decoding or shifting original source offsets.
+    # An odd backslash run escapes the ampersand, leaving a literal entity.
+    offsets = [
+        match.start()
+        for match in re.finditer(r"—|&mdash;|&#0{0,3}8212;|&#[xX]0{0,2}2014;", masked)
+        if match.group() == "—"
+        or (match.start() - len(masked[:match.start()].rstrip("\\"))) % 2 == 0
+    ]
     if profile == "balanced":
         offsets = sorted(set(offsets) - balanced_structural_dash_offsets(masked, offsets))
     words = max(1, len(re.findall(r"\b[\w’'-]+\b", masked)))
