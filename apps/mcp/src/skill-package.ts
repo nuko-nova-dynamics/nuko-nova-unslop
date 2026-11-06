@@ -1,4 +1,4 @@
-import { GENERATED_SKILL_PACKAGE, GENERATED_SKILL_PACKAGES } from "./skill-package.generated";
+import { GENERATED_SKILL_PACKAGES } from "./skill-package.generated";
 
 const PRIMARY_SKILL_PATH = "SKILL.md";
 const REFERENCE_PREFIX = "references/";
@@ -10,22 +10,68 @@ export type SkillResource = {
   content: string;
 };
 
-type SkillPackage = {
+export type LoadTool = {
+  name: string;
+  title: string;
+  description: string;
+};
+
+export type LoadSkillOutput = {
   name: string;
   version: string;
   commitSha: string;
-  resources: readonly SkillResource[];
+  uri: string;
+  digest: string;
+  instructions: string;
+  references: string[];
 };
 
-function findResourceByPath(skillPackage: SkillPackage, resourcePath: string): SkillResource {
-  const resource = skillPackage.resources.find(
-    (candidate) => candidate.path === resourcePath,
-  );
+export type SkillCatalogEntry = {
+  uri: string;
+  frontmatter: { name: string; description: string };
+  resources: { uri: string; digest: string }[];
+};
 
+/** One served skill: its package, its load tool, and its catalog entry. */
+export type ServedSkill = {
+  /** Frontmatter name. */
+  name: string;
+  /** Frontmatter description. */
+  description: string;
+  /** True for the one skill whose references the reference reader serves. */
+  primary: boolean;
+  version: string;
+  commitSha: string;
+  /** URI of the skill's SKILL.md. */
+  uri: string;
+  /** Digest of the skill's SKILL.md. */
+  digest: `sha256:${string}`;
+  /** Text of the skill's SKILL.md. */
+  content: string;
+  /** Filenames under references/, without the prefix. */
+  references: string[];
+  /** Every packaged file, in package order. */
+  resources: SkillResource[];
+  loadTool: LoadTool;
+  /** Structured result of the skill's load tool. */
+  loadOutput: LoadSkillOutput;
+  /** Entry for skills/list and skills/get. */
+  catalogEntry: SkillCatalogEntry;
+  /** Returns one file under references/ by filename, or throws. */
+  readReference(referenceName: string): SkillResource;
+};
+
+type GeneratedSkillPackage = (typeof GENERATED_SKILL_PACKAGES)[number];
+
+function findResource(
+  resources: readonly SkillResource[],
+  resourcePath: string,
+  errorMessage: string,
+): SkillResource {
+  const resource = resources.find((candidate) => candidate.path === resourcePath);
   if (!resource) {
-    throw new Error(`Unknown ${skillPackage.name} resource: ${resourcePath}`);
+    throw new Error(errorMessage);
   }
-
   return resource;
 }
 
@@ -46,80 +92,79 @@ function parseFrontmatter(content: string, skillName: string) {
   return { name, description };
 }
 
-export function listSkillResources(): SkillResource[] {
-  return GENERATED_SKILL_PACKAGE.resources.map((resource) => ({ ...resource }));
+function toServedSkill(skillPackage: GeneratedSkillPackage): ServedSkill {
+  const resources: SkillResource[] = skillPackage.resources.map((resource) => ({ ...resource }));
+  const skillFile = findResource(
+    resources,
+    PRIMARY_SKILL_PATH,
+    `Unknown ${skillPackage.name} resource: ${PRIMARY_SKILL_PATH}`,
+  );
+  const { name, description } = parseFrontmatter(skillFile.content, skillPackage.name);
+  const references = resources
+    .filter((candidate) => candidate.path.startsWith(REFERENCE_PREFIX))
+    .map((candidate) => candidate.path.slice(REFERENCE_PREFIX.length));
+
+  return {
+    name,
+    description,
+    primary: skillPackage.primary,
+    version: skillPackage.version,
+    commitSha: skillPackage.commitSha,
+    uri: skillFile.uri,
+    digest: skillFile.digest,
+    content: skillFile.content,
+    references,
+    resources,
+    loadTool: { ...skillPackage.loadTool },
+    loadOutput: {
+      name,
+      version: skillPackage.version,
+      commitSha: skillPackage.commitSha,
+      uri: skillFile.uri,
+      digest: skillFile.digest,
+      instructions: skillFile.content,
+      references: [...references],
+    },
+    catalogEntry: {
+      uri: skillFile.uri,
+      frontmatter: { name, description },
+      resources: resources.map(({ uri, digest }) => ({ uri, digest })),
+    },
+    readReference(referenceName) {
+      const errorMessage = `Unknown ${skillPackage.name} reference: ${referenceName}`;
+      if (
+        referenceName.includes("/") ||
+        referenceName.includes("\\") ||
+        !referenceName.endsWith(".md")
+      ) {
+        throw new Error(errorMessage);
+      }
+      return { ...findResource(resources, `${REFERENCE_PREFIX}${referenceName}`, errorMessage) };
+    },
+  };
+}
+
+/** Every served skill, in generated order. Each call returns fresh objects. */
+export function listServedSkills(): ServedSkill[] {
+  return GENERATED_SKILL_PACKAGES.map(toServedSkill);
+}
+
+export function findPrimarySkill(skills: readonly ServedSkill[]): ServedSkill {
+  const primary = skills.filter((skill) => skill.primary);
+  if (primary.length !== 1) {
+    throw new Error(`Expected exactly one primary served skill; found ${primary.length}`);
+  }
+  return primary[0];
+}
+
+export function getPrimarySkill(): ServedSkill {
+  return findPrimarySkill(listServedSkills());
 }
 
 export function listAllSkillResources(): SkillResource[] {
-  return GENERATED_SKILL_PACKAGES.flatMap((skillPackage) =>
-    skillPackage.resources.map((resource) => ({ ...resource })),
-  );
+  return listServedSkills().flatMap((skill) => skill.resources);
 }
 
-function getPackagedSkill(skillPackage: SkillPackage) {
-  const resource = findResourceByPath(skillPackage, PRIMARY_SKILL_PATH);
-  const frontmatter = parseFrontmatter(resource.content, skillPackage.name);
-
-  return {
-    ...frontmatter,
-    version: skillPackage.version,
-    commitSha: skillPackage.commitSha,
-    uri: resource.uri,
-    digest: resource.digest,
-    content: resource.content,
-    references: skillPackage.resources
-      .filter((candidate) => candidate.path.startsWith(REFERENCE_PREFIX))
-      .map((candidate) => candidate.path.slice(REFERENCE_PREFIX.length)),
-  };
-}
-
-export function getPrimarySkill() {
-  return getPackagedSkill(GENERATED_SKILL_PACKAGE);
-}
-
-export function getSuperTightenSkill() {
-  const skillPackage = GENERATED_SKILL_PACKAGES.find(
-    (candidate) => candidate.name === "super-tighten",
-  );
-  if (!skillPackage) {
-    throw new Error("Super Tighten skill package is missing");
-  }
-  return getPackagedSkill(skillPackage);
-}
-
-export function getReference(referenceName: string) {
-  if (
-    referenceName.includes("/") ||
-    referenceName.includes("\\") ||
-    !referenceName.endsWith(".md")
-  ) {
-    throw new Error(`Unknown Nuko Nova Unslop reference: ${referenceName}`);
-  }
-
-  const resourcePath = `${REFERENCE_PREFIX}${referenceName}`;
-  const resource = GENERATED_SKILL_PACKAGE.resources.find(
-    (candidate) => candidate.path === resourcePath,
-  );
-
-  if (!resource) {
-    throw new Error(`Unknown Nuko Nova Unslop reference: ${referenceName}`);
-  }
-
-  return { ...resource };
-}
-
-export function getSkillCatalog() {
-  return {
-    skills: GENERATED_SKILL_PACKAGES.map((skillPackage) => {
-      const skill = getPackagedSkill(skillPackage);
-      return {
-        uri: skill.uri,
-        frontmatter: {
-          name: skill.name,
-          description: skill.description,
-        },
-        resources: skillPackage.resources.map(({ uri, digest }) => ({ uri, digest })),
-      };
-    }),
-  };
+export function getSkillCatalog(): { skills: SkillCatalogEntry[] } {
+  return { skills: listServedSkills().map((skill) => skill.catalogEntry) };
 }

@@ -62,6 +62,30 @@ def report(lock: dict, refresh: bool, references: Path) -> list[dict]:
     return rows
 
 
+def accept(lock: dict, rows: list[dict], source_ids: list[str], today: str | None = None) -> None:
+    """Advance the reviewed pin of each named source to its observed SHA.
+
+    The lock is the only record of reviewed pins, so this is the whole acceptance
+    step. Every id is validated before any source changes.
+    """
+    by_id = {row["id"]: row for row in rows}
+    unknown = sorted(set(source_ids) - set(by_id))
+    if unknown:
+        raise ValueError(f"unknown source id(s): {', '.join(unknown)}")
+    unavailable = sorted(
+        source_id
+        for source_id in set(source_ids)
+        if by_id[source_id]["status"] not in {"current", "changed"} or not by_id[source_id]["observed_sha"]
+    )
+    if unavailable:
+        raise ValueError(f"cannot accept unavailable source: {', '.join(unavailable)}")
+    reviewed_at = today or datetime.now(timezone.utc).date().isoformat()
+    for source in lock["sources"]:
+        if source["id"] in source_ids:
+            source["reviewed_sha"] = by_id[source["id"]]["observed_sha"]
+            source["reviewed_at"] = reviewed_at
+
+
 def render_markdown(rows: list[dict], refreshed: bool) -> str:
     mode = "remote" if refreshed else "local reference"
     now = datetime.now(timezone.utc).replace(microsecond=0).isoformat()
@@ -112,19 +136,11 @@ def main(argv: list[str] | None = None) -> int:
 
     lock = json.loads(LOCK_PATH.read_text(encoding="utf-8"))
     rows = report(lock, args.refresh, args.references_dir)
-    by_id = {row["id"]: row for row in rows}
     if args.accept:
-        unknown = sorted(set(args.accept) - set(by_id))
-        if unknown:
-            raise SystemExit(f"unknown source id(s): {', '.join(unknown)}")
-        for source in lock["sources"]:
-            if source["id"] not in args.accept:
-                continue
-            row = by_id[source["id"]]
-            if row["status"] not in {"current", "changed"} or not row["observed_sha"]:
-                raise SystemExit(f"cannot accept unavailable source: {source['id']}")
-            source["reviewed_sha"] = row["observed_sha"]
-            source["reviewed_at"] = datetime.now(timezone.utc).date().isoformat()
+        try:
+            accept(lock, rows, args.accept)
+        except ValueError as exc:
+            raise SystemExit(str(exc)) from exc
         LOCK_PATH.write_text(json.dumps(lock, indent=2) + "\n", encoding="utf-8")
         rows = report(lock, args.refresh, args.references_dir)
 

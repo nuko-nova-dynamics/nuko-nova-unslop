@@ -1,5 +1,6 @@
 export { default as primarySkillSource } from "../../../skills/nuko-nova-unslop/SKILL.md?raw";
 export { default as superTightenSource } from "../../../skills/super-tighten/SKILL.md?raw";
+export { default as pluginManifestSource } from "../../../.codex-plugin/plugin.json?raw";
 export { default as patternCatalogSource } from "../../../skills/nuko-nova-unslop/references/pattern-catalog.md?raw";
 
 export async function sha256Digest(content: string) {

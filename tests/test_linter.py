@@ -332,6 +332,48 @@ class LinterTests(unittest.TestCase):
         self.assertEqual(len(vocabulary), 1)
         self.assertEqual(vocabulary[0].line, 1)
 
+    def test_indented_code_inside_list_containers_is_exempt(self) -> None:
+        text = (FIXTURES / "indented-code.md").read_text(encoding="utf-8")
+        vocabulary = [
+            (finding.line, finding.excerpt)
+            for finding in MODULE.lint_text(text, "strict")
+            if finding.rule_id == "watched-vocabulary"
+        ]
+        self.assertEqual(
+            vocabulary,
+            [
+                (7, "The visible list prose says robust."),
+                (9, "with seamless wrapped text."),
+                (15, "The closing prose says empower."),
+            ],
+        )
+
+    def test_indented_code_measures_tab_columns(self) -> None:
+        # Fixtures cannot contain tabs, so these cases stay inline.
+        cases = (
+            "Intro prose.\n\n  \tdelve = config['tabs']\n\nVisible prose says robust.\n",
+            "- Intro step.\n\n  \t  delve = config['tabs']\n\nVisible prose says robust.\n",
+        )
+        for text in cases:
+            with self.subTest(text=text):
+                vocabulary = [
+                    (finding.line, finding.column)
+                    for finding in MODULE.lint_text(text, "strict")
+                    if finding.rule_id == "watched-vocabulary"
+                ]
+                self.assertEqual(vocabulary, [(5, 20)])
+
+    def test_fence_opener_indentation_is_measured_in_columns(self) -> None:
+        # A space plus a tab reaches column four, so this is indented code, not
+        # an unclosed fence that would hide every later line.
+        text = "Intro prose.\n\n \t```\n\nVisible prose says robust.\n"
+        vocabulary = [
+            (finding.line, finding.column)
+            for finding in MODULE.lint_text(text, "strict")
+            if finding.rule_id == "watched-vocabulary"
+        ]
+        self.assertEqual(vocabulary, [(5, 20)])
+
     def test_unclosed_html_comment_is_protected_to_end(self) -> None:
         text = "Visible leverage.\n<!-- TODO: delve into the hidden draft.\n"
         findings = MODULE.lint_text(text, "strict")

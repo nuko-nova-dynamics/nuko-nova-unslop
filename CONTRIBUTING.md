@@ -12,7 +12,7 @@ The Python helpers separate Markdown recognition from editorial decisions:
 
 | Module | Responsibility |
 | --- | --- |
-| `markdown_source.py` | Recognize fences, containers, comments, and tables; mask selected spans without changing offsets or line endings. |
+| `markdown_source.py` | Recognize all source structure through `source_structure(text)` (fenced, indented, and inline code, comments, HTML blocks, and tables) under one precedence order; mask selected spans without changing offsets or line endings. |
 | `unslop_lint.py` | Choose which source spans are exempt, then report advisory findings on visible prose. Table prose remains lintable. |
 | `preservation_guard.py` | Compare protected source and rewrite content, including code and tables, and report differences for review. |
 

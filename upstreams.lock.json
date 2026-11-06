@@ -1,7 +1,6 @@
 {
   "schema_version": 1,
-  "review_cadence": "every-two-days",
-  "research_cutoff": "2026-11-05",
+  "review_cadence": "weekly",
   "sources": [
     {
       "id": "vale",
@@ -212,21 +211,6 @@
       ]
     },
     {
-      "id": "stephenturner-deslop",
-      "repository": "stephenturner/skills",
-      "url": "https://github.com/stephenturner/skills.git",
-      "branch": "refs/heads/main",
-      "checkout": "stephenturner-skills",
-      "reviewed_sha": "48287d806e61534bc14939b55b72c3f3f11a7db5",
-      "reviewed_at": "2026-08-21",
-      "license": "MIT",
-      "monitored_paths": [
-        "deslop/SKILL.md",
-        "deslop/references",
-        "LICENSE"
-      ]
-    },
-    {
       "id": "elithrar-anti-slop",
       "repository": "elithrar/dotfiles",
       "url": "https://github.com/elithrar/dotfiles.git",
@@ -237,24 +221,6 @@
       "license": "MIT",
       "monitored_paths": [
         ".agents/skills/anti-slop/SKILL.md",
-        "LICENSE"
-      ]
-    },
-    {
-      "id": "soundshuman",
-      "repository": "aashaexo/soundshuman",
-      "url": "https://github.com/aashaexo/soundshuman.git",
-      "branch": "refs/heads/main",
-      "checkout": "soundshuman",
-      "reviewed_sha": "a45cfbba9fde843d670e553a0aa98f6a23d7fb28",
-      "reviewed_at": "2026-08-21",
-      "license": "MIT",
-      "monitored_paths": [
-        "SKILL.md",
-        "references",
-        "rules/slop-rules.json",
-        "bin/sloplint.js",
-        "tests",
         "LICENSE"
       ]
     },

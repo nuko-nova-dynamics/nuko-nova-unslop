@@ -56,7 +56,6 @@ The STE baseline is Issue 9 (January 2025). The skill applies controlled termino
 - Calibrates to author samples instead of forcing a generic casual voice.
 - Protects URLs, numbers, dates, code identifiers, quotations, and other fixed details.
 - Runs deterministic local linting without sending prose to another service.
-- Reviews upstream writing research every other day through a controlled, test-gated evolution workflow.
 
 ## Local use
 
@@ -121,24 +120,24 @@ Both clients use `skills/nuko-nova-unslop/SKILL.md`. Claude Code also loads the 
 
 ## Controlled evolution
 
-`upstreams.lock.json` records the reviewed commit for every research source. The scheduled workflow checks for new commits every other day and opens a review issue when monitored material changes. It never copies a new word list into the skill or rewrites the prompt automatically.
+`upstreams.lock.json` records the reviewed commit for every research source. The scheduled workflow checks for new commits weekly and opens a review issue when monitored material changes. It never copies a new word list into the skill or rewrites the prompt automatically.
 
 An evolution pass must inspect the relevant diff, decide whether behavior should change, add or update a regression case, run the package gates, and only then advance the source pin. A valid review can conclude that no plugin change is warranted.
 
 ## Source policy
 
-The implementation is an original Nuko Nova synthesis. Permissively licensed projects informed its pattern taxonomy, safety contract, lint architecture, evaluation strategy, and cross-client packaging. Large phrase corpora and third-party tools are not bundled. See `PROVENANCE.md`, `NOTICE`, and the skill's `references/source-map.md` for the exact source roles and reviewed commits.
+The implementation is an original Nuko Nova synthesis. Permissively licensed projects informed its pattern taxonomy, safety contract, lint architecture, evaluation strategy, and cross-client packaging. Large phrase corpora and third-party tools are not bundled. See `PROVENANCE.md`, `NOTICE`, and `docs/source-map.md` for the source roles and licenses. `upstreams.lock.json` is the only record of reviewed commits; `scripts/check_upstreams.py --accept` updates it.
 
 ## Release boundary
 
 The local bundle is not a marketplace release until its repository commit is pushed, tagged, pinned by full SHA in both marketplace manifests, validated there, and installed independently in each client.
 
-After creating a release commit, render aligned immutable catalog entries with:
+After creating a release commit, render aligned immutable catalog entries with the command below. `scripts/release_metadata.py` reads the version from both manifests, and the bundle validator fails if this `--ref` or the first `CHANGELOG.md` release heading names a different version.
 
 ```bash
 python3 scripts/render_marketplace_entries.py \
   --sha <40-character-release-commit> \
-  --ref nuko-nova-unslop-marketplace-v0.9.1
+  --ref nuko-nova-unslop-marketplace-v0.10.0
 ```
 
 ## License

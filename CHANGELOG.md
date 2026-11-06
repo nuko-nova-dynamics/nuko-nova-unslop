@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.10.0 - 2026-11-05
+
+- Shorten the canonical skill from 2,503 to about 1,490 words. Each rule is stated once, the always-on standard and the contract come first, and the trigger description names the user's requests instead of maintainer tasks. The em-dash preference is now applied without being explained in the reply.
+- Move the upstream review protocol and source map to `docs/`, outside the shipped skill and the MCP package.
+- Add `claude plugin eval` cases under `evals/` that score eight writing tasks with and without the plugin. Replace the validator's exact-sentence checks on skill and output-style prose with structural checks, so wording can change against eval results.
+- Review upstream sources weekly instead of every two days, and stop monitoring two sources that adapt catalogs already tracked here.
+- Make `scripts/check_upstreams.py --accept` the only step that records a reviewed pin. `docs/source-map.md` no longer repeats commit SHAs or a research cutoff, and the bundle validator requires one linked source-map row per locked repository instead of a fixed source count.
+- Read release metadata from one module, `scripts/release_metadata.py`, in both the bundle validator and the marketplace renderer. The validator now fails when the first `CHANGELOG.md` release heading or the README marketplace `--ref` names a different version than the manifests.
+- Define the MCP host's served skills in one list in `apps/mcp/scripts/build-skill-packages.mjs`. Each entry names its skill, its load tool, and whether it is primary. The server registers load tools and resources by looping over the resulting descriptors. Tool names, schemas, `skills/list`, `skills/get`, and `resources/read` results are unchanged.
+- Move MCP package building and import-limit validation into an exported builder. Tests now run every limit, the missing `SKILL.md` case, and served-skill conflicts against small fixture directories, check the NFC path conflict on in-memory resources, and compare the served version with `.codex-plugin/plugin.json` instead of a literal.
+- Recognize Markdown source structure through one function, `source_structure(text)` in `markdown_source.py`. It resolves all structures with one precedence order, so an HTML comment opener inside inline or indented code no longer starts a comment. The preservation guard now reports edits to a table that follows `` `<!--` `` in prose or `<!--` in an indented code sample. Before this change it reported no difference.
+- Measure fence opener indentation in columns, so a line indented with a space and a tab is indented code instead of an unclosed fence that hid the rest of the document from linting.
+- Type-check the MCP tests with `@types/node` instead of hand-written declarations.
+- Use the shared indented-code scanner in the linter. It measures tab stops in columns and strips list and block-quote containers first, so code indented with spaces and a tab, or code nested under a list item, no longer produces findings. Prose after an indented code sample that contains `<!--` is linted again.
+
 ## 0.9.1 - 2026-11-03
 
 - Detect named and numeric HTML character references that render as em dashes in mutable Markdown prose, using the existing profile thresholds and original source locations.

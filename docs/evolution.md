@@ -4,7 +4,7 @@ Use this protocol when maintaining or updating Nuko Nova Unslop. The objective i
 
 ## Cadence
 
-Check upstream state every two days. A check is read-only until a reviewed change justifies a local edit. Do not update source pins merely to make the report clean.
+Check upstream state once a week. A check is read-only until a reviewed change justifies a local edit. Do not update source pins merely to make the report clean.
 
 The permanent reference worktrees normally live at:
 
@@ -34,11 +34,13 @@ Override that location with `--references-dir` when needed.
 6. Add a regression case for any non-obvious rule, exception, or safety fix.
 7. Run the full validation suite and compare lint output on both slop-heavy and clean-human fixtures.
 8. Review the diff for third-party copying, inflated claims, new blanket bans, and degraded context handling.
-9. Advance only the accepted source pins:
+9. Advance only the accepted source pins with one command. Repeat `--accept` for each accepted source:
 
    ```bash
    python3 scripts/check_upstreams.py --refresh --accept source-id
    ```
+
+   The command writes the observed SHA and today's date into `upstreams.lock.json`, which is the only record of reviewed pins. Do not copy SHAs or a cutoff date into `docs/source-map.md`. Edit that table only when a source is added, removed, or its reviewed value or license changes; the bundle validator requires one linked row for each locked repository.
 
 10. Record the behavioral reason in `CHANGELOG.md`. Do not list a source bump as a product improvement when behavior did not change.
 

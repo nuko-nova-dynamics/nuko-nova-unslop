@@ -6,56 +6,55 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import sys
 from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+from release_metadata import load_release_metadata  # noqa: E402
+
 SHA_RE = re.compile(r"^[0-9a-f]{40}$")
 
 
-def load(path: Path) -> dict:
-    return json.loads(path.read_text(encoding="utf-8"))
-
-
-def build_entries(sha: str, ref: str) -> dict[str, dict]:
+def build_entries(sha: str, ref: str, root: Path = ROOT) -> dict[str, dict]:
     if not SHA_RE.fullmatch(sha):
         raise ValueError("sha must contain 40 lowercase hexadecimal characters")
     if not ref.strip():
         raise ValueError("ref must be non-empty")
-    codex = load(ROOT / ".codex-plugin" / "plugin.json")
-    claude = load(ROOT / ".claude-plugin" / "plugin.json")
-    if codex["repository"] != claude["repository"]:
-        raise ValueError("client manifests disagree on repository")
+    metadata = load_release_metadata(root)
+    codex, claude = metadata.codex, metadata.claude
     source = {
         "source": "url",
-        "url": codex["repository"] + ".git",
+        "url": metadata.repository + ".git",
         "ref": ref,
         "sha": sha,
     }
     codex_entry = {
-        "name": codex["name"],
+        "name": metadata.name,
         "source": source,
-        "version": codex["version"],
-        "description": codex["description"],
-        "author": {"name": codex["author"]["name"], "email": codex["author"]["email"]},
-        "homepage": codex["homepage"],
-        "repository": codex["repository"],
-        "license": codex["license"],
+        "version": metadata.version,
+        "description": metadata.description,
+        "author": {"name": metadata.author["name"], "email": metadata.author["email"]},
+        "homepage": metadata.homepage,
+        "repository": metadata.repository,
+        "license": metadata.license,
         "keywords": codex["keywords"],
         "interface": codex["interface"],
         "policy": {"installation": "AVAILABLE", "authentication": "ON_INSTALL"},
         "category": codex["interface"]["category"],
     }
     claude_entry = {
-        "name": claude["name"],
+        "name": metadata.name,
         "displayName": claude["displayName"],
-        "version": claude["version"],
+        "version": metadata.version,
         "source": source,
-        "description": claude["description"],
-        "author": claude["author"],
-        "homepage": claude["homepage"],
-        "repository": claude["repository"],
-        "license": claude["license"],
+        "description": metadata.description,
+        "author": metadata.author,
+        "homepage": metadata.homepage,
+        "repository": metadata.repository,
+        "license": metadata.license,
         "keywords": claude["keywords"],
         "category": "productivity",
         "tags": ["writing", "humanizer", "anti-slop", "no-cringe", "voice"],

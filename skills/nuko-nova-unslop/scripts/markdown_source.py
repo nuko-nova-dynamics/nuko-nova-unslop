@@ -1,26 +1,49 @@
 """Recognize Markdown source structure without applying editorial policy.
 
-Spans use offsets into the original text. Scanners cover the supported fenced
-code, container, comment, and table forms; they are not a full Markdown parser.
+Call ``source_structure(text)`` once per document. It returns every recognized
+structure grouped by kind, with offsets into the original text. One precedence
+order decides which structure wins; a later kind never opens inside an earlier
+one:
+
+1. fenced code
+2. indented code
+3. inline code outside block code
+4. HTML comments that open outside any code
+5. raw HTML blocks outside code and comments
+6. tables outside fenced code, comments, and raw HTML blocks
+
+Callers choose which kinds to hide or compare, and ``mask_spans`` hides spans
+without shifting offsets or changing line endings. The scanners cover the
+supported block-quote and list containers; they are not a full Markdown parser.
 Both command-line helpers use this module so syntax fixes reach both callers.
 """
 
 from __future__ import annotations
 
 import re
-from typing import Iterable
+from dataclasses import dataclass
+from typing import Iterable, NamedTuple
 
 
-FENCE_RE = re.compile(r"^[ \t]{0,3}(`{3,}|~{3,})([^\r\n]*)$")
+FENCE_RE = re.compile(r"^[ \t]*(`{3,}|~{3,})([^\r\n]*)$")
+# One backtick pair on one line. The guard also uses the group as a token.
+INLINE_CODE_RE = re.compile(r"`([^`\n]+)`")
 LIST_MARKER_RE = re.compile(
     r"^(?P<indent>[ \t]{0,3})(?P<marker>[-+*]|\d{1,9}[.)])"
     r"(?:(?P<spacing>[ \t]+)(?P<content>.*))?$"
 )
 
 
-def _fence_match(line: str) -> re.Match[str] | None:
-    """Return a fence match after the line's container prefix is removed."""
-    return FENCE_RE.match(line)
+def _fence_match(line: str, column: int = 0) -> re.Match[str] | None:
+    """Return a fence match after the line's container prefix is removed.
+
+    The opener may be indented at most three columns, measured with tab stops
+    from ``column``, the line's position after its container prefix.
+    """
+    match = FENCE_RE.match(line)
+    if match is None or _indent_width(line, column) > 3:
+        return None
+    return match
 
 
 ContainerPath = tuple[tuple[str, int, int], ...]
@@ -110,8 +133,8 @@ def _strip_container_path(line: str, path: ContainerPath) -> tuple[str, int] | N
 
 def _peel_direct_containers(
     line: str, initial_path: ContainerPath = (), initial_column: int = 0
-) -> tuple[str, ContainerPath, tuple[ContainerPath, ...]]:
-    """Peel ordered quote and list markers before a possible fence."""
+) -> tuple[str, ContainerPath, tuple[ContainerPath, ...], int]:
+    """Peel ordered quote and list markers and return the content column."""
     remainder = line
     path = list(initial_path)
     list_paths: list[ContainerPath] = []
@@ -144,35 +167,77 @@ def _peel_direct_containers(
         list_paths.append(tuple(path))
         remainder = list_match.group("content") or ""
 
-    return remainder, tuple(path), tuple(list_paths)
+    return remainder, tuple(path), tuple(list_paths), column
 
 
-def fenced_code_spans(text: str) -> list[tuple[int, int]]:
-    """Return normalized-text spans for Markdown fenced code blocks.
+Span = tuple[int, int]
+LineView = tuple[str, ContainerPath, int]
 
-    This scanner handles top-level fences plus common block-quote and list-item
-    containers. It stays deliberately smaller than a full Markdown parser.
+
+class _ContainerWalker:
+    """Track open list containers across lines and strip established prefixes."""
+
+    def __init__(self) -> None:
+        self._list_paths: list[ContainerPath] = []
+
+    def view(self, physical: str) -> LineView:
+        """Return a line's content, container path, and content start column."""
+        for index in range(len(self._list_paths) - 1, -1, -1):
+            stripped = _strip_container_path(physical, self._list_paths[index])
+            if stripped is None:
+                continue
+            active_path = self._list_paths[index]
+            self._list_paths = self._list_paths[: index + 1]
+            content, path, new_list_paths, column = _peel_direct_containers(
+                stripped[0], active_path, stripped[1]
+            )
+            self._list_paths.extend(new_list_paths)
+            return content, path, column
+
+        if self._list_paths and not physical.strip():
+            return "", self._list_paths[-1], 0
+        content, path, new_list_paths, column = _peel_direct_containers(physical)
+        self._list_paths = list(new_list_paths)
+        return content, path, column
+
+
+def _indent_width(content: str, column: int) -> int:
+    """Return the indentation width of container content in Markdown columns."""
+    leading = content[: len(content) - len(content.lstrip(" \t"))]
+    return _advance_columns(leading, column) - column
+
+
+def _code_block_spans(text: str) -> tuple[list[Span], list[Span]]:
+    """Return fenced and indented code spans from one container-aware line walk.
+
+    Indented code cannot interrupt a paragraph, so it needs a blank line or the
+    start of the document before it. Every other non-blank line, including a
+    fence closer or heading, counts as paragraph text here; that keeps prose
+    visible when the scanner is unsure. Indentation is measured in columns
+    after the line's quote and list containers are stripped.
     """
-    spans: list[tuple[int, int]] = []
-    lines = text.splitlines(keepends=True)
+    fenced: list[Span] = []
+    indented: list[Span] = []
+    walker = _ContainerWalker()
     offset = 0
-    active_list_paths: list[ContainerPath] = []
-    opening: tuple[str, int, int, ContainerPath] | None = None
+    fence: tuple[str, int, int, ContainerPath] | None = None
+    code: tuple[int, int, ContainerPath] | None = None
+    in_paragraph = False
 
-    for line in lines:
+    for line in text.splitlines(keepends=True):
         line_start = offset
         offset += len(line)
         physical = line.rstrip("\r\n")
 
-        if opening is not None:
-            marker_char, marker_length, start, container_path = opening
+        if fence is not None:
+            marker_char, marker_length, start, container_path = fence
             stripped = _strip_container_path(physical, container_path)
             if stripped is None:
-                spans.append((start, line_start))
-                opening = None
+                fenced.append((start, line_start))
+                fence = None
+                in_paragraph = False
             else:
-                content, _ = stripped
-                match = _fence_match(content)
+                match = _fence_match(*stripped)
                 if match:
                     marker = match.group(1)
                     suffix = match.group(2)
@@ -181,50 +246,68 @@ def fenced_code_spans(text: str) -> list[tuple[int, int]]:
                         and len(marker) >= marker_length
                         and not suffix.strip(" \t")
                     ):
-                        spans.append((start, offset))
-                        opening = None
+                        fenced.append((start, offset))
+                        fence = None
+                        in_paragraph = True
                 continue
 
-        active_match: tuple[int, ContainerPath, str, int] | None = None
-        for index in range(len(active_list_paths) - 1, -1, -1):
-            candidate = active_list_paths[index]
-            stripped = _strip_container_path(physical, candidate)
-            if stripped is not None:
-                candidate_content, candidate_column = stripped
-                active_match = (index, candidate, candidate_content, candidate_column)
-                break
+        content, container_path, column = walker.view(physical)
+        blank = not content.strip()
 
-        if active_match is not None:
-            index, active_path, active_content, active_column = active_match
-            active_list_paths = active_list_paths[: index + 1]
-            content, container_path, new_list_paths = _peel_direct_containers(
-                active_content, active_path, active_column
-            )
-        else:
-            if active_list_paths and not physical.strip():
+        if code is not None:
+            code_start, code_end, code_path = code
+            if container_path == code_path and (
+                blank or _indent_width(content, column) >= 4
+            ):
+                if not blank:
+                    code = (code_start, offset, code_path)
                 continue
-            active_list_paths = []
-            content, container_path, new_list_paths = _peel_direct_containers(physical)
+            indented.append((code_start, code_end))
+            code = None
 
-        active_list_paths.extend(new_list_paths)
-
-        match = _fence_match(content)
-        if not match:
+        if blank:
+            in_paragraph = False
             continue
-        marker = match.group(1)
-        suffix = match.group(2)
-        if marker[0] == "`" and "`" in suffix:
+
+        match = _fence_match(content, column)
+        if match:
+            marker = match.group(1)
+            suffix = match.group(2)
+            if not (marker[0] == "`" and "`" in suffix):
+                fence = (marker[0], len(marker), line_start, container_path)
+                continue
+
+        if not in_paragraph and _indent_width(content, column) >= 4:
+            code = (line_start, offset, container_path)
             continue
-        opening = (marker[0], len(marker), line_start, container_path)
+        in_paragraph = True
 
-    if opening is not None:
-        spans.append((opening[2], len(text)))
+    if fence is not None:
+        fenced.append((fence[2], len(text)))
+    if code is not None:
+        indented.append((code[0], code[1]))
+    return fenced, indented
 
-    return spans
+
+def _inline_code_spans(text: str, block_code: list[Span]) -> list[Span]:
+    """Return one-line inline code spans that open outside block code."""
+    return [
+        match.span()
+        for match in INLINE_CODE_RE.finditer(text)
+        if not any(start <= match.start() < end for start, end in block_code)
+    ]
 
 
 CanonicalTable = tuple[tuple[str, ...], ...]
 ContainerView = tuple[str, ContainerPath]
+
+
+class TableSpan(NamedTuple):
+    """A recognized table: its source span and whitespace-normalized rows."""
+
+    start: int
+    end: int
+    cells: CanonicalTable
 
 ATX_HEADING_RE = re.compile(r"^#{1,6}(?:[ \t]+|$)")
 THEMATIC_BREAK_RE = re.compile(
@@ -308,8 +391,8 @@ def _delimiter_alignment(cell: str) -> str | None:
     )
 
 
-def html_comment_spans(text: str, excluded: list[tuple[int, int]]) -> list[tuple[int, int]]:
-    """Return Markdown HTML comment spans outside already protected blocks."""
+def _html_comment_spans(text: str, excluded: list[Span]) -> list[Span]:
+    """Return HTML comment spans whose opener lies outside excluded spans."""
     spans: list[tuple[int, int]] = []
     cursor = 0
     while True:
@@ -330,7 +413,7 @@ def html_comment_spans(text: str, excluded: list[tuple[int, int]]) -> list[tuple
     return spans
 
 
-def _raw_html_block_spans(text: str, excluded: list[tuple[int, int]]) -> list[tuple[int, int]]:
+def _raw_html_block_spans(text: str, excluded: list[Span]) -> list[Span]:
     """Return common raw HTML block spans, which end at the next blank line."""
     spans: list[tuple[int, int]] = []
     lines = text.splitlines(keepends=True)
@@ -353,8 +436,7 @@ def _raw_html_block_spans(text: str, excluded: list[tuple[int, int]]) -> list[tu
             continue
         if any(start <= line_start < end for start, end in excluded):
             continue
-        content, _, _ = _peel_direct_containers(physical)
-        content = _strip_table_indentation(content)
+        content = _strip_table_indentation(_peel_direct_containers(physical)[0])
         if content is None:
             continue
         closed_match = RAW_HTML_CLOSED_RE.match(content)
@@ -373,52 +455,21 @@ def _raw_html_block_spans(text: str, excluded: list[tuple[int, int]]) -> list[tu
     return spans
 
 
-def _protected_source_spans(text: str) -> list[tuple[int, int]]:
-    """Return source-only blocks that must not be parsed as Markdown tables."""
-    fenced = fenced_code_spans(text)
-    comments = html_comment_spans(text, fenced)
-    html_blocks = _raw_html_block_spans(text, [*fenced, *comments])
-    return [*fenced, *comments, *html_blocks]
-
-
-def _markdown_container_views(text: str) -> list[ContainerView | None]:
+def _markdown_container_views(
+    text: str, protected: list[Span]
+) -> list[ContainerView | None]:
     """Strip established quote and list containers from each unprotected line."""
-    protected = _protected_source_spans(text)
-    active_list_paths: list[ContainerPath] = []
+    walker = _ContainerWalker()
     views: list[ContainerView | None] = []
     offset = 0
 
     for line in text.splitlines(keepends=True):
         line_start = offset
         offset += len(line)
-        physical = line.rstrip("\r\n")
         if any(start <= line_start < end for start, end in protected):
             views.append(None)
             continue
-
-        active_match: tuple[int, ContainerPath, str, int] | None = None
-        for index in range(len(active_list_paths) - 1, -1, -1):
-            candidate = active_list_paths[index]
-            stripped = _strip_container_path(physical, candidate)
-            if stripped is not None:
-                candidate_content, candidate_column = stripped
-                active_match = (index, candidate, candidate_content, candidate_column)
-                break
-
-        if active_match is not None:
-            index, active_path, active_content, active_column = active_match
-            active_list_paths = active_list_paths[: index + 1]
-            content, container_path, new_list_paths = _peel_direct_containers(
-                active_content, active_path, active_column
-            )
-        else:
-            if active_list_paths and not physical.strip():
-                views.append(("", active_list_paths[-1]))
-                continue
-            active_list_paths = []
-            content, container_path, new_list_paths = _peel_direct_containers(physical)
-
-        active_list_paths.extend(new_list_paths)
+        content, container_path, _ = walker.view(line.rstrip("\r\n"))
         views.append((content, container_path))
 
     return views
@@ -438,8 +489,8 @@ def _starts_block_structure(content: str) -> bool:
     )
 
 
-def markdown_table_spans(text: str) -> list[tuple[int, int, CanonicalTable]]:
-    """Return recognized Markdown table spans and whitespace-normalized cell content."""
+def _markdown_table_spans(text: str, protected: list[Span]) -> list[TableSpan]:
+    """Return Markdown tables outside protected lines, with normalized cells."""
     lines = text.splitlines(keepends=True)
     starts: list[int] = []
     offset = 0
@@ -447,9 +498,9 @@ def markdown_table_spans(text: str) -> list[tuple[int, int, CanonicalTable]]:
         starts.append(offset)
         offset += len(line)
 
-    views = _markdown_container_views(text)
+    views = _markdown_container_views(text, protected)
 
-    spans: list[tuple[int, int, CanonicalTable]] = []
+    spans: list[TableSpan] = []
     index = 0
     while index + 1 < len(lines):
         header_view = views[index]
@@ -502,13 +553,49 @@ def markdown_table_spans(text: str) -> list[tuple[int, int, CanonicalTable]]:
             end_index += 1
 
         end = starts[end_index] if end_index < len(lines) else len(text)
-        spans.append((starts[index], end, tuple(canonical_rows)))
+        spans.append(TableSpan(starts[index], end, tuple(canonical_rows)))
         index = end_index
 
     return spans
 
 
-def mask_spans(text: str, spans: Iterable[tuple[int, int]]) -> str:
+@dataclass(frozen=True)
+class SourceStructure:
+    """Every recognized source structure in one text, grouped by kind.
+
+    Spans are ``(start, end)`` offsets into the text that was scanned. Kinds
+    can overlap only where the module precedence allows it: inline code may
+    sit inside an HTML comment, and a comment that opens in prose ends at the
+    first ``-->`` even when that closer lies inside later code.
+    """
+
+    fenced_code: tuple[Span, ...]
+    indented_code: tuple[Span, ...]
+    inline_code: tuple[Span, ...]
+    html_comments: tuple[Span, ...]
+    html_blocks: tuple[Span, ...]
+    tables: tuple[TableSpan, ...]
+
+
+def source_structure(text: str) -> SourceStructure:
+    """Recognize every supported structure in ``text`` with one precedence order."""
+    fenced, indented = _code_block_spans(text)
+    block_code = [*fenced, *indented]
+    inline = _inline_code_spans(text, block_code)
+    comments = _html_comment_spans(text, [*block_code, *inline])
+    html_blocks = _raw_html_block_spans(text, [*block_code, *comments])
+    tables = _markdown_table_spans(text, [*fenced, *comments, *html_blocks])
+    return SourceStructure(
+        fenced_code=tuple(fenced),
+        indented_code=tuple(indented),
+        inline_code=tuple(inline),
+        html_comments=tuple(comments),
+        html_blocks=tuple(html_blocks),
+        tables=tuple(tables),
+    )
+
+
+def mask_spans(text: str, spans: Iterable[Span]) -> str:
     """Hide selected spans without shifting offsets or changing line endings."""
     characters = list(text)
     for start, end in spans:

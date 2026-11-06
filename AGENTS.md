@@ -10,7 +10,8 @@ This repository contains one shared writing skill packaged for Codex and Claude 
 - `skills/super-tighten/SKILL.md` is a standalone combined Unslop, compression, and ASD-STE100 workflow. Its runtime instructions must not route to another writing skill or reference. Preserve the distinction between applying STE rules and verifying full vocabulary conformance against the official standard.
 - `output-styles/nuko-nova-unslop.md` makes the standard apply to every Claude Code response while the plugin is enabled.
 - `skills/nuko-nova-unslop/agents/openai.yaml` keeps implicit Codex invocation enabled.
-- The files under `skills/nuko-nova-unslop/references/` hold detailed rules and maintenance guidance.
+- The files under `skills/nuko-nova-unslop/references/` hold detailed runtime rules. Maintainer material lives in `docs/`: follow `docs/evolution.md` for upstream review, and record sources in `docs/source-map.md`. That folder is not shipped in the skill or served by the MCP host.
+- `evals/` holds `claude plugin eval` cases that measure behavior with and without the plugin. Change skill prose against eval results, not against exact-wording checks.
 - `skills/nuko-nova-unslop/scripts/markdown_source.py` owns shared Markdown recognition and offset-preserving masking. The linter and preservation guard apply their own editorial policies to its results.
 - `.codex-plugin/plugin.json` and `.claude-plugin/plugin.json` must keep name, version, description, author, repository, and license aligned.
 - `upstreams.lock.json` records reviewed upstream state; a new SHA is not accepted until its relevant diff has been reviewed and the package gates pass.
@@ -44,5 +45,13 @@ python3 /Users/judiazm/.codex/skills/.system/skill-creator/scripts/quick_validat
 ```
 
 `pnpm check` runs the portable bundle, Python, and MCP checks and is also the CI entry point. `tests/validate_bundle.py` is the required repository-owned plugin validator; it checks both client manifests, shipped resources, invocation metadata, and hook-free packaging. Install workspace dependencies with `pnpm install --frozen-lockfile` first. The skill creator checks above depend on the local Codex installation and remain separate.
+
+After changing skill or output-style prose, run the behavior evals and compare the score with the previous run and with the no-plugin arm:
+
+```bash
+claude plugin eval . --runs 3 --judge-model sonnet --no-publish --threshold 0 --output-dir /tmp/unslop-eval
+```
+
+Evals call models and cost money, so they are not part of `pnpm check` or CI.
 
 Run `claude plugin validate .` when Claude Code is available. Treat package validation, marketplace registration, installation, and client reload as separate states.

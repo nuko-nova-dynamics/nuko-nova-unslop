@@ -296,23 +296,23 @@ class PreservationTests(unittest.TestCase):
     def test_escaped_pipe_stays_inside_table_cell(self) -> None:
         source = "Name \\| alias | Status\n--- | ---\nAlpha \\| A | Ready\n"
         rewrite = source.replace("Alpha", "Beta")
-        spans = MODULE.markdown_table_spans(source)
-        self.assertEqual(len(spans), 1)
         self.assertIn("markdown_table", MODULE.compare(source, rewrite))
+        reformatted = "| Name \\| alias | Status |\n| --- | --- |\n| Alpha \\| A | Ready |\n"
+        self.assertEqual(MODULE.compare(source, reformatted), {})
+
+    def assert_not_a_table(self, text: str) -> None:
+        self.assertEqual(MODULE.compare(text, text.replace("Alpha", "Beta")), {})
 
     def test_four_space_indented_pipe_text_is_not_a_table(self) -> None:
-        text = "    Name | Status\n    --- | ---\n    Alpha | Ready\n"
-        self.assertEqual(MODULE.markdown_table_spans(text), [])
+        self.assert_not_a_table("    Name | Status\n    --- | ---\n    Alpha | Ready\n")
 
     def test_bare_pipe_prose_is_not_a_table(self) -> None:
         source = "Use alpha | beta in the shell.\n"
         rewrite = "Use gamma | delta in the shell.\n"
-        self.assertEqual(MODULE.markdown_table_spans(source), [])
         self.assertEqual(MODULE.compare(source, rewrite), {})
 
     def test_malformed_table_shape_is_not_protected(self) -> None:
-        text = "Name | Status\n--- | --- | ---\nAlpha | Ready\n"
-        self.assertEqual(MODULE.markdown_table_spans(text), [])
+        self.assert_not_a_table("Name | Status\n--- | --- | ---\nAlpha | Ready\n")
 
     def test_table_values_are_redacted_from_generic_differences(self) -> None:
         source = '| Endpoint | Note |\n| --- | --- |\n| https://secret.example/v1.2.3 | "private value" |\n'
@@ -363,7 +363,8 @@ class PreservationTests(unittest.TestCase):
                 f"{indent}--- | ---\n"
                 f"{indent}Alpha | Ready\n"
             )
-            self.assertEqual(MODULE.markdown_table_spans(text), [])
+            with self.subTest(indent=indent):
+                self.assert_not_a_table(text)
 
     def test_block_quote_table_cell_edit_is_reported(self) -> None:
         source = "> Name | Status\n> --- | ---\n> Alpha | Ready\n"
@@ -395,9 +396,8 @@ class PreservationTests(unittest.TestCase):
 
     def test_new_block_structure_ends_table(self) -> None:
         source = "Name | Status\n--- | ---\nAlpha | Ready\n> Quote | original\n"
-        spans = MODULE.markdown_table_spans(source)
-        self.assertEqual(len(spans), 1)
-        self.assertNotIn("Quote", str(spans[0][2]))
+        self.assertIn("markdown_table", MODULE.compare(source, source.replace("Alpha", "Beta")))
+        self.assertEqual(MODULE.compare(source, source.replace("original", "changed")), {})
 
     def test_extra_body_cells_remain_protected_source(self) -> None:
         source = "Name | Status\n--- | ---\nAlpha | Ready | ignored\n"
@@ -412,8 +412,7 @@ class PreservationTests(unittest.TestCase):
         self.assertNotIn("secret.example", str(differences))
 
     def test_list_indented_code_is_not_a_table(self) -> None:
-        source = "-\n      Name | Status\n      --- | ---\n      Alpha | Ready\n"
-        self.assertEqual(MODULE.markdown_table_spans(source), [])
+        self.assert_not_a_table("-\n      Name | Status\n      --- | ---\n      Alpha | Ready\n")
 
     def test_raw_script_and_pre_blocks_are_not_markdown_tables(self) -> None:
         for tag in ("script", "pre"):
@@ -424,7 +423,8 @@ class PreservationTests(unittest.TestCase):
                 "Alpha | Ready\n"
                 f"</{tag}>\n"
             )
-            self.assertEqual(MODULE.markdown_table_spans(text), [])
+            with self.subTest(tag=tag):
+                self.assert_not_a_table(text)
 
     def test_unrelated_drift_remains_visible_when_table_breaks(self) -> None:
         source = (
@@ -472,7 +472,23 @@ class PreservationTests(unittest.TestCase):
             "<div>\nName | Status\n--- | ---\nAlpha | Ready\n</div>\n",
             "<!--\nName | Status\n--- | ---\nAlpha | Ready\n-->\n",
         ):
-            self.assertEqual(MODULE.markdown_table_spans(text), [])
+            with self.subTest(text=text):
+                self.assert_not_a_table(text)
+
+    def test_comment_markers_inside_code_do_not_hide_tables(self) -> None:
+        source = (FIXTURES / "comment-marker-in-code.md").read_text(encoding="utf-8")
+        self.assertEqual(MODULE.compare(source, source), {})
+        for before, after in (("owner", "viewer"), ("east", "west")):
+            with self.subTest(cell=before):
+                self.assertEqual(
+                    MODULE.compare(source, source.replace(before, after)),
+                    {
+                        "markdown_table": {
+                            "missing": {"original table": 1},
+                            "added": {"rewrite table": 1},
+                        }
+                    },
+                )
 
 
 if __name__ == "__main__":

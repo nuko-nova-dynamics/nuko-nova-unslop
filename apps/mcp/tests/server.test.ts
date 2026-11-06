@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { z } from "zod";
 
 import { createNukoNovaUnslopServer } from "../src/server";
-import { getPrimarySkill, getReference, getSkillCatalog, getSuperTightenSkill, listAllSkillResources } from "../src/skill-package";
+import { getPrimarySkill, getSkillCatalog, listAllSkillResources, listServedSkills } from "../src/skill-package";
 import { sha256Digest } from "./skill-sources";
 
 const skillResourceSchema = z.object({
@@ -89,7 +89,7 @@ describe("Nuko Nova Unslop MCP server", () => {
       skillsListResultSchema,
     )).rejects.toMatchObject({ code: -32602 });
     await expect(client.request(
-      { method: "skills/get", params: { uri: getSuperTightenSkill().uri, prose: "Rewrite me" } },
+      { method: "skills/get", params: { uri: getPrimarySkill().uri, prose: "Rewrite me" } },
       skillGetResultSchema,
     )).rejects.toMatchObject({ code: -32602 });
   });
@@ -167,7 +167,7 @@ describe("Nuko Nova Unslop MCP server", () => {
       arguments: { name: "tighten.md" },
     });
     expect(reference.isError).not.toBe(true);
-    expect(reference.content).toEqual([{ type: "text", text: getReference("tighten.md").content }]);
+    expect(reference.content).toEqual([{ type: "text", text: getPrimarySkill().readReference("tighten.md").content }]);
 
     const rejected = await client.callTool({
       name: "read_nuko_nova_reference",
@@ -177,9 +177,12 @@ describe("Nuko Nova Unslop MCP server", () => {
     expect(rejected.isError).toBe(true);
   });
 
-  it.each([{}, undefined])("loads the entire standalone skill in one response with arguments %j", async (arguments_) => {
-    const skill = getSuperTightenSkill();
-    const loaded = await client.callTool({ name: "load_super_tighten", arguments: arguments_ });
+  it.each(
+    listServedSkills().flatMap((skill) =>
+      [{}, undefined].map((arguments_) => [skill.loadTool.name, arguments_, skill] as const),
+    ),
+  )("%s loads the entire skill in one response with arguments %j", async (name, arguments_, skill) => {
+    const loaded = await client.callTool({ name, arguments: arguments_ });
 
     expect(loaded.isError).not.toBe(true);
     expect(loaded.content).toEqual([{ type: "text", text: skill.content }]);
@@ -190,11 +193,11 @@ describe("Nuko Nova Unslop MCP server", () => {
       uri: skill.uri,
       digest: skill.digest,
       instructions: skill.content,
-      references: [],
+      references: skill.references,
     });
   });
 
-  it.each(["load_nuko_nova_unslop", "load_super_tighten"])("rejects prose and any extra argument on %s", async (name) => {
+  it.each(listServedSkills().map((skill) => skill.loadTool.name))("rejects prose and any extra argument on %s", async (name) => {
     for (const arguments_ of [{ prose: "Rewrite this" }, { name: "tighten.md" }, { skill: "nuko-nova-unslop" }]) {
       const result = await client.callTool({ name, arguments: arguments_ });
       expect(result.isError).toBe(true);

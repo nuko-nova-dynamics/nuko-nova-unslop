@@ -21,4 +21,4 @@ owners:
 
 No LanguageTool code or data is distributed in this package. No upstream
 phrase corpus, model, grammar engine, or executable is bundled. See
-PROVENANCE.md and skills/nuko-nova-unslop/references/source-map.md.
+PROVENANCE.md and docs/source-map.md.
