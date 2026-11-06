@@ -16,7 +16,7 @@ from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Iterable
 
-from markdown_source import fenced_code_spans, html_comment_spans, mask_spans
+from markdown_source import mask_spans, source_structure
 
 
 PROFILE_LEVEL = {"balanced": 1, "strict": 2, "nuko-nova": 3}
@@ -223,7 +223,6 @@ RULES = (
 )
 
 
-INLINE_CODE_RE = re.compile(r"`[^`\n]+`")
 LINK_TARGET_RE = re.compile(r"(?<=\]\()[^)]+(?=\))")
 URL_RE = re.compile(r"https?://[^\s)>]+")
 # A straight quote attached to a word or number is not a prose opener (13").
@@ -241,7 +240,6 @@ REFERENCE_DEFINITION_RE = re.compile(
     r"(?:[ \t]+(?:\"[^\"\r\n]*\"|'[^'\r\n]*'|\([^\)\r\n]*\)))?[ \t]*$",
     re.MULTILINE,
 )
-LIST_MARKER_RE = re.compile(r"^ {0,3}(?:[-*+]|\d{1,9}[.)])(?:[ \t]+|$)")
 
 
 def frontmatter_range(text: str) -> tuple[int, int] | None:
@@ -262,45 +260,16 @@ def frontmatter_range(text: str) -> tuple[int, int] | None:
     return None
 
 
-def indented_code_ranges(text: str) -> list[tuple[int, int]]:
-    """Find top-level Markdown indented code without hiding list prose."""
-    ranges: list[tuple[int, int]] = []
-    start: int | None = None
-    offset = 0
-    previous_blank = True
-    previous_nonblank_was_list = False
-
-    for line in text.splitlines(keepends=True):
-        body = line.rstrip("\r\n")
-        blank = not body.strip()
-        indented = body.startswith("    ") or body.startswith("\t")
-
-        if start is not None and not (blank or indented):
-            ranges.append((start, offset))
-            start = None
-
-        if start is None and indented and previous_blank and not previous_nonblank_was_list:
-            start = offset
-
-        if not blank:
-            previous_nonblank_was_list = bool(LIST_MARKER_RE.match(body))
-        previous_blank = blank
-        offset += len(line)
-
-    if start is not None:
-        ranges.append((start, len(text)))
-    return ranges
-
-
 def mask_exempt_spans(text: str) -> str:
-    fenced_ranges = fenced_code_spans(text)
-    inline_ranges = [(match.start(), match.end()) for match in INLINE_CODE_RE.finditer(text)]
-    protected_ranges = [*fenced_ranges, *inline_ranges]
-    source_only_ranges = html_comment_spans(text, protected_ranges)
+    structure = source_structure(text)
+    # Lint policy: code, comments, and frontmatter are not prose. Raw HTML
+    # blocks and tables stay visible; only their tags are hidden below.
+    protected_ranges = [*structure.fenced_code, *structure.inline_code]
+    source_only_ranges = list(structure.html_comments)
     if leading_frontmatter := frontmatter_range(text):
         source_only_ranges.append(leading_frontmatter)
 
-    indented_ranges = indented_code_ranges(text)
+    indented_ranges = list(structure.indented_code)
     non_prose_ranges = [*protected_ranges, *source_only_ranges, *indented_ranges]
     html_ranges = []
     for match in HTML_TAG_RE.finditer(text):

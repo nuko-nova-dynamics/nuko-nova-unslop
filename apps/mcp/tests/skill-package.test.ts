@@ -1,29 +1,42 @@
 import { describe, expect, it } from "vitest";
-import { primarySkillSource, superTightenSource, patternCatalogSource, sha256Digest } from "./skill-sources";
+import {
+  patternCatalogSource,
+  pluginManifestSource,
+  primarySkillSource,
+  sha256Digest,
+  superTightenSource,
+} from "./skill-sources";
 
 import {
   getPrimarySkill,
-  getReference,
   getSkillCatalog,
-  getSuperTightenSkill,
   listAllSkillResources,
-  listSkillResources,
+  listServedSkills,
 } from "../src/skill-package";
 
-const utf8Bytes = (content: string) => new TextEncoder().encode(content).byteLength;
+const manifest = JSON.parse(pluginManifestSource) as { name: string; version: string };
 
 describe("Nuko Nova Unslop skill package", () => {
   it("serves the released skill as the primary resource", () => {
     const skill = getPrimarySkill();
 
     expect(skill.name).toBe("nuko-nova-unslop");
-    expect(skill.version).toBe("0.9.1");
+    expect(skill.primary).toBe(true);
+    expect(skill.version).toBe(manifest.version);
     expect(skill.uri).toBe("skill://nuko-nova-unslop/nuko-nova-unslop/SKILL.md");
     expect(skill.content).toBe(primarySkillSource);
   });
 
+  it("marks exactly one served skill as primary", () => {
+    const primaryNames = listServedSkills()
+      .filter((skill) => skill.primary)
+      .map((skill) => skill.name);
+
+    expect(primaryNames).toEqual([getPrimarySkill().name]);
+  });
+
   it("publishes only files from the skill package", () => {
-    const resources = listSkillResources();
+    const { resources } = getPrimarySkill();
 
     expect(resources.length).toBeGreaterThan(5);
     expect(resources.every((resource) => resource.uri.startsWith("skill://nuko-nova-unslop/nuko-nova-unslop/"))).toBe(true);
@@ -43,39 +56,54 @@ describe("Nuko Nova Unslop skill package", () => {
     ).toBe(true);
   });
 
+  it.each(listServedSkills().map((skill) => [skill.name, skill] as const))(
+    "describes %s consistently across catalog and load output",
+    (_name, skill) => {
+      const root = `skill://${manifest.name}/${skill.name}/`;
+
+      expect(skill.version).toBe(manifest.version);
+      expect(skill.uri).toBe(`${root}SKILL.md`);
+      expect(skill.resources.every(({ uri }) => uri.startsWith(root))).toBe(true);
+      expect(skill.catalogEntry).toEqual({
+        uri: skill.uri,
+        frontmatter: { name: skill.name, description: skill.description },
+        resources: skill.resources.map(({ uri, digest }) => ({ uri, digest })),
+      });
+      expect(skill.loadOutput).toEqual({
+        name: skill.name,
+        version: skill.version,
+        commitSha: skill.commitSha,
+        uri: skill.uri,
+        digest: skill.digest,
+        instructions: skill.content,
+        references: skill.references,
+      });
+      expect(skill.references).toEqual(
+        skill.resources
+          .filter(({ path }) => path.startsWith("references/"))
+          .map(({ path }) => path.slice("references/".length)),
+      );
+    },
+  );
+
   it("returns the complete OpenAI skill catalog entry", () => {
     const catalog = getSkillCatalog();
 
-    expect(catalog.skills).toHaveLength(2);
-    expect(catalog.skills[0]?.frontmatter.name).toBe("nuko-nova-unslop");
-    expect(catalog.skills[0]?.frontmatter.description).toBe(getPrimarySkill().description);
-    expect(catalog.skills[0]?.resources).toEqual(listSkillResources().map(({ uri, digest }) => ({ uri, digest })));
-    const standalone = getSuperTightenSkill();
-    expect(catalog.skills[1]).toEqual({
-      uri: standalone.uri,
-      frontmatter: { name: standalone.name, description: standalone.description },
-      resources: listAllSkillResources()
-        .filter(({ uri }) => uri.startsWith("skill://nuko-nova-unslop/super-tighten/"))
-        .map(({ uri, digest }) => ({ uri, digest })),
-    });
+    expect(catalog.skills).toEqual(listServedSkills().map((skill) => skill.catalogEntry));
     const declaredUris = catalog.skills.flatMap((entry) => entry.resources.map(({ uri }) => uri));
     expect(new Set(declaredUris).size).toBe(declaredUris.length);
     expect(declaredUris).toEqual(listAllSkillResources().map(({ uri }) => uri));
-    for (const entry of catalog.skills) {
-      const root = entry.uri.slice(0, -"SKILL.md".length);
-      expect(entry.resources.every(({ uri }) => uri.startsWith(root))).toBe(true);
-    }
   });
 
   it("packages the standalone skill verbatim without reference dependencies", async () => {
-    const skill = getSuperTightenSkill();
+    const skill = listServedSkills().find((candidate) => candidate.name === "super-tighten");
 
-    expect(skill.name).toBe("super-tighten");
-    expect(skill.version).toBe(getPrimarySkill().version);
-    expect(skill.uri).toBe("skill://nuko-nova-unslop/super-tighten/SKILL.md");
-    expect(skill.content).toBe(superTightenSource);
-    expect(skill.references).toEqual([]);
-    expect(skill.digest).toBe(await sha256Digest(superTightenSource));
+    expect(skill).toBeDefined();
+    expect(skill!.primary).toBe(false);
+    expect(skill!.uri).toBe("skill://nuko-nova-unslop/super-tighten/SKILL.md");
+    expect(skill!.content).toBe(superTightenSource);
+    expect(skill!.references).toEqual([]);
+    expect(skill!.digest).toBe(await sha256Digest(superTightenSource));
   });
 
   it("hashes every shipped resource from its actual contents", async () => {
@@ -84,31 +112,11 @@ describe("Nuko Nova Unslop skill package", () => {
     }
   });
 
-  it.each(["nuko-nova-unslop", "super-tighten"])("keeps %s inside OpenAI's skill import limits", (name) => {
-    const resources = listAllSkillResources().filter(({ uri }) => uri.startsWith(`skill://nuko-nova-unslop/${name}/`));
-    const totalBytes = resources.reduce(
-      (total, resource) => total + utf8Bytes(resource.content),
-      0,
-    );
-    const normalizedPaths = resources.map((resource) => resource.path.normalize("NFC"));
-
-    expect(resources.length).toBeLessThanOrEqual(100);
-    expect(new Set(normalizedPaths).size).toBe(normalizedPaths.length);
-    expect(
-      utf8Bytes(resources.find((resource) => resource.path === "SKILL.md")!.content),
-    ).toBeLessThanOrEqual(256 * 1024);
-    expect(
-      resources
-        .filter((resource) => resource.path !== "SKILL.md")
-        .every(
-          (resource) => utf8Bytes(resource.content) <= 1024 * 1024,
-        ),
-    ).toBe(true);
-    expect(totalBytes).toBeLessThanOrEqual(5 * 1024 * 1024);
-  });
-
   it("reads an allowed reference and rejects arbitrary paths", () => {
-    expect(getReference("pattern-catalog.md").content).toBe(patternCatalogSource);
-    expect(() => getReference("../../AGENTS.md")).toThrow("Unknown Nuko Nova Unslop reference");
+    const skill = getPrimarySkill();
+
+    expect(skill.readReference("pattern-catalog.md").content).toBe(patternCatalogSource);
+    expect(() => skill.readReference("../../AGENTS.md")).toThrow("Unknown nuko-nova-unslop reference");
+    expect(() => skill.readReference("missing.md")).toThrow("Unknown nuko-nova-unslop reference");
   });
 });

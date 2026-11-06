@@ -17,13 +17,13 @@ import sys
 from collections import Counter
 from pathlib import Path
 
-from markdown_source import fenced_code_spans, markdown_table_spans, mask_spans
+from markdown_source import INLINE_CODE_RE, SourceStructure, TableSpan, mask_spans, source_structure
 
 
 PATTERNS = {
     "url": re.compile(r"https?://[^\s)>\]]+"),
     "email": re.compile(r"\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b", re.IGNORECASE),
-    "inline_code": re.compile(r"`([^`\n]+)`"),
+    "inline_code": INLINE_CODE_RE,
     "flag": re.compile(r"(?<!\w)--[a-zA-Z0-9][a-zA-Z0-9-]*"),
     "version": re.compile(r"\bv?\d+\.\d+(?:\.\d+)?(?:[-+][0-9A-Za-z.-]+)?\b"),
     "date": re.compile(
@@ -41,10 +41,12 @@ PATTERNS = {
 }
 
 
-def compare_markdown_tables(source: str, rewrite: str) -> dict[str, dict[str, int]] | None:
+def compare_markdown_tables(
+    source: SourceStructure, rewrite: SourceStructure
+) -> dict[str, dict[str, int]] | None:
     """Report Markdown table drift without printing protected table contents."""
-    before = [table for _, _, table in markdown_table_spans(source)]
-    after = [table for _, _, table in markdown_table_spans(rewrite)]
+    before = [table.cells for table in source.tables]
+    after = [table.cells for table in rewrite.tables]
     if before == after:
         return None
 
@@ -64,22 +66,24 @@ def line_offsets(text: str) -> list[int]:
     return offsets
 
 
-def table_line_intervals(text: str) -> list[tuple[int, int]]:
+def table_line_intervals(text: str, tables: tuple[TableSpan, ...]) -> list[tuple[int, int]]:
     """Return zero-based line intervals for recognized Markdown tables."""
     offsets = line_offsets(text)
     intervals: list[tuple[int, int]] = []
-    for start, end, _ in markdown_table_spans(text):
+    for start, end, _ in tables:
         start_line = max(0, bisect.bisect_right(offsets, start) - 1)
         end_line = bisect.bisect_left(offsets, end)
         intervals.append((start_line, end_line))
     return intervals
 
 
-def mapped_table_spans(source: str, target: str) -> list[tuple[int, int]]:
+def mapped_table_spans(
+    source: str, target: str, source_tables: tuple[TableSpan, ...]
+) -> list[tuple[int, int]]:
     """Map recognized source-table lines onto their corresponding target regions."""
     source_lines = source.splitlines(keepends=True)
     target_lines = target.splitlines(keepends=True)
-    source_intervals = table_line_intervals(source)
+    source_intervals = table_line_intervals(source, source_tables)
     target_offsets = line_offsets(target)
     spans: list[tuple[int, int]] = []
 
@@ -100,19 +104,26 @@ def mapped_table_spans(source: str, target: str) -> list[tuple[int, int]]:
 
 
 def mask_protected_blocks(
-    text: str, additional_spans: list[tuple[int, int]] | None = None
+    text: str,
+    structure: SourceStructure,
+    additional_spans: list[tuple[int, int]] | None = None,
 ) -> str:
     """Hide fenced code and Markdown tables while retaining line structure."""
-    spans = fenced_code_spans(text)
-    spans.extend((start, end) for start, end, _ in markdown_table_spans(text))
+    spans = list(structure.fenced_code)
+    spans.extend((table.start, table.end) for table in structure.tables)
     spans.extend(additional_spans or [])
     return mask_spans(text, spans)
 
 
-def compare_fenced_code(source: str, rewrite: str) -> dict[str, dict[str, int]] | None:
+def compare_fenced_code(
+    source: str,
+    rewrite: str,
+    source_blocks: SourceStructure,
+    rewrite_blocks: SourceStructure,
+) -> dict[str, dict[str, int]] | None:
     """Report exact fenced-code drift without printing protected code."""
-    before = [source[start:end] for start, end in fenced_code_spans(source)]
-    after = [rewrite[start:end] for start, end in fenced_code_spans(rewrite)]
+    before = [source[start:end] for start, end in source_blocks.fenced_code]
+    after = [rewrite[start:end] for start, end in rewrite_blocks.fenced_code]
     if before == after:
         return None
 
@@ -151,13 +162,21 @@ def extract(text: str) -> dict[str, Counter[str]]:
 def compare(source: str, rewrite: str) -> dict[str, dict[str, dict[str, int]]]:
     source = source.replace("\r\n", "\n")
     rewrite = rewrite.replace("\r\n", "\n")
-    markdown_table = compare_markdown_tables(source, rewrite)
-    source_transition_spans = mapped_table_spans(rewrite, source) if markdown_table else []
-    rewrite_transition_spans = mapped_table_spans(source, rewrite) if markdown_table else []
-    before = extract(mask_protected_blocks(source, source_transition_spans))
-    after = extract(mask_protected_blocks(rewrite, rewrite_transition_spans))
+    # Guard policy: compare fenced code and tables as whole blocks, then
+    # compare tokens in the remaining text.
+    source_blocks = source_structure(source)
+    rewrite_blocks = source_structure(rewrite)
+    markdown_table = compare_markdown_tables(source_blocks, rewrite_blocks)
+    source_transition_spans = (
+        mapped_table_spans(rewrite, source, rewrite_blocks.tables) if markdown_table else []
+    )
+    rewrite_transition_spans = (
+        mapped_table_spans(source, rewrite, source_blocks.tables) if markdown_table else []
+    )
+    before = extract(mask_protected_blocks(source, source_blocks, source_transition_spans))
+    after = extract(mask_protected_blocks(rewrite, rewrite_blocks, rewrite_transition_spans))
     result: dict[str, dict[str, dict[str, int]]] = {}
-    fenced_code = compare_fenced_code(source, rewrite)
+    fenced_code = compare_fenced_code(source, rewrite, source_blocks, rewrite_blocks)
     if fenced_code:
         result["fenced_code"] = fenced_code
     if markdown_table:

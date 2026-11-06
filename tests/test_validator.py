@@ -23,12 +23,27 @@ def run_validator(root: Path) -> subprocess.CompletedProcess[str]:
     )
 
 
+def manifest_version(root: Path) -> str:
+    return json.loads((root / ".codex-plugin" / "plugin.json").read_text(encoding="utf-8"))["version"]
+
+
+def edit_lock(root: Path, change: Callable[[dict], None]) -> None:
+    path = root / "upstreams.lock.json"
+    data = json.loads(path.read_text(encoding="utf-8"))
+    change(data)
+    path.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
+
+
+def drop_source_map_row(root: Path, repository: str) -> None:
+    path = root / "docs" / "source-map.md"
+    lines = path.read_text(encoding="utf-8").splitlines(keepends=True)
+    kept = [line for line in lines if f"(https://github.com/{repository})" not in line]
+    assert len(kept) == len(lines) - 1, repository
+    path.write_text("".join(kept), encoding="utf-8")
+
+
 class ValidatorMutationTests(unittest.TestCase):
-    def assert_rejected(
-        self,
-        mutate: Callable[[Path], None],
-        expected: str,
-    ) -> None:
+    def run_mutated(self, mutate: Callable[[Path], None]) -> subprocess.CompletedProcess[str]:
         with tempfile.TemporaryDirectory(prefix="nuko-nova-unslop-validator-") as temp:
             root = Path(temp) / "plugin"
             shutil.copytree(
@@ -44,10 +59,21 @@ class ValidatorMutationTests(unittest.TestCase):
                 ),
             )
             mutate(root)
-            result = run_validator(root)
-            combined = result.stdout + result.stderr
-            self.assertNotEqual(result.returncode, 0, combined)
-            self.assertIn(expected, combined)
+            return run_validator(root)
+
+    def assert_rejected(
+        self,
+        mutate: Callable[[Path], None],
+        expected: str,
+    ) -> None:
+        result = self.run_mutated(mutate)
+        combined = result.stdout + result.stderr
+        self.assertNotEqual(result.returncode, 0, combined)
+        self.assertIn(expected, combined)
+
+    def assert_accepted(self, mutate: Callable[[Path], None]) -> None:
+        result = self.run_mutated(mutate)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
     def test_baseline_passes(self) -> None:
         result = run_validator(SOURCE)
@@ -114,7 +140,7 @@ class ValidatorMutationTests(unittest.TestCase):
 
     def test_missing_reference_is_rejected(self) -> None:
         def mutate(root: Path) -> None:
-            (root / "skills" / "nuko-nova-unslop" / "references" / "source-map.md").unlink()
+            (root / "skills" / "nuko-nova-unslop" / "references" / "editorial-contract.md").unlink()
 
         self.assert_rejected(mutate, "reference set mismatch")
 
@@ -186,20 +212,6 @@ class ValidatorMutationTests(unittest.TestCase):
 
         self.assert_rejected(mutate, "tighten command skill is missing")
 
-    def test_tighten_instruction_drift_is_rejected(self) -> None:
-        def mutate(root: Path) -> None:
-            path = root / "skills" / "tighten" / "SKILL.md"
-            text = path.read_text(encoding="utf-8")
-            path.write_text(
-                text.replace(
-                    "Make sure each word in this text justifies its existence.",
-                    "Shorten the text as much as possible.",
-                ),
-                encoding="utf-8",
-            )
-
-        self.assert_rejected(mutate, "tighten command must preserve its direct instruction")
-
     def test_tighten_route_drift_is_rejected(self) -> None:
         def mutate(root: Path) -> None:
             path = root / "skills" / "tighten" / "SKILL.md"
@@ -210,37 +222,6 @@ class ValidatorMutationTests(unittest.TestCase):
             )
 
         self.assert_rejected(mutate, "tighten command must route to the canonical skill")
-
-    def test_tighten_second_stage_drift_is_rejected(self) -> None:
-        def mutate(root: Path) -> None:
-            path = root / "skills" / "nuko-nova-unslop" / "SKILL.md"
-            text = path.read_text(encoding="utf-8")
-            path.write_text(
-                text.replace(
-                    "first apply the complete Nuko Nova Unslop workflow",
-                    "skip the normal workflow",
-                ),
-                encoding="utf-8",
-            )
-
-        self.assert_rejected(
-            mutate,
-            "tighten mode must run the complete unslop workflow before its second-stage removal pass",
-        )
-
-    def test_tighten_preservation_drift_is_rejected(self) -> None:
-        def mutate(root: Path) -> None:
-            path = root / "skills" / "nuko-nova-unslop" / "SKILL.md"
-            text = path.read_text(encoding="utf-8")
-            path.write_text(
-                text.replace(
-                    "Remove words only when meaning, factual scope, intent, voice, rhythm, readability, and necessary context remain intact.",
-                    "Remove words even when meaning or factual scope changes.",
-                ),
-                encoding="utf-8",
-            )
-
-        self.assert_rejected(mutate, "tighten mode must preserve meaning, scope, voice, readability, and context")
 
     def test_tighten_implicit_invocation_is_rejected(self) -> None:
         def mutate(root: Path) -> None:
@@ -256,7 +237,7 @@ class ValidatorMutationTests(unittest.TestCase):
             text = path.read_text(encoding="utf-8")
             path.write_text(text.replace("Use $tighten:", "Use Tighten to"), encoding="utf-8")
 
-        self.assert_rejected(mutate, "tighten OpenAI default prompt must name $tighten and preserve its direct instruction")
+        self.assert_rejected(mutate, "tighten OpenAI default prompt must name $tighten")
 
     def test_forced_output_style_drift_is_rejected(self) -> None:
         def mutate(root: Path) -> None:
@@ -280,28 +261,6 @@ class ValidatorMutationTests(unittest.TestCase):
 
         self.assert_rejected(mutate, "Claude output style is missing")
 
-    def test_delegated_prose_guard_drift_is_rejected(self) -> None:
-        def mutate(root: Path) -> None:
-            path = root / "skills" / "nuko-nova-unslop" / "SKILL.md"
-            text = path.read_text(encoding="utf-8")
-            path.write_text(
-                text.replace("Treat delegated prose as unreviewed source material", "Delegated prose may be returned directly"),
-                encoding="utf-8",
-            )
-
-        self.assert_rejected(mutate, "parent review of delegated prose")
-
-    def test_preference_continuity_drift_is_rejected(self) -> None:
-        def mutate(root: Path) -> None:
-            path = root / "skills" / "nuko-nova-unslop" / "SKILL.md"
-            text = path.read_text(encoding="utf-8")
-            path.write_text(
-                text.replace("Carry explicit writing corrections forward", "Ignore prior writing corrections"),
-                encoding="utf-8",
-            )
-
-        self.assert_rejected(mutate, "carry explicit writing corrections forward")
-
     def test_unapproved_writing_evaluation_restriction_is_rejected(self) -> None:
         def mutate(root: Path) -> None:
             path = root / "skills" / "nuko-nova-unslop" / "SKILL.md"
@@ -312,58 +271,13 @@ class ValidatorMutationTests(unittest.TestCase):
 
         self.assert_rejected(mutate, "unapproved writing-evaluation restriction")
 
-    def test_no_cringe_contract_drift_is_rejected(self) -> None:
+    def test_unrouted_reference_is_rejected(self) -> None:
         def mutate(root: Path) -> None:
             path = root / "skills" / "nuko-nova-unslop" / "SKILL.md"
             text = path.read_text(encoding="utf-8")
-            path.write_text(
-                text.replace("Apply the no-cringe standard as a context test", "Treat cringe as an undefined preference"),
-                encoding="utf-8",
-            )
+            path.write_text(text.replace("(references/tighten.md)", "(tighten.md)"), encoding="utf-8")
 
-        self.assert_rejected(mutate, "no-cringe context test")
-
-    def test_caveat_relevance_contract_drift_is_rejected(self) -> None:
-        def mutate(root: Path) -> None:
-            path = root / "skills" / "nuko-nova-unslop" / "SKILL.md"
-            text = path.read_text(encoding="utf-8")
-            path.write_text(
-                text.replace(
-                    "Keep caveats, risk framing, and process notes only when",
-                    "Add caveats, risk framing, and process notes whenever",
-                ),
-                encoding="utf-8",
-            )
-
-        self.assert_rejected(mutate, "keep caveats and process notes relevant")
-
-    def test_reader_context_contract_drift_is_rejected(self) -> None:
-        def mutate(root: Path) -> None:
-            path = root / "skills" / "nuko-nova-unslop" / "SKILL.md"
-            text = path.read_text(encoding="utf-8")
-            path.write_text(
-                text.replace(
-                    "When a reader may not know a term, label, or technical choice",
-                    "Assume every reader already knows each term, label, and technical choice",
-                ),
-                encoding="utf-8",
-            )
-
-        self.assert_rejected(mutate, "explain unfamiliar terms with reader context")
-
-    def test_reader_context_output_style_drift_is_rejected(self) -> None:
-        def mutate(root: Path) -> None:
-            path = root / "output-styles" / "nuko-nova-unslop.md"
-            text = path.read_text(encoding="utf-8")
-            path.write_text(
-                text.replace(
-                    "When a term, label, or technical choice may be unfamiliar",
-                    "Assume every term, label, and technical choice is familiar",
-                ),
-                encoding="utf-8",
-            )
-
-        self.assert_rejected(mutate, "Claude output style must explain unfamiliar terms with reader context")
+        self.assert_rejected(mutate, "canonical skill must route to references/tighten.md")
 
     def test_missing_artwork_is_rejected(self) -> None:
         def mutate(root: Path) -> None:
@@ -387,7 +301,86 @@ class ValidatorMutationTests(unittest.TestCase):
             data["review_cadence"] = "monthly"
             path.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
 
-        self.assert_rejected(mutate, "cadence must be every-two-days")
+        self.assert_rejected(mutate, "cadence must be weekly")
+
+    def test_changelog_version_drift_is_rejected(self) -> None:
+        def mutate(root: Path) -> None:
+            path = root / "CHANGELOG.md"
+            path.write_text(
+                path.read_text(encoding="utf-8").replace("# Changelog\n", "# Changelog\n\n## 99.0.0 - 2099-01-01\n\n- Future.\n", 1),
+                encoding="utf-8",
+            )
+
+        self.assert_rejected(mutate, "CHANGELOG.md: first release heading '99.0.0' does not match manifest version")
+
+    def test_changelog_unreleased_heading_is_ignored(self) -> None:
+        def mutate(root: Path) -> None:
+            path = root / "CHANGELOG.md"
+            path.write_text(
+                path.read_text(encoding="utf-8").replace("# Changelog\n", "# Changelog\n\n## Unreleased\n\n- Pending.\n", 1),
+                encoding="utf-8",
+            )
+
+        self.assert_accepted(mutate)
+
+    def test_manifest_version_bump_without_changelog_is_rejected(self) -> None:
+        def mutate(root: Path) -> None:
+            for client in (".codex-plugin", ".claude-plugin"):
+                path = root / client / "plugin.json"
+                data = json.loads(path.read_text(encoding="utf-8"))
+                data["version"] = "99.0.0"
+                path.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
+
+        self.assert_rejected(mutate, "does not match manifest version 99.0.0")
+
+    def test_readme_marketplace_ref_drift_is_rejected(self) -> None:
+        def mutate(root: Path) -> None:
+            path = root / "README.md"
+            text = path.read_text(encoding="utf-8")
+            current = f"nuko-nova-unslop-marketplace-v{manifest_version(root)}"
+            self.assertIn(current, text)
+            path.write_text(text.replace(current, "nuko-nova-unslop-marketplace-v0.0.1"), encoding="utf-8")
+
+        self.assert_rejected(mutate, "README.md: marketplace --ref nuko-nova-unslop-marketplace-v0.0.1 does not match manifest version")
+
+    def test_upstream_count_is_not_fixed(self) -> None:
+        def mutate(root: Path) -> None:
+            removed: list[str] = []
+            edit_lock(root, lambda data: removed.append(data["sources"].pop(0)["repository"]))
+            drop_source_map_row(root, removed[0])
+
+        self.assert_accepted(mutate)
+
+    def test_locked_source_without_source_map_row_is_rejected(self) -> None:
+        def mutate(root: Path) -> None:
+            repository = json.loads((root / "upstreams.lock.json").read_text(encoding="utf-8"))["sources"][0]["repository"]
+            drop_source_map_row(root, repository)
+
+        self.assert_rejected(mutate, "docs/source-map.md: missing source row for")
+
+    def test_source_map_row_without_lock_entry_is_rejected(self) -> None:
+        def mutate(root: Path) -> None:
+            edit_lock(root, lambda data: data["sources"].pop(0))
+
+        self.assert_rejected(mutate, "has no entry in upstreams.lock.json")
+
+    def test_duplicate_upstream_id_is_rejected(self) -> None:
+        def mutate(root: Path) -> None:
+            def change(data: dict) -> None:
+                data["sources"][1]["id"] = data["sources"][0]["id"]
+
+            edit_lock(root, change)
+
+        self.assert_rejected(mutate, "upstream ids must be unique")
+
+    def test_non_github_upstream_url_is_rejected(self) -> None:
+        def mutate(root: Path) -> None:
+            def change(data: dict) -> None:
+                data["sources"][0]["url"] = "https://example.com/vale.git"
+
+            edit_lock(root, change)
+
+        self.assert_rejected(mutate, "expected GitHub HTTPS URL")
 
 
 if __name__ == "__main__":

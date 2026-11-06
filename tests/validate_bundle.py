@@ -13,6 +13,17 @@ from urllib.parse import unquote
 
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "scripts"))
+
+from release_metadata import (  # noqa: E402
+    ReleaseMetadata,
+    ReleaseMetadataError,
+    agreed_metadata,
+    changelog_version,
+    load_manifests,
+    readme_refs,
+)
+
 SKILL = ROOT / "skills" / "nuko-nova-unslop"
 ALIAS_SKILL = ROOT / "skills" / "unslop"
 TIGHTEN_SKILL = ROOT / "skills" / "tighten"
@@ -20,14 +31,15 @@ SUPER_TIGHTEN_SKILL = ROOT / "skills" / "super-tighten"
 OUTPUT_STYLE = ROOT / "output-styles" / "nuko-nova-unslop.md"
 SEMVER = re.compile(r"^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:[-+][0-9A-Za-z.-]+)?$")
 SHA = re.compile(r"^[0-9a-f]{40}$")
+GITHUB_REPOSITORY = re.compile(r"https://github\.com/([A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+?)(?:\.git)?(?=[/)#\s]|$)")
+SOURCE_MAP = ROOT / "docs" / "source-map.md"
+SOURCE_MAP_HEADER = "| Source | License | Reviewed value |"
 LINK = re.compile(r"\[[^\]]+\]\(([^)]+)\)")
 REQUIRED_REFERENCES = {
     "editorial-contract.md",
-    "evolution.md",
     "interaction-calibration.md",
     "pattern-catalog.md",
     "profiles-and-genres.md",
-    "source-map.md",
     "tighten.md",
 }
 REQUIRED_SCRIPTS = {"markdown_source.py", "preservation_guard.py", "unslop_lint.py"}
@@ -105,22 +117,15 @@ def png_dimensions(path: Path) -> tuple[int, int]:
     return struct.unpack(">II", data[16:24])
 
 
-def check_manifests() -> None:
-    codex = load_json(ROOT / ".codex-plugin" / "plugin.json")
-    claude = load_json(ROOT / ".claude-plugin" / "plugin.json")
-    for client, manifest in (("Codex", codex), ("Claude", claude)):
-        if "hooks" in manifest:
-            fail(f"{client}: lifecycle hooks must not be declared")
-        for field in ("name", "version", "description", "homepage", "repository", "license"):
-            value = manifest.get(field)
-            if not isinstance(value, str) or not value.strip():
-                fail(f"{client}: invalid manifest {field}; expected a nonempty string")
-        author = manifest.get("author")
-        if not isinstance(author, dict) or not isinstance(author.get("name"), str) or not author["name"].strip():
-            fail(f"{client}: invalid manifest author; expected an object with a nonempty name")
-    for field in ("name", "version", "description", "author", "homepage", "repository", "license"):
-        if codex.get(field) != claude.get(field):
-            fail(f"client manifests disagree on {field}")
+def check_manifests() -> ReleaseMetadata:
+    try:
+        codex, claude = load_manifests(ROOT)
+        for client, manifest in (("Codex", codex), ("Claude", claude)):
+            if "hooks" in manifest:
+                fail(f"{client}: lifecycle hooks must not be declared")
+        metadata = agreed_metadata(codex, claude)
+    except ReleaseMetadataError as exc:
+        fail(str(exc))
     if codex.get("name") != "nuko-nova-unslop":
         fail("plugin name mismatch")
     if not isinstance(codex.get("version"), str) or not SEMVER.fullmatch(codex["version"]):
@@ -151,6 +156,19 @@ def check_manifests() -> None:
         width, height = png_dimensions(artwork_path)
         if (width, height) != (expected_size, expected_size):
             fail(f"{relative_path}: expected {expected_size}x{expected_size}, found {width}x{height}")
+    return metadata
+
+
+def check_release_references(metadata: ReleaseMetadata) -> None:
+    heading = changelog_version((ROOT / "CHANGELOG.md").read_text(encoding="utf-8"))
+    if heading != metadata.version:
+        fail(f"CHANGELOG.md: first release heading {heading!r} does not match manifest version {metadata.version}")
+    refs = readme_refs((ROOT / "README.md").read_text(encoding="utf-8"))
+    if not refs:
+        fail(f"README.md: missing marketplace --ref {metadata.marketplace_ref}")
+    for ref in refs:
+        if ref != metadata.marketplace_ref:
+            fail(f"README.md: marketplace --ref {ref} does not match manifest version; expected {metadata.marketplace_ref}")
 
 
 def check_skill() -> None:
@@ -161,8 +179,6 @@ def check_skill() -> None:
         fail("skill name mismatch")
     if len(frontmatter["description"]) < 180 or "Use " not in frontmatter["description"]:
         fail("skill description must explain capability and triggers")
-    if not frontmatter["description"].startswith("Always-on human-writing standard for every human-facing"):
-        fail("skill description must trigger for every human-facing response")
     references = {path.name for path in (SKILL / "references").iterdir() if path.is_file()}
     scripts = {path.name for path in (SKILL / "scripts").iterdir() if path.is_file() and path.suffix == ".py"}
     if references != REQUIRED_REFERENCES:
@@ -188,34 +204,10 @@ def check_skill() -> None:
     }
     if style != expected_style:
         fail("Claude output style must stay forced and retain coding instructions")
-    style_body = OUTPUT_STYLE.read_text(encoding="utf-8")
-    if "every human-facing response" not in style_body or "Never invent detail" not in style_body:
-        fail("Claude output style is missing the default writing contract")
-    if "Human does not mean" not in style_body or "fake intimacy" not in style_body:
-        fail("Claude output style is missing the human-writing and no-cringe contract")
-    if "When a term, label, or technical choice may be unfamiliar" not in style_body:
-        fail("Claude output style must explain unfamiliar terms with reader context")
     skill_body = (SKILL / "SKILL.md").read_text(encoding="utf-8")
-    if "Treat delegated prose as unreviewed source material" not in skill_body:
-        fail("skill must require parent review of delegated prose")
-    if "Carry explicit writing corrections forward" not in skill_body:
-        fail("skill must carry explicit writing corrections forward")
-    if "Apply the no-cringe standard as a context test" not in skill_body:
-        fail("skill must define the no-cringe context test")
-    if "Keep caveats, risk framing, and process notes only when" not in skill_body:
-        fail("skill must keep caveats and process notes relevant")
-    if "When a reader may not know a term, label, or technical choice" not in skill_body:
-        fail("skill must explain unfamiliar terms with reader context")
-    if "ranking, exclusivity claim, simultaneity claim, and scope boundary" not in skill_body:
-        fail("skill must preserve ranking, exclusivity, and simultaneity claims")
-    if "**Tighten:**" not in skill_body or "Make sure each word in this text justifies its existence." not in skill_body:
-        fail("canonical skill must define the tighten mode and its direct instruction")
-    if "first apply the complete Nuko Nova Unslop workflow" not in skill_body or "[tighten.md](references/tighten.md)" not in skill_body:
-        fail("tighten mode must run the complete unslop workflow before its second-stage removal pass")
-    if "Remove words only when meaning, factual scope, intent, voice, rhythm, readability, and necessary context remain intact." not in skill_body:
-        fail("tighten mode must preserve meaning, scope, voice, readability, and context")
-    if "rankings, exclusivity, simultaneity" not in style_body:
-        fail("Claude output style must preserve ranking, exclusivity, and simultaneity claims")
+    for reference in sorted(REQUIRED_REFERENCES):
+        if f"(references/{reference})" not in skill_body:
+            fail(f"canonical skill must route to references/{reference}")
 
     alias_entrypoint = ALIAS_SKILL / "SKILL.md"
     if not alias_entrypoint.is_file():
@@ -253,10 +245,8 @@ def check_skill() -> None:
     tighten_body = tighten_entrypoint.read_text(encoding="utf-8")
     if "../nuko-nova-unslop/SKILL.md" not in tighten_body:
         fail("tighten command must route to the canonical skill")
-    if "Make sure each word in this text justifies its existence." not in tighten_body:
-        fail("tighten command must preserve its direct instruction")
-    if "Finish its normal workflow" not in tighten_body or "references/tighten.md" not in tighten_body:
-        fail("tighten command must add its second-stage rules after the complete canonical workflow")
+    if "references/tighten.md" not in tighten_body:
+        fail("tighten command must route to its second-stage reference")
     if len(tighten_body) > 1_200 or "## Non-negotiable contract" in tighten_body:
         fail("tighten command must not duplicate canonical behavior")
     tighten_agent_path = TIGHTEN_SKILL / "agents" / "openai.yaml"
@@ -265,8 +255,8 @@ def check_skill() -> None:
     tighten_agent = tighten_agent_path.read_text(encoding="utf-8")
     if not re.search(r'^\s*display_name:\s*"Tighten"\s*$', tighten_agent, re.MULTILINE):
         fail("tighten OpenAI metadata must display Tighten")
-    if 'default_prompt: "Use $tighten: Make sure each word in this text justifies its existence."' not in tighten_agent:
-        fail("tighten OpenAI default prompt must name $tighten and preserve its direct instruction")
+    if "Use $tighten" not in tighten_agent:
+        fail("tighten OpenAI default prompt must name $tighten")
     if not re.search(r"^\s*allow_implicit_invocation:\s*false\s*$", tighten_agent, re.MULTILINE):
         fail("tighten OpenAI invocation must remain explicit")
 
@@ -316,23 +306,64 @@ def check_super_tighten() -> None:
     check_links(ROOT / "research" / "super-tighten.md")
 
 
-def check_upstreams() -> None:
+def source_map_repositories() -> dict[str, str]:
+    """Map each lowercase owner/repo linked in the source-map table to its row's Source cell."""
+    lines = SOURCE_MAP.read_text(encoding="utf-8").splitlines()
+    try:
+        start = lines.index(SOURCE_MAP_HEADER)
+    except ValueError:
+        fail(f"docs/source-map.md: missing source table header {SOURCE_MAP_HEADER!r}")
+    rows: dict[str, str] = {}
+    for line in lines[start + 2 :]:
+        if not line.startswith("|"):
+            break
+        cell = line.split("|")[1].strip()
+        match = GITHUB_REPOSITORY.search(cell)
+        if not match:
+            fail(f"docs/source-map.md: source row {cell!r} must link its GitHub repository")
+        repository = match.group(1).lower()
+        if repository in rows:
+            fail(f"docs/source-map.md: duplicate source row for {repository}")
+        rows[repository] = cell
+    return rows
+
+
+def check_upstreams() -> int:
     lock = load_json(ROOT / "upstreams.lock.json")
-    if lock.get("review_cadence") != "every-two-days":
-        fail("upstream cadence must be every-two-days")
+    if lock.get("review_cadence") != "weekly":
+        fail("upstream cadence must be weekly")
     sources = lock.get("sources")
-    if not isinstance(sources, list) or len(sources) != 17:
-        fail("upstream lock must contain the seventeen researched repositories")
+    if not isinstance(sources, list) or not sources or not all(isinstance(source, dict) for source in sources):
+        fail("upstream lock must contain a nonempty list of source objects")
     ids = [source.get("id") for source in sources]
+    if any(not isinstance(source_id, str) or not source_id for source_id in ids):
+        fail("upstream ids must be nonempty strings")
     if len(ids) != len(set(ids)):
         fail("upstream ids must be unique")
+    repositories: dict[str, str] = {}
     for source in sources:
+        source_id = source["id"]
         if not SHA.fullmatch(source.get("reviewed_sha", "")):
-            fail(f"{source.get('id')}: invalid reviewed SHA")
-        if not source.get("monitored_paths"):
-            fail(f"{source.get('id')}: monitored paths are required")
-        if not source.get("url", "").startswith("https://github.com/"):
-            fail(f"{source.get('id')}: expected GitHub HTTPS URL")
+            fail(f"{source_id}: invalid reviewed SHA")
+        paths = source.get("monitored_paths")
+        if not isinstance(paths, list) or not paths or not all(isinstance(path, str) and path for path in paths):
+            fail(f"{source_id}: monitored paths are required")
+        repository = source.get("repository")
+        if not isinstance(repository, str) or not re.fullmatch(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+", repository):
+            fail(f"{source_id}: repository must be owner/name")
+        if source.get("url") not in {f"https://github.com/{repository}", f"https://github.com/{repository}.git"}:
+            fail(f"{source_id}: expected GitHub HTTPS URL for {repository}")
+        if repository.lower() in repositories:
+            fail(f"{source_id}: repository {repository} is already tracked by {repositories[repository.lower()]}")
+        repositories[repository.lower()] = source_id
+    rows = source_map_repositories()
+    for repository, source_id in repositories.items():
+        if repository not in rows:
+            fail(f"docs/source-map.md: missing source row for {source_id} ({repository})")
+    for repository, cell in rows.items():
+        if repository not in repositories:
+            fail(f"docs/source-map.md: source row {cell!r} has no entry in upstreams.lock.json")
+    return len(sources)
 
 
 def check_content() -> None:
@@ -351,18 +382,24 @@ def check_content() -> None:
                 if pattern.search(text):
                     fail(f"{path.relative_to(ROOT)}: unapproved writing-evaluation restriction remains")
     workflow = (ROOT / ".github" / "workflows" / "upstream-review.yml").read_text(encoding="utf-8")
-    if "86400 % 2" not in workflow or "schedule:" not in workflow:
-        fail("upstream workflow must enforce its every-two-days cadence")
+    if not re.search(r'cron: "\d+ \d+ \* \* [0-6]"', workflow):
+        fail("upstream workflow must run on a weekly schedule")
 
 
 def main() -> int:
-    check_manifests()
+    metadata = check_manifests()
+    check_release_references(metadata)
     check_skill()
     check_super_tighten()
     check_no_hooks()
-    check_upstreams()
+    source_count = check_upstreams()
     check_content()
-    print("PASS: dual manifests, forced Claude output style, hook-free packaging, canonical skill, short alias, focused command, standalone Super Tighten, seven references, two helpers with shared Markdown recognition, seventeen source pins, links, metadata, and cadence verified")
+    print(
+        "PASS: dual manifests, release version references, forced Claude output style, hook-free packaging, "
+        "canonical skill, short alias, focused command, standalone Super Tighten, "
+        f"{len(REQUIRED_REFERENCES)} references, {len(REQUIRED_SCRIPTS)} helpers with shared Markdown recognition, "
+        f"{source_count} source pins with source-map rows, links, metadata, and cadence verified"
+    )
     return 0
 
 

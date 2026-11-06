@@ -1,7 +1,10 @@
 from __future__ import annotations
 
 import importlib.util
+import json
+import shutil
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -34,6 +37,25 @@ class MarketplaceEntryTests(unittest.TestCase):
     def test_invalid_sha_is_rejected(self) -> None:
         with self.assertRaises(ValueError):
             MODULE.build_entries("abc", "release")
+
+    def test_entries_use_the_agreed_manifest_version(self) -> None:
+        manifest = json.loads((ROOT / ".codex-plugin" / "plugin.json").read_text(encoding="utf-8"))
+        entries = MODULE.build_entries("a" * 40, "release")
+        self.assertEqual(entries["codex"]["version"], manifest["version"])
+        self.assertEqual(entries["claude"]["version"], manifest["version"])
+
+    def test_manifest_drift_is_rejected_by_shared_metadata(self) -> None:
+        for field, value in (("version", "9.9.9"), ("repository", "https://github.com/example/fork")):
+            with self.subTest(field=field), tempfile.TemporaryDirectory(prefix="nuko-nova-unslop-entries-") as temp:
+                root = Path(temp)
+                for client in (".codex-plugin", ".claude-plugin"):
+                    shutil.copytree(ROOT / client, root / client)
+                path = root / ".claude-plugin" / "plugin.json"
+                data = json.loads(path.read_text(encoding="utf-8"))
+                data[field] = value
+                path.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
+                with self.assertRaisesRegex(ValueError, f"client manifests disagree on {field}"):
+                    MODULE.build_entries("a" * 40, "release", root=root)
 
 
 if __name__ == "__main__":

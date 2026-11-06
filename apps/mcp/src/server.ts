@@ -6,12 +6,9 @@ import {
 import { z } from "zod";
 
 import {
-  getPrimarySkill,
-  getReference,
+  findPrimarySkill,
   getSkillCatalog,
-  getSuperTightenSkill,
-  listAllSkillResources,
-  listSkillResources,
+  listServedSkills,
 } from "./skill-package";
 
 const SERVER_NAME = "nuko-nova-unslop";
@@ -91,19 +88,19 @@ function toolText(content: string) {
 }
 
 export function createNukoNovaUnslopServer(): McpServer {
-  const skill = getPrimarySkill();
-  const superTighten = getSuperTightenSkill();
+  const servedSkills = listServedSkills();
+  const primary = findPrimarySkill(servedSkills);
   const catalog = getSkillCatalog();
 
-  if (skill.references.length === 0) {
+  if (primary.references.length === 0) {
     throw new Error("Nuko Nova Unslop has no supporting references");
   }
 
   const readReferenceInputSchema = z
     .object({
       name: z
-        .enum(skill.references as [string, ...string[]])
-        .describe("A reference filename listed by load_nuko_nova_unslop"),
+        .enum(primary.references as [string, ...string[]])
+        .describe(`A reference filename listed by ${primary.loadTool.name}`),
     })
     .strict();
 
@@ -111,7 +108,7 @@ export function createNukoNovaUnslopServer(): McpServer {
     {
       name: SERVER_NAME,
       title: "Unslop",
-      version: skill.version,
+      version: primary.version,
     },
     {
       capabilities: {
@@ -149,85 +146,50 @@ export function createNukoNovaUnslopServer(): McpServer {
     },
   );
 
-  const primaryResourceUris = new Set(listSkillResources().map(({ uri }) => uri));
-  for (const resource of listAllSkillResources()) {
-    const isPrimaryResource = primaryResourceUris.has(resource.uri);
-    const resourceName = isPrimaryResource
-      ? resource.path
-      : new URL(resource.uri).pathname.slice(1);
-    server.registerResource(
-      resourceName,
-      resource.uri,
+  for (const servedSkill of servedSkills) {
+    for (const resource of servedSkill.resources) {
+      const resourceName = servedSkill.primary
+        ? resource.path
+        : new URL(resource.uri).pathname.slice(1);
+      server.registerResource(
+        resourceName,
+        resource.uri,
+        {
+          title: resourceName,
+          description: servedSkill.primary
+            ? `Nuko Nova Unslop package file: ${resource.path}`
+            : `Standalone skill package file: ${resourceName}`,
+          mimeType: resourceMimeType(resource.path),
+        },
+        async () => ({
+          contents: [
+            {
+              uri: resource.uri,
+              mimeType: resourceMimeType(resource.path),
+              text: resource.content,
+            },
+          ],
+        }),
+      );
+    }
+  }
+
+  for (const servedSkill of servedSkills) {
+    server.registerTool(
+      servedSkill.loadTool.name,
       {
-        title: resourceName,
-        description: isPrimaryResource
-          ? `Nuko Nova Unslop package file: ${resource.path}`
-          : `Standalone skill package file: ${resourceName}`,
-        mimeType: resourceMimeType(resource.path),
+        title: servedSkill.loadTool.title,
+        description: servedSkill.loadTool.description,
+        inputSchema: z.object({}).strict(),
+        outputSchema: loadSkillOutputSchema,
+        annotations: readOnlyAnnotations,
       },
       async () => ({
-        contents: [
-          {
-            uri: resource.uri,
-            mimeType: resourceMimeType(resource.path),
-            text: resource.content,
-          },
-        ],
+        content: toolText(servedSkill.content),
+        structuredContent: servedSkill.loadOutput,
       }),
     );
   }
-
-  server.registerTool(
-    "load_nuko_nova_unslop",
-    {
-      title: "Load Unslop",
-      description:
-        "Load the complete Nuko Nova Unslop writing standard. Use it when the user invokes @Unslop or asks for human, direct, no-slop, no-cringe writing.",
-      inputSchema: z.object({}).strict(),
-      outputSchema: loadSkillOutputSchema,
-      annotations: readOnlyAnnotations,
-    },
-    async () => {
-      const output = {
-        name: skill.name,
-        version: skill.version,
-        commitSha: skill.commitSha,
-        uri: skill.uri,
-        digest: skill.digest,
-        instructions: skill.content,
-        references: skill.references,
-      };
-
-      return {
-        content: toolText(skill.content),
-        structuredContent: output,
-      };
-    },
-  );
-
-  server.registerTool(
-    "load_super_tighten",
-    {
-      title: "Load Super Tighten",
-      description:
-        "Load the complete standalone Super Tighten skill to combine human writing, useful compression, and ASD-STE100 Simplified Technical English rules while preserving facts and meaning. Use it when the user invokes super-tighten, Super Tighten, or requests all three together. No other skill or reference needs to be loaded.",
-      inputSchema: z.object({}).strict(),
-      outputSchema: loadSkillOutputSchema,
-      annotations: readOnlyAnnotations,
-    },
-    async () => ({
-      content: toolText(superTighten.content),
-      structuredContent: {
-        name: superTighten.name,
-        version: superTighten.version,
-        commitSha: superTighten.commitSha,
-        uri: superTighten.uri,
-        digest: superTighten.digest,
-        instructions: superTighten.content,
-        references: superTighten.references,
-      },
-    }),
-  );
 
   server.registerTool(
     "read_nuko_nova_reference",
@@ -242,7 +204,7 @@ export function createNukoNovaUnslopServer(): McpServer {
     async ({ name }) => {
       let reference;
       try {
-        reference = getReference(name);
+        reference = primary.readReference(name);
       } catch {
         throw invalidParams(`Unknown Nuko Nova Unslop reference: ${name}`);
       }
