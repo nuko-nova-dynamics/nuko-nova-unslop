@@ -8,8 +8,8 @@
       "url": "https://github.com/vale-cli/vale.git",
       "branch": "refs/heads/v3",
       "checkout": "vale",
-      "reviewed_sha": "0d9e80234ba63323fefa027b5698467cf477c46d",
-      "reviewed_at": "2026-11-01",
+      "reviewed_sha": "66bbb85a1a78a5b5497331e04d4033357caced4d",
+      "reviewed_at": "2026-11-09",
       "license": "MIT",
       "monitored_paths": [
         "README.md",
@@ -71,8 +71,8 @@
       "url": "https://github.com/Automattic/harper.git",
       "branch": "refs/heads/master",
       "checkout": "harper",
-      "reviewed_sha": "3dacd9bfec6a87e26bb4dc1a629e9734b588b64f",
-      "reviewed_at": "2026-11-07",
+      "reviewed_sha": "11f7925c57e70eee9867b6b9cc734624ee202203",
+      "reviewed_at": "2026-11-09",
       "license": "Apache-2.0",
       "monitored_paths": [
         "README.md",
@@ -134,8 +134,8 @@
       "url": "https://github.com/languagetool-org/languagetool.git",
       "branch": "refs/heads/master",
       "checkout": "languagetool",
-      "reviewed_sha": "e7283256dbf060602bdc77a1d0e2209c9e5dfe01",
-      "reviewed_at": "2026-11-07",
+      "reviewed_sha": "647dc0893ca3174db37e7a9c9c7346235a315b11",
+      "reviewed_at": "2026-11-09",
       "license": "LGPL-2.1-or-later",
       "monitored_paths": [
         "README.md",
@@ -150,8 +150,8 @@
       "url": "https://github.com/promptfoo/promptfoo.git",
       "branch": "refs/heads/main",
       "checkout": "promptfoo",
-      "reviewed_sha": "1084fd33e60039841e5697c12a535ba13631ecc2",
-      "reviewed_at": "2026-11-07",
+      "reviewed_sha": "a19bed05b037b9df183b4a45dc936dade0c19b3d",
+      "reviewed_at": "2026-11-09",
       "license": "MIT",
       "monitored_paths": [
         "site/docs/configuration/expected-outputs",
