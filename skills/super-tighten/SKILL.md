@@ -1,17 +1,17 @@
 ---
 name: super-tighten
-description: Apply Super Tighten to supplied English prose when requested, combining human writing without slop or cringe, the strongest useful compression, and ASD-STE100 Simplified Technical English rules in one standalone skill. Use for /super-tighten, $super-tighten, Super Tighten mode, or a request to combine Unslop, Tighten, and STE. Preserve facts, conditions, warnings, and exact strings. Ordinary writing does not require this controlled-language pass.
+description: Apply Super Tighten to supplied prose in English, Spanish, or another language when requested, combining human writing without slop or cringe, the strongest useful compression, and ASD-STE100 Simplified Technical English rules in one standalone skill. Use for /super-tighten, $super-tighten, Super Tighten mode, or a request to combine Unslop, Tighten, and STE. For non-English text, apply the rules to an internal English draft and return the result in the source language. Preserve facts, conditions, warnings, and exact strings. Ordinary writing does not require this controlled-language pass.
 ---
 
 # Super Tighten
 
-Produce clear, natural English that says the necessary things in the fewest useful words and applies ASD-STE100 controlled-language rules. All three requirements apply to the same final text. This file contains the complete editing workflow. Do not load another writing skill, alias, reference file, or MCP tool to obtain Unslop or Tighten instructions.
+Produce clear, natural text that says the necessary things in the fewest useful words and applies ASD-STE100 controlled-language rules. All three requirements apply to the same final text. This file contains the complete editing workflow. Do not load another writing skill, alias, reference file, or MCP tool to obtain Unslop or Tighten instructions.
 
 The STE baseline is Issue 9, dated January 15, 2025. The instructions below are an original implementation of its writing principles, not a reproduction of the standard or its dictionary. Read the official issue when a task requires full conformance verification. A short sentence or a clean lint result does not prove STE compliance.
 
 ## Protect the meaning
 
-Read the whole source and identify the purpose, reader, channel, author, and stakes. Distinguish instructions from descriptions. For a mixed document, apply the correct STE limits to each passage. For a message or other general prose, use the descriptive limits unless it contains instructions. Do not silently translate a non-English source; STE is an English standard.
+Read the whole source and identify the purpose, reader, channel, author, and stakes. Distinguish instructions from descriptions. For a mixed document, apply the correct STE limits to each passage. For a message or other general prose, use the descriptive limits unless it contains instructions.
 
 Before a material edit, make an internal ledger of:
 
@@ -26,6 +26,19 @@ Preserve these items and their relationships. Never turn a proposal into a commi
 Leave code, machine-readable data, frontmatter, HTML attributes, quotations, citations, link targets, and deliberately fixed wording unchanged unless the request explicitly includes them. Editing table prose must preserve cell meaning, rows, columns, and alignment semantics. Formatting changes must preserve the document's non-prose structure.
 
 The user's explicit constraints and source truth take priority over style and compression. When protected text or meaning prevents STE conformance, keep it and identify the exception briefly if it affects the requested result. Do not claim that the entire document conforms while hiding an exception.
+
+## Non-English sources
+
+STE is an English standard, but a non-English source is not a reason to refuse or to skip the STE pass. For Spanish or another language, use this sequence:
+
+1. Make the protection ledger from the source text in its own language.
+2. Write an internal English draft with the same meaning, and apply all three requirements to that draft.
+3. Translate the final English draft back into the source language. Keep its STE structure: sentence and paragraph limits, one instruction per sentence, command form for procedures, active voice, explicit subjects and connectors, one term for each meaning, and no idioms. Use the target language's own correct grammar, spelling, and punctuation, and keep the source's form of address (for example, Spanish `usted` or `tú`).
+4. Compare the translated result with the source ledger, then repeat the slop and compression checks in the target language, because translation can add padding or literal phrasing.
+
+Leave protected items in their original form: quotations, names, UI labels, commands, identifiers, and other fixed strings. Do not translate them into English or into a new wording. Return only the source-language result. Show the English draft or an English version only when the user asks for one, or return English when the user requests English output.
+
+The STE dictionary approves English words only, so a translated result can follow STE writing rules but cannot be verified against the STE vocabulary. Do not claim ASD-STE100 conformance for the translated text. Mention this limit only when the user asks for compliance or the claim matters to the result.
 
 ## Human writing without slop or cringe
 

@@ -22,5 +22,13 @@
     "protected": ["Before the test", "do a check of the bearing"],
     "forbidden": ["important", "commencing", "check the bearing"],
     "invalid": "Before the test, check the bearing."
+  },
+  {
+    "name": "spanish-source-returns-spanish-after-english-ste-pass",
+    "source": "Queremos informarle con mucho gusto que, a efectos de aclaración, la unidad Vela puede reiniciarse durante la prueba, pero solo cuando la temperatura del depósito sea inferior a 40 °C. Pulse el botón azul y mantenga la palanca al mismo tiempo durante 8 segundos. La pregunta del técnico fue “¿Esto es normal?”.",
+    "expected": "La unidad Vela puede reiniciarse durante la prueba solo cuando la temperatura del depósito sea menor que 40 °C. Pulse el botón azul y mantenga la palanca al mismo tiempo durante 8 segundos. La pregunta del técnico fue “¿Esto es normal?”.",
+    "protected": ["La unidad Vela puede reiniciarse", "solo cuando", "40 °C", "Pulse el botón azul y mantenga la palanca al mismo tiempo durante 8 segundos.", "“¿Esto es normal?”"],
+    "forbidden": ["con mucho gusto", "a efectos de aclaración", "may restart", "Press the blue button"],
+    "invalid": "The Vela unit may restart during the test only when the reservoir temperature is less than 40 °C. Press the blue button and hold the lever at the same time for 8 seconds. The technician asked “¿Esto es normal?”."
   }
 ]
