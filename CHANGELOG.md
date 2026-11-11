@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.10.1 - 2026-11-11
 
 - Super Tighten now accepts Spanish and other non-English text instead of refusing it. It applies the rules to an internal English draft, translates the result back into the source language with the STE structure intact, keeps quotations and fixed strings unchanged, and does not claim STE vocabulary conformance for the translation.
 
