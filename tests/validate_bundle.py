@@ -28,6 +28,9 @@ SKILL = ROOT / "skills" / "nuko-nova-unslop"
 ALIAS_SKILL = ROOT / "skills" / "unslop"
 TIGHTEN_SKILL = ROOT / "skills" / "tighten"
 SUPER_TIGHTEN_SKILL = ROOT / "skills" / "super-tighten"
+# Every shipped skill directory. Each one has dedicated checks below, so a new
+# skill must be added here and given its own checks before the bundle passes.
+DECLARED_SKILLS = {SKILL.name, ALIAS_SKILL.name, TIGHTEN_SKILL.name, SUPER_TIGHTEN_SKILL.name}
 OUTPUT_STYLE = ROOT / "output-styles" / "nuko-nova-unslop.md"
 SEMVER = re.compile(r"^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:[-+][0-9A-Za-z.-]+)?$")
 SHA = re.compile(r"^[0-9a-f]{40}$")
@@ -277,6 +280,13 @@ def check_skill() -> None:
             fail(f"{path.relative_to(ROOT)}: invalid Python: {exc}")
 
 
+def check_skill_inventory() -> None:
+    shipped = {path.name for path in (ROOT / "skills").iterdir() if path.is_dir() and path.name not in IGNORED_CONTENT_PARTS}
+    undeclared = sorted(shipped - DECLARED_SKILLS)
+    if undeclared:
+        fail(f"undeclared skill directories have no bundle checks: {undeclared}")
+
+
 def check_no_hooks() -> None:
     if (ROOT / "hooks").exists():
         fail("lifecycle hook bundle must not be shipped")
@@ -389,6 +399,7 @@ def check_content() -> None:
 def main() -> int:
     metadata = check_manifests()
     check_release_references(metadata)
+    check_skill_inventory()
     check_skill()
     check_super_tighten()
     check_no_hooks()
