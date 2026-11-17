@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.10.4 - 2026-11-16
 
 - Audits now present writing patterns as signals, not proof of who wrote the text. Drafts describe only what the brief states, with no added workflow steps, screen locations, or benefits. Both gaps came from eval runs in which a judge correctly failed answers that opened with a flat "Yes, it's AI" or that invented "pick the date when you create an invoice."
 - Fix four eval graders. The `claude plugin eval` judge sees only the criterion and the agent's last message, never the prompt, and answers with one word. Graders that relied on the source failed correct answers. `email-rewrite` and `launch-post` now describe their whole source, `launch-post` no longer asks for a settings location the brief never gives, `audit-only` says that an ellipsis is not an em dash, and `chat-explain` says that a closing paragraph of new practical guidance is not a recap.
