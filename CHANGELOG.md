@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.10.2 - 2026-11-16
 
 - Document the Claude Code commands by their bare names, `/tighten` and `/super-tighten`. Claude Code runs a plugin skill by its bare name unless another command already uses that name, so a separate user-skill copy is not needed. Such a copy takes the bare name, shadows the plugin, and stops updating with it: on November 16, a stale copy that refused non-English text competed with the 0.10.1 skill that accepts it.
 - Add a `super-tighten-spanish` behavior eval. It checks that Super Tighten returns Spanish text in the source's form of address, keeps a button label and other fixed strings, and removes padding.
