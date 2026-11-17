@@ -189,7 +189,15 @@ class ValidatorMutationTests(unittest.TestCase):
                 encoding="utf-8",
             )
 
-        self.assert_rejected(mutate, "default prompt must name its own invocation")
+        self.assert_rejected(mutate, "super-tighten OpenAI default prompt must name $super-tighten")
+
+    def test_super_tighten_implicit_invocation_drift_is_rejected(self) -> None:
+        def mutate(root: Path) -> None:
+            path = root / "skills" / "super-tighten" / "agents" / "openai.yaml"
+            text = path.read_text(encoding="utf-8")
+            path.write_text(text.replace("allow_implicit_invocation: true", "allow_implicit_invocation: false"), encoding="utf-8")
+
+        self.assert_rejected(mutate, "super-tighten OpenAI implicit invocation must remain enabled")
 
     def test_alias_behavior_duplication_is_rejected(self) -> None:
         def mutate(root: Path) -> None:

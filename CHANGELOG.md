@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- The Claude Code output style now loads the `nuko-nova-unslop` skill directly, before substantive drafting, rewriting, auditing, or file edits. It used to point at the `unslop` alias, which costs an extra file read and often did not load at all. Over 3 runs of each eval case with the plugin, the skill loaded in 27 of 27 runs instead of 11 of 27, and judges passed 57 of 81 criteria votes instead of 43. Mean cost per run rose from about from about $0.104 to $0.116.107 to from about $0.104 to $0.116.116 because the skill now loads every time. `email-rewrite` still fails its criteria in every run.
+- Check all four skills from one table in the bundle validator. Each entry states the skill's description rule, routes, size limit, standalone rule, display name, and invocation policy, and one loop applies them. Three rules are new: the canonical display name, the short-description length for every skill, and Super Tighten's implicit invocation.
+- Move the workspace from pnpm 10.34.5 to 12.21.0, locally and in CI. The lockfile now also pins the pnpm binary. `allowBuilds` keeps the build scripts of `core-js-pure`, `esbuild`, and `workerd` skipped, as pnpm 10 did; pnpm 11 and later fail the install when they are undeclared.
+
 ## 0.10.2 - 2026-11-16
 
 - Document the Claude Code commands by their bare names, `/tighten` and `/super-tighten`. Claude Code runs a plugin skill by its bare name unless another command already uses that name, so a separate user-skill copy is not needed. Such a copy takes the bare name, shadows the plugin, and stops updating with it: on November 16, a stale copy that refused non-English text competed with the 0.10.1 skill that accepts it.

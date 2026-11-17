@@ -1,7 +1,7 @@
 {
   "name": "nuko-nova-unslop-workspace",
   "private": true,
-  "packageManager": "pnpm@10.34.5",
+  "packageManager": "pnpm@12.21.0",
   "scripts": {
     "check": "python3 tests/validate_bundle.py && python3 -m unittest discover -s tests -p 'test_*.py' && pnpm mcp:check",
     "mcp:generate": "pnpm --filter @nuko-nova/unslop-mcp generate",

@@ -1,3 +1,10 @@
 packages:
   - apps/*
 
+
+# pnpm 10 skipped these build scripts; keep them skipped. The MCP tests and
+# deploy run without them.
+allowBuilds:
+  core-js-pure: false
+  esbuild: false
+  workerd: false
