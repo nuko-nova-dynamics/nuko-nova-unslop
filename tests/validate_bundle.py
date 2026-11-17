@@ -8,7 +8,9 @@ import json
 import re
 import struct
 import sys
+from dataclasses import dataclass
 from pathlib import Path
+from typing import Callable
 from urllib.parse import unquote
 
 
@@ -28,9 +30,6 @@ SKILL = ROOT / "skills" / "nuko-nova-unslop"
 ALIAS_SKILL = ROOT / "skills" / "unslop"
 TIGHTEN_SKILL = ROOT / "skills" / "tighten"
 SUPER_TIGHTEN_SKILL = ROOT / "skills" / "super-tighten"
-# Every shipped skill directory. Each one has dedicated checks below, so a new
-# skill must be added here and given its own checks before the bundle passes.
-DECLARED_SKILLS = {SKILL.name, ALIAS_SKILL.name, TIGHTEN_SKILL.name, SUPER_TIGHTEN_SKILL.name}
 OUTPUT_STYLE = ROOT / "output-styles" / "nuko-nova-unslop.md"
 SEMVER = re.compile(r"^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:[-+][0-9A-Za-z.-]+)?$")
 SHA = re.compile(r"^[0-9a-f]{40}$")
@@ -68,6 +67,80 @@ FORBIDDEN_WRITING_RESTRICTIONS = (
     re.compile(r"\bauthorship signal\b", re.IGNORECASE),
     re.compile(r"\bprove (?:the )?prose is human\b", re.IGNORECASE),
 )
+
+
+@dataclass(frozen=True)
+class EntryPoint:
+    """A shipped skill and the rules its files must follow."""
+
+    directory: Path
+    kind: str  # names the skill in failure messages
+    label: str  # prefixes failure messages about its OpenAI metadata
+    display_name: str
+    implicit: bool  # Codex allow_implicit_invocation
+    describes: Callable[[str], bool]
+    description_rule: str
+    routes: tuple[tuple[str, str], ...] = ()  # text the body must contain, and the failure message
+    max_body: int | None = None  # a router stays short so it cannot duplicate canonical behavior
+    standalone: bool = False  # a standalone skill links to no local file
+    extra_links: Callable[[], list[Path]] = list
+
+    @property
+    def name(self) -> str:
+        return self.directory.name
+
+
+# Every shipped skill. A directory under skills/ that is missing here fails the bundle,
+# so a new skill cannot ship without its own rules.
+ENTRY_POINTS = (
+    EntryPoint(
+        SKILL,
+        kind="canonical skill",
+        label="",
+        display_name="Nuko Nova Unslop",
+        implicit=True,
+        describes=lambda text: len(text) >= 180 and "Use " in text,
+        description_rule="skill description must explain capability and triggers",
+        extra_links=lambda: sorted((SKILL / "references").glob("*.md")),
+    ),
+    EntryPoint(
+        ALIAS_SKILL,
+        kind="alias skill",
+        label="alias ",
+        display_name="Unslop",
+        implicit=False,
+        describes=lambda text: text.startswith("Short explicit alias for Nuko Nova Unslop"),
+        description_rule="alias skill description must declare its narrow purpose",
+        routes=(("../nuko-nova-unslop/SKILL.md", "alias skill must route to the canonical skill"),),
+        max_body=1_000,
+    ),
+    EntryPoint(
+        TIGHTEN_SKILL,
+        kind="tighten command skill",
+        label="tighten ",
+        display_name="Tighten",
+        implicit=False,
+        describes=lambda text: text.startswith("Focused command for tightening supplied prose"),
+        description_rule="tighten skill description must declare its focused purpose",
+        routes=(
+            ("../nuko-nova-unslop/SKILL.md", "tighten command must route to the canonical skill"),
+            ("references/tighten.md", "tighten command must route to its second-stage reference"),
+        ),
+        max_body=1_200,
+    ),
+    EntryPoint(
+        SUPER_TIGHTEN_SKILL,
+        kind="standalone super-tighten skill",
+        label="super-tighten ",
+        display_name="Super Tighten",
+        implicit=True,
+        describes=lambda text: "ASD-STE100" in text,
+        description_rule="super-tighten discovery must identify its controlled-language purpose",
+        standalone=True,
+        extra_links=lambda: [ROOT / "research" / "super-tighten.md"],
+    ),
+)
+DECLARED_SKILLS = {entry.name for entry in ENTRY_POINTS}
 
 
 def fail(message: str) -> None:
@@ -174,110 +247,76 @@ def check_release_references(metadata: ReleaseMetadata) -> None:
             fail(f"README.md: marketplace --ref {ref} does not match manifest version; expected {metadata.marketplace_ref}")
 
 
-def check_skill() -> None:
-    frontmatter = parse_frontmatter(SKILL / "SKILL.md")
-    if set(frontmatter) != {"name", "description"}:
-        fail("skill frontmatter must contain only name and description")
-    if frontmatter["name"] != "nuko-nova-unslop":
-        fail("skill name mismatch")
-    if len(frontmatter["description"]) < 180 or "Use " not in frontmatter["description"]:
-        fail("skill description must explain capability and triggers")
+def check_canonical_resources() -> None:
+    """Check what only the canonical skill ships: references, helpers, and the output style."""
     references = {path.name for path in (SKILL / "references").iterdir() if path.is_file()}
     scripts = {path.name for path in (SKILL / "scripts").iterdir() if path.is_file() and path.suffix == ".py"}
     if references != REQUIRED_REFERENCES:
         fail(f"reference set mismatch: {sorted(references)}")
     if scripts != REQUIRED_SCRIPTS:
         fail(f"script set mismatch: {sorted(scripts)}")
-    agent = (SKILL / "agents" / "openai.yaml").read_text(encoding="utf-8")
-    if "Use $nuko-nova-unslop" not in agent:
-        fail("OpenAI default prompt must name $nuko-nova-unslop")
-    if not re.search(r"^\s*allow_implicit_invocation:\s*true\s*$", agent, re.MULTILINE):
-        fail("OpenAI implicit invocation must remain enabled")
-    match = re.search(r'^\s*short_description:\s*"([^"]+)"', agent, re.MULTILINE)
-    if not match or not 25 <= len(match.group(1)) <= 64:
-        fail("OpenAI short description must be 25 to 64 characters")
+    skill_body = (SKILL / "SKILL.md").read_text(encoding="utf-8")
+    for reference in sorted(REQUIRED_REFERENCES):
+        if f"(references/{reference})" not in skill_body:
+            fail(f"canonical skill must route to references/{reference}")
     if not OUTPUT_STYLE.is_file():
         fail("Claude output style is missing")
-    style = parse_frontmatter(OUTPUT_STYLE)
     expected_style = {
         "name": "Nuko Nova Unslop",
         "description": "Always-on human writing with no slop or cringe",
         "keep-coding-instructions": "true",
         "force-for-plugin": "true",
     }
-    if style != expected_style:
+    if parse_frontmatter(OUTPUT_STYLE) != expected_style:
         fail("Claude output style must stay forced and retain coding instructions")
-    skill_body = (SKILL / "SKILL.md").read_text(encoding="utf-8")
-    for reference in sorted(REQUIRED_REFERENCES):
-        if f"(references/{reference})" not in skill_body:
-            fail(f"canonical skill must route to references/{reference}")
+    for path in [*(SKILL / "scripts").glob("*.py"), *(ROOT / "scripts").glob("*.py")]:
+        try:
+            ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
+        except SyntaxError as exc:
+            fail(f"{path.relative_to(ROOT)}: invalid Python: {exc}")
 
-    alias_entrypoint = ALIAS_SKILL / "SKILL.md"
-    if not alias_entrypoint.is_file():
-        fail("alias skill is missing")
-    alias_frontmatter = parse_frontmatter(alias_entrypoint)
-    if set(alias_frontmatter) != {"name", "description"}:
-        fail("alias skill frontmatter must contain only name and description")
-    if alias_frontmatter["name"] != "unslop":
-        fail("alias skill name must be unslop")
-    if not alias_frontmatter["description"].startswith("Short explicit alias for Nuko Nova Unslop"):
-        fail("alias skill description must declare its narrow purpose")
-    alias_body = alias_entrypoint.read_text(encoding="utf-8")
-    if "../nuko-nova-unslop/SKILL.md" not in alias_body:
-        fail("alias skill must route to the canonical skill")
-    if len(alias_body) > 1_000 or "## Non-negotiable contract" in alias_body:
-        fail("alias skill must not duplicate canonical behavior")
-    alias_agent = (ALIAS_SKILL / "agents" / "openai.yaml").read_text(encoding="utf-8")
-    if not re.search(r"^\s*display_name:\s*\"Unslop\"\s*$", alias_agent, re.MULTILINE):
-        fail("alias OpenAI metadata must display Unslop")
-    if "Use $unslop" not in alias_agent:
-        fail("alias OpenAI default prompt must name $unslop")
-    if not re.search(r"^\s*allow_implicit_invocation:\s*false\s*$", alias_agent, re.MULTILINE):
-        fail("alias OpenAI invocation must remain explicit")
 
-    tighten_entrypoint = TIGHTEN_SKILL / "SKILL.md"
-    if not tighten_entrypoint.is_file():
-        fail("tighten command skill is missing")
-    tighten_frontmatter = parse_frontmatter(tighten_entrypoint)
-    if set(tighten_frontmatter) != {"name", "description"}:
-        fail("tighten skill frontmatter must contain only name and description")
-    if tighten_frontmatter["name"] != "tighten":
-        fail("tighten skill name mismatch")
-    if not tighten_frontmatter["description"].startswith("Focused command for tightening supplied prose"):
-        fail("tighten skill description must declare its focused purpose")
-    tighten_body = tighten_entrypoint.read_text(encoding="utf-8")
-    if "../nuko-nova-unslop/SKILL.md" not in tighten_body:
-        fail("tighten command must route to the canonical skill")
-    if "references/tighten.md" not in tighten_body:
-        fail("tighten command must route to its second-stage reference")
-    if len(tighten_body) > 1_200 or "## Non-negotiable contract" in tighten_body:
-        fail("tighten command must not duplicate canonical behavior")
-    tighten_agent_path = TIGHTEN_SKILL / "agents" / "openai.yaml"
-    if not tighten_agent_path.is_file():
-        fail("tighten OpenAI metadata is missing")
-    tighten_agent = tighten_agent_path.read_text(encoding="utf-8")
-    if not re.search(r'^\s*display_name:\s*"Tighten"\s*$', tighten_agent, re.MULTILINE):
-        fail("tighten OpenAI metadata must display Tighten")
-    if "Use $tighten" not in tighten_agent:
-        fail("tighten OpenAI default prompt must name $tighten")
-    if not re.search(r"^\s*allow_implicit_invocation:\s*false\s*$", tighten_agent, re.MULTILINE):
-        fail("tighten OpenAI invocation must remain explicit")
+def check_entry_point(entry: EntryPoint) -> None:
+    skill_file = entry.directory / "SKILL.md"
+    if not skill_file.is_file():
+        fail(f"{entry.kind} is missing")
+    frontmatter = parse_frontmatter(skill_file)
+    if set(frontmatter) != {"name", "description"}:
+        fail(f"{entry.kind} frontmatter must contain only name and description")
+    if frontmatter["name"] != entry.name:
+        fail(f"{entry.kind} name must be {entry.name}")
+    if not entry.describes(frontmatter["description"]):
+        fail(entry.description_rule)
 
-    for path in [SKILL / "SKILL.md", *(SKILL / "references").glob("*.md")]:
+    body = skill_file.read_text(encoding="utf-8")
+    for required, message in entry.routes:
+        if required not in body:
+            fail(message)
+    if entry.max_body is not None and (len(body) > entry.max_body or "## Non-negotiable contract" in body):
+        fail(f"{entry.kind} must not duplicate canonical behavior")
+    if entry.standalone:
+        for raw in LINK.findall(body):
+            if not raw.startswith(("https://", "http://", "mailto:", "#")):
+                fail(f"{entry.name} instructions must not depend on another local resource")
+    for path in (skill_file, *entry.extra_links()):
         check_links(path)
-    check_links(ALIAS_SKILL / "SKILL.md")
-    check_links(TIGHTEN_SKILL / "SKILL.md")
-    for path in (SKILL / "scripts").glob("*.py"):
-        try:
-            ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
-        except SyntaxError as exc:
-            fail(f"{path.relative_to(ROOT)}: invalid Python: {exc}")
 
-    for path in (ROOT / "scripts").glob("*.py"):
-        try:
-            ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
-        except SyntaxError as exc:
-            fail(f"{path.relative_to(ROOT)}: invalid Python: {exc}")
+    agent_path = entry.directory / "agents" / "openai.yaml"
+    if not agent_path.is_file():
+        fail(f"{entry.label}OpenAI metadata is missing")
+    agent = agent_path.read_text(encoding="utf-8")
+    if not re.search(rf'^\s*display_name:\s*"{re.escape(entry.display_name)}"\s*$', agent, re.MULTILINE):
+        fail(f"{entry.label}OpenAI metadata must display {entry.display_name}")
+    if f"Use ${entry.name}" not in agent:
+        fail(f"{entry.label}OpenAI default prompt must name ${entry.name}")
+    match = re.search(r'^\s*short_description:\s*"([^"]+)"', agent, re.MULTILINE)
+    if not match or not 25 <= len(match.group(1)) <= 64:
+        fail(f"{entry.label}OpenAI short description must be 25 to 64 characters")
+    implicit = re.search(r"^\s*allow_implicit_invocation:\s*(true|false)\s*$", agent, re.MULTILINE)
+    if not implicit or (implicit.group(1) == "true") != entry.implicit:
+        if entry.implicit:
+            fail(f"{entry.label}OpenAI implicit invocation must remain enabled")
+        fail(f"{entry.label}OpenAI invocation must remain explicit")
 
 
 def check_skill_inventory() -> None:
@@ -290,30 +329,6 @@ def check_skill_inventory() -> None:
 def check_no_hooks() -> None:
     if (ROOT / "hooks").exists():
         fail("lifecycle hook bundle must not be shipped")
-
-
-def check_super_tighten() -> None:
-    entrypoint = SUPER_TIGHTEN_SKILL / "SKILL.md"
-    if not entrypoint.is_file():
-        fail("standalone super-tighten skill is missing")
-    frontmatter = parse_frontmatter(entrypoint)
-    if set(frontmatter) != {"name", "description"} or frontmatter["name"] != "super-tighten":
-        fail("super-tighten frontmatter must declare its standalone name and description")
-    if "ASD-STE100" not in frontmatter["description"]:
-        fail("super-tighten discovery must identify its controlled-language purpose")
-    for raw in LINK.findall(entrypoint.read_text(encoding="utf-8")):
-        if not raw.startswith(("https://", "http://", "mailto:", "#")):
-            fail("super-tighten instructions must not depend on another local resource")
-    agent_path = SUPER_TIGHTEN_SKILL / "agents" / "openai.yaml"
-    if not agent_path.is_file():
-        fail("super-tighten OpenAI metadata is missing")
-    agent = agent_path.read_text(encoding="utf-8")
-    if not re.search(r'^\s*display_name:\s*"Super Tighten"\s*$', agent, re.MULTILINE):
-        fail("super-tighten OpenAI display name mismatch")
-    if "Use $super-tighten" not in agent:
-        fail("super-tighten default prompt must name its own invocation")
-    check_links(entrypoint)
-    check_links(ROOT / "research" / "super-tighten.md")
 
 
 def source_map_repositories() -> dict[str, str]:
@@ -400,8 +415,9 @@ def main() -> int:
     metadata = check_manifests()
     check_release_references(metadata)
     check_skill_inventory()
-    check_skill()
-    check_super_tighten()
+    check_canonical_resources()
+    for entry in ENTRY_POINTS:
+        check_entry_point(entry)
     check_no_hooks()
     source_count = check_upstreams()
     check_content()
