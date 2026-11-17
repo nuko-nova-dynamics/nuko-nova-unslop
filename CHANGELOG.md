@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.10.3 - 2026-11-16
 
 - The Claude Code output style now loads the `nuko-nova-unslop` skill directly, before substantive drafting, rewriting, auditing, or file edits. It used to point at the `unslop` alias, which costs an extra file read and often did not load at all. Over 3 runs of each eval case with the plugin, the skill loaded in 27 of 27 runs instead of 11 of 27, and judges passed 57 of 81 criteria votes instead of 43. Mean cost per run rose from about from about $0.104 to $0.116.107 to from about $0.104 to $0.116.116 because the skill now loads every time. `email-rewrite` still fails its criteria in every run.
 - Check all four skills from one table in the bundle validator. Each entry states the skill's description rule, routes, size limit, standalone rule, display name, and invocation policy, and one loop applies them. Three rules are new: the canonical display name, the short-description length for every skill, and Super Tighten's implicit invocation.

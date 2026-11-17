@@ -137,7 +137,7 @@ After creating a release commit, render aligned immutable catalog entries with t
 ```bash
 python3 scripts/render_marketplace_entries.py \
   --sha <40-character-release-commit> \
-  --ref nuko-nova-unslop-marketplace-v0.10.2
+  --ref nuko-nova-unslop-marketplace-v0.10.3
 ```
 
 ## License
