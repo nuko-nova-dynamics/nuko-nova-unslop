@@ -156,6 +156,14 @@ class ValidatorMutationTests(unittest.TestCase):
 
         self.assert_rejected(mutate, "alias skill")
 
+    def test_undeclared_skill_directory_is_rejected(self) -> None:
+        def mutate(root: Path) -> None:
+            skill = root / "skills" / "shorten"
+            skill.mkdir()
+            (skill / "SKILL.md").write_text("---\nname: shorten\ndescription: Unchecked.\n---\n", encoding="utf-8")
+
+        self.assert_rejected(mutate, "undeclared skill directories have no bundle checks: ['shorten']")
+
     def test_missing_standalone_super_tighten_is_rejected(self) -> None:
         def mutate(root: Path) -> None:
             shutil.rmtree(root / "skills" / "super-tighten")

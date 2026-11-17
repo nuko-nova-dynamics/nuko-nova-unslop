@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+- Document the Claude Code commands by their bare names, `/tighten` and `/super-tighten`. Claude Code runs a plugin skill by its bare name unless another command already uses that name, so a separate user-skill copy is not needed. Such a copy takes the bare name, shadows the plugin, and stops updating with it: on November 16, a stale copy that refused non-English text competed with the 0.10.1 skill that accepts it.
+- Add a `super-tighten-spanish` behavior eval. It checks that Super Tighten returns Spanish text in the source's form of address, keeps a button label and other fixed strings, and removes padding.
+- Fail the bundle validator when a directory under `skills/` has no dedicated checks, so a new skill cannot ship unvalidated.
+- Pin the upstream-review workflow's actions to commit SHAs, as the validate workflow already does.
+
 ## 0.10.1 - 2026-11-11
 
 - Super Tighten now accepts Spanish and other non-English text instead of refusing it. It applies the rules to an internal English draft, translates the result back into the source language with the STE structure intact, keeps quotations and fixed strings unchanged, and does not claim STE vocabulary conformance for the translation.

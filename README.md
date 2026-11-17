@@ -23,7 +23,7 @@ Use the same word on every client:
 - Codex: type `$unslop` and select Unslop
 - Claude Code: `/unslop`
 
-The clients use different prefix characters, but `unslop` is the shared trigger. Automatic writing guidance remains active; the short command is available when you want to invoke it explicitly.
+The clients use different prefix characters, but `unslop` is the shared trigger. Claude Code accepts a plugin command's bare name unless another command already uses it; the namespaced forms (`/nuko-nova-unslop:unslop`, `/nuko-nova-unslop:tighten`, `/nuko-nova-unslop:super-tighten`) always reach this plugin. Do not install a separate user-skill copy of these skills: it takes the bare name, shadows the plugin, and stops updating when the plugin does. Automatic writing guidance remains active; the short command is available when you want to invoke it explicitly.
 
 The standard and the linter are separate. The standard shapes prose when the skill or output style is active. The linter runs only when invoked for a writing task or file. It does not scan final conversational output automatically. Use it for prose files, multi-paragraph deliverables, and text that will be sent, submitted, published, or reused.
 
@@ -33,15 +33,15 @@ Use `tighten` when the text needs a stricter compression pass:
 
 - ChatGPT: invoke `@Unslop` and ask for Tighten mode
 - Codex: type `$tighten` and select Tighten
-- Claude Code: `/nuko-nova-unslop:tighten`
+- Claude Code: `/tighten`
 
-Tighten mode runs only when the user asks for it, so ordinary writing does not receive an aggressive compression pass. Codex keeps the `$tighten` entry point explicit-only, while Claude Code exposes the namespaced command for requests that explicitly ask for Tighten or its strictest useful compression. Tighten first applies the complete Nuko Nova Unslop workflow and the appropriate profile. It then runs a separate removal pass built around one direct instruction: “Make sure each word in this text justifies its existence.” The second pass removes throat-clearing, repetition, empty qualifiers, indirect phrasing, vague stacks, and unnecessary structural scaffolding while preserving facts, scope, intent, voice, rhythm, readability, and necessary context. A final compression-damage check restores any language needed for accuracy or natural prose.
+Tighten mode runs only when the user asks for it, so ordinary writing does not receive an aggressive compression pass. Codex keeps the `$tighten` entry point explicit-only, while Claude Code exposes the command for requests that explicitly ask for Tighten or its strictest useful compression. Tighten first applies the complete Nuko Nova Unslop workflow and the appropriate profile. It then runs a separate removal pass built around one direct instruction: “Make sure each word in this text justifies its existence.” The second pass removes throat-clearing, repetition, empty qualifiers, indirect phrasing, vague stacks, and unnecessary structural scaffolding while preserving facts, scope, intent, voice, rhythm, readability, and necessary context. A final compression-damage check restores any language needed for accuracy or natural prose.
 
 ## Super Tighten command
 
 Super Tighten combines the human-writing standard, the strongest useful compression, and ASD-STE100 Simplified Technical English in one standalone skill. Its own `SKILL.md` contains all three workflows; it does not load the Unslop or Tighten entry points or their references.
 
-Use `$super-tighten` in Codex, `/nuko-nova-unslop:super-tighten` in the Claude Code plugin, or `/super-tighten` when installed as a user skill. The MCP package also exposes `load_super_tighten` and a separate skill catalog entry for ChatGPT clients after deployment and tool refresh.
+Use `$super-tighten` in Codex or `/super-tighten` in Claude Code. The MCP package also exposes `load_super_tighten` and a separate skill catalog entry for ChatGPT clients after deployment and tool refresh.
 
 The STE baseline is Issue 9 (January 2025). The skill applies controlled terminology, sentence and paragraph limits, direct instructions, explicit conditions, and safety-preserving edits. Compression must retain facts, scope, uncertainty, simultaneity, and necessary context. Full conformance requires checking the official dictionary and justified technical terms; without that evidence, the skill reports the verification limit instead of claiming compliance. The copyrighted standard and dictionary are not distributed. See the [standalone skill](skills/super-tighten/SKILL.md) and [research record](research/super-tighten.md).
 
