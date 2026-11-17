@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Audits now present writing patterns as signals, not proof of who wrote the text. Drafts describe only what the brief states, with no added workflow steps, screen locations, or benefits. Both gaps came from eval runs in which a judge correctly failed answers that opened with a flat "Yes, it's AI" or that invented "pick the date when you create an invoice."
+- Fix four eval graders. The `claude plugin eval` judge sees only the criterion and the agent's last message, never the prompt, and answers with one word. Graders that relied on the source failed correct answers. `email-rewrite` and `launch-post` now describe their whole source, `launch-post` no longer asks for a settings location the brief never gives, `audit-only` says that an ellipsis is not an em dash, and `chat-explain` says that a closing paragraph of new practical guidance is not a recap.
+- With these changes, the full suite scores a mean 0.20 above the no-plugin arm over 3 runs per case. Plugin-arm judge votes rose from 57 to 68 of 81, and `chat-explain` passed 9 of 9 after its grader fix. Grader changes mean these numbers are not a strict before-and-after comparison.
+
 ## 0.10.3 - 2026-11-16
 
 - The Claude Code output style now loads the `nuko-nova-unslop` skill directly, before substantive drafting, rewriting, auditing, or file edits. It used to point at the `unslop` alias, which costs an extra file read and often did not load at all. Over 3 runs of each eval case with the plugin, the skill loaded in 27 of 27 runs instead of 11 of 27, and judges passed 57 of 81 criteria votes instead of 43. Mean cost per run rose from about from about $0.104 to $0.116.107 to from about $0.104 to $0.116.116 because the skill now loads every time. `email-rewrite` still fails its criteria in every run.

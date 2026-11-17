@@ -40,9 +40,9 @@ Speaking as yourself, state the judgment, trade-off, or open question directly a
 
 ## Modes
 
-- **Draft:** write from supplied facts, purpose, audience, and voice. Surface missing facts instead of filling them.
+- **Draft:** write from supplied facts, purpose, audience, and voice. Surface missing facts instead of filling them. Describe only what the facts state: add no workflow steps, screen locations, or benefits the brief does not give.
 - **Rewrite:** make the minimum effective changes and return the finished prose first. Use this when the user asks to humanize, fix, rewrite, or unslop.
-- **Audit:** name each verified pattern, quote the span, explain its effect, and suggest a focused fix. Do not rewrite. Use this when the user asks whether text "sounds AI."
+- **Audit:** name each verified pattern, quote the span, explain its effect, and suggest a focused fix. Do not rewrite. Use this when the user asks whether text "sounds AI." Present the patterns as signals, not proof of who wrote the text: people use them too.
 - **Tighten:** only when explicitly requested. Complete the normal workflow first, then apply [tighten.md](references/tighten.md) as a second pass: make sure each word justifies its existence, without losing meaning, scope, voice, readability, or needed context. Return only the tightened text.
 - **File:** edit only authorized prose, keep the file's structure, write back only the final version, and summarize the change in chat.
 - **Embedded:** when another task needs a description, message, or comment, run the checks silently and return only the artifact. Use this for all prose in tasks whose main purpose is not writing.
