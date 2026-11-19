@@ -8,11 +8,11 @@
 | [Avoid AI Writing](https://github.com/conorbronsdon/avoid-ai-writing) | MIT | Separation of deterministic signals from editorial judgment, protected Markdown source boundaries, and corpus discipline. |
 | [Cursor pstack Unslop](https://github.com/cursor/plugins) | MIT for `pstack` | Compact pattern catalog, portability test, mechanism-first specificity, and rhythm audit. |
 | [Better Writing](https://github.com/forjd/better-writing) | MIT | Preservation contract, context dials, genre exemptions, voice fixtures, and preflight checks. |
-| [Harper](https://github.com/Automattic/harper) | Apache-2.0 | Private, low-latency English mechanics and structured, markup-aware diagnostics. |
+| [Harper](https://github.com/Automattic/harper) | Apache-2.0 | Private, low-latency English mechanics, structured diagnostics, and heading exemptions that inform local rhythm boundaries. |
 | [No AI Slop](https://github.com/petergyang/no-ai-slop) | MIT | Audit-only mode, minimum-effective editing, and named findings. |
 | [Humanizer](https://github.com/blader/humanizer) | MIT | Cross-client packaging, author-sample calibration, broad pattern coverage, and non-fabrication guidance. |
 | [AntiSlop Sampler](https://github.com/sam-paech/antislop-sampler) | Apache-2.0 | Phrase-level prevention research and the warning that generated slop lists require curation rather than blanket adoption. |
-| [LanguageTool](https://github.com/languagetool-org/languagetool) | LGPL-2.1-or-later | Multilingual grammar/style architecture; referenced as an optional external tool and not redistributed. |
+| [LanguageTool](https://github.com/languagetool-org/languagetool) | LGPL-2.1-or-later | Multilingual grammar/style architecture and sentence-boundary regression ideas, including lowercase continuation after an ellipsis. Referenced as an optional external tool and not redistributed. |
 | [Promptfoo](https://github.com/promptfoo/promptfoo) | MIT | Deterministic assertions, model-graded evaluation boundaries, and repeatable regression configuration. |
 | [Stop Slop](https://github.com/hardikpandya/stop-slop) | MIT | Compact structural catalog and the lineage source for several later skills. Blanket bans on adverbs, passive voice, and individual punctuation remain outside the Nuko Nova standard. |
 | [Slopbeth](https://github.com/ehmo/slopkit) | MIT | Brief-versus-artifact separation, evidence-bound rewriting, sentence-load and topic-swap tests, preservation benchmarks, and dated evaluation hygiene. |

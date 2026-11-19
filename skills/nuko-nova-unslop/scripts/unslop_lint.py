@@ -16,7 +16,7 @@ from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Iterable
 
-from markdown_source import mask_spans, source_structure
+from markdown_source import ATX_HEADING_RE, mask_spans, source_structure
 
 
 PROFILE_LEVEL = {"balanced": 1, "strict": 2, "nuko-nova": 3}
@@ -398,6 +398,14 @@ LIST_ITEM_RE = re.compile(r"\s*(?:[-*+]|\d+[.)])\s")
 
 
 def rhythm_findings(text: str, masked: str) -> list[Finding]:
+    # ATX headings label sections; they are not consecutive prose sentences.
+    masked = mask_spans(masked, [
+        match.span() for match in re.finditer(r"^ {0,3}([^\n]*)", masked, re.MULTILINE)
+        if ATX_HEADING_RE.match(match.group(1))
+    ])
+    # A same-line lowercase continuation keeps an ellipsis inside its sentence.
+    # Mask only its dots so sentence lengths and source offsets stay intact.
+    masked = re.sub(r"(?<!\.)\.{3}(?!\.)(?=[ \t]+[a-z])", "   ", masked)
     sentences: list[tuple[int, int, bool]] = []
     for match in SENTENCE_RE.finditer(masked):
         count = len(re.findall(r"\b[\w’'-]+\b", match.group()))

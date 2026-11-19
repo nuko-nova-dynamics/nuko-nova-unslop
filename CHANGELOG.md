@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.10.5 - 2026-11-19
+
+- Keep a three-dot ellipsis with a same-line lowercase continuation inside its sentence during rhythm checks. The linter previously dropped the words before the dots and could falsely report stacked short sentences. Preserve original finding locations and continue detecting actual short-sentence clusters.
+- Exclude Markdown ATX section headings from sentence-rhythm checks. Short question headings in a troubleshooting guide no longer look like a cluster of prose fragments; other writing checks still inspect them.
+
 ## 0.10.4 - 2026-11-16
 
 - Audits now present writing patterns as signals, not proof of who wrote the text. Drafts describe only what the brief states, with no added workflow steps, screen locations, or benefits. Both gaps came from eval runs in which a judge correctly failed answers that opened with a flat "Yes, it's AI" or that invented "pick the date when you create an invoice."

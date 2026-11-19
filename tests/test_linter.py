@@ -497,6 +497,25 @@ class LinterTests(unittest.TestCase):
         self.assertNotIn("staccato-drama", rule_ids("- Run tests.\n- Fix lint.\n- Ship it.\n", "balanced"))
         self.assertIn("staccato-drama", rule_ids("Fast. Simple. Powerful.", "balanced"))
 
+    def test_ellipsis_continuations_keep_the_whole_sentence_in_rhythm_checks(self) -> None:
+        for ellipsis in ("...", "…"):
+            with self.subTest(ellipsis=ellipsis):
+                text = f"We kept the lights on {ellipsis} just in case. Nobody came. We locked up."
+                self.assertNotIn("staccato-drama", rule_ids(text, "balanced"))
+                text += " Rain started."
+                finding = next(f for f in MODULE.lint_text(text) if f.rule_id == "staccato-drama")
+                self.assertEqual((finding.line, finding.column), (1, text.index(" Nobody came") + 1))
+        self.assertIn("staccato-drama", rule_ids(
+            "We kept the lights on ... Just in case. Nobody came. We locked up.", "balanced"))
+
+    def test_section_headings_are_not_consecutive_prose_sentences(self) -> None:
+        text = "## Is the cache ready?\n\n```sh\ncachectl ping\n```\n\n## Is the database ready?\n\n```sh\ndbctl ping\n```\n\n## Are workers registered?\n"
+        self.assertNotIn("staccato-drama", rule_ids(text, "balanced"))
+        self.assertIn("promotional-fog", rule_ids("## A game-changing launch!", "balanced"))
+        text += "\nFast. Simple. Powerful."
+        finding = next(f for f in MODULE.lint_text(text) if f.rule_id == "staccato-drama")
+        self.assertEqual((finding.line, finding.column), (15, 1))
+
     def test_canned_personality_is_contextual_and_profile_scoped(self) -> None:
         text = "Plot twist: the migration worked. Chef's kiss."
         self.assertIn("performative-personality", rule_ids(text, "strict"))
