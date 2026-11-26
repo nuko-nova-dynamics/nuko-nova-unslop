@@ -13,6 +13,11 @@ import preservation_guard as MODULE
 
 
 class PreservationTests(unittest.TestCase):
+    def test_bom_prefixed_first_fence_preserves_code(self) -> None:
+        source = "\ufeff```text\nalpha\n```\n\nPlain text.\n"
+        self.assertIn("fenced_code", MODULE.compare(source, source.replace("alpha", "bravo")))
+        self.assertEqual(MODULE.compare(source, source.replace("Plain text.", "Clear prose.")), {})
+
     def test_safe_rewrite_preserves_surface_tokens(self) -> None:
         source = (FIXTURES / "protected-source.md").read_text(encoding="utf-8")
         rewrite = (FIXTURES / "protected-safe.md").read_text(encoding="utf-8")

@@ -18,6 +18,11 @@ def rule_ids(text: str, profile: str) -> set[str]:
 
 
 class LinterTests(unittest.TestCase):
+    def test_bom_prefixed_first_fence_masks_code_only(self) -> None:
+        text = "\ufeff```text\ndelve\n```\n\ndelve\n"
+        findings = [f for f in MODULE.lint_text(text, "strict") if f.rule_id == "watched-vocabulary"]
+        self.assertEqual([(f.line, f.column) for f in findings], [(5, 1)])
+
     def test_eval_matrix(self) -> None:
         cases = json.loads((ROOT / "tests" / "eval-cases.json").read_text(encoding="utf-8"))
         for case in cases:

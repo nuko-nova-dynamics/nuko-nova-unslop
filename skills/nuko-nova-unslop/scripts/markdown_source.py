@@ -228,6 +228,10 @@ def _code_block_spans(text: str) -> tuple[list[Span], list[Span]]:
         line_start = offset
         offset += len(line)
         physical = line.rstrip("\r\n")
+        # A file-leading byte-order mark is transport metadata, not Markdown.
+        # Ignore it for recognition while retaining original span offsets.
+        if line_start == 0:
+            physical = physical.removeprefix("\ufeff")
 
         if fence is not None:
             marker_char, marker_length, start, container_path = fence

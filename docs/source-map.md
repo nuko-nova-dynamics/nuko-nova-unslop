@@ -5,7 +5,7 @@
 | Source | License | Reviewed value |
 | --- | --- | --- |
 | [Vale](https://github.com/vale-cli/vale) | MIT | Markup-aware deterministic linting, quote and source-boundary tests, and small inspectable rules. |
-| [Avoid AI Writing](https://github.com/conorbronsdon/avoid-ai-writing) | MIT | Separation of deterministic signals from editorial judgment, protected Markdown source boundaries, and corpus discipline. |
+| [Avoid AI Writing](https://github.com/conorbronsdon/avoid-ai-writing) | MIT | Separation of deterministic signals from editorial judgment, protected Markdown source boundaries including file-leading byte-order marks, and corpus discipline. |
 | [Cursor pstack Unslop](https://github.com/cursor/plugins) | MIT for `pstack` | Compact pattern catalog, portability test, mechanism-first specificity, and rhythm audit. |
 | [Better Writing](https://github.com/forjd/better-writing) | MIT | Preservation contract, context dials, genre exemptions, voice fixtures, and preflight checks. |
 | [Harper](https://github.com/Automattic/harper) | Apache-2.0 | Private, low-latency English mechanics, structured diagnostics, and heading exemptions that inform local rhythm boundaries. |

@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.10.6 - 2026-11-26
+
+- Recognize a first-line code fence after a UTF-8 byte-order mark. The linter now skips its code, and the preservation guard detects edits inside it while retaining original source offsets.
+
 ## 0.10.5 - 2026-11-19
 
 - Keep a three-dot ellipsis with a same-line lowercase continuation inside its sentence during rhythm checks. The linter previously dropped the words before the dots and could falsely report stacked short sentences. Preserve original finding locations and continue detecting actual short-sentence clusters.
